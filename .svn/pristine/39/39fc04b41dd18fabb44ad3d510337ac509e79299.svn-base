@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="14F1509" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PayAccountViewController">
+            <connections>
+                <outlet property="flagImageWidth" destination="GVk-dL-m2y" id="fUo-Y9-6ug"/>
+                <outlet property="noDatasLabel" destination="7BQ-z1-F3N" id="WUL-Vy-RFh"/>
+                <outlet property="noDatasView" destination="eay-ne-V2a" id="Snh-YV-gpX"/>
+                <outlet property="tableView" destination="p81-kI-buo" id="K3A-Ja-PHM"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="44" width="375" height="623"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="p81-kI-buo">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </tableView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eay-ne-V2a">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="形状 1" translatesAutoresizingMaskIntoConstraints="NO" id="Zhx-QQ-WLg">
+                            <rect key="frame" x="274" y="15" width="86" height="55"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="80" id="GVk-dL-m2y"/>
+                            </constraints>
+                            <variation key="default">
+                                <mask key="constraints">
+                                    <exclude reference="GVk-dL-m2y"/>
+                                </mask>
+                            </variation>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="还没有绑定支付账号请点击右上角[+]添加" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7BQ-z1-F3N">
+                            <rect key="frame" x="111" y="30" width="155" height="50"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="155" id="NYk-PP-slt"/>
+                                <constraint firstAttribute="height" constant="50" id="t20-jO-6YV"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="0.52722408890000005" blue="0.98470199999999997" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="Zhx-QQ-WLg" firstAttribute="leading" secondItem="7BQ-z1-F3N" secondAttribute="trailing" constant="9" id="584-tn-b91"/>
+                        <constraint firstItem="Zhx-QQ-WLg" firstAttribute="top" secondItem="eay-ne-V2a" secondAttribute="top" constant="15" id="EpY-zy-DGn"/>
+                        <constraint firstAttribute="trailing" secondItem="Zhx-QQ-WLg" secondAttribute="trailing" constant="15" id="GKD-bh-gsS"/>
+                        <constraint firstAttribute="bottom" secondItem="Zhx-QQ-WLg" secondAttribute="bottom" constant="25" id="QNr-HS-mqn"/>
+                        <constraint firstItem="7BQ-z1-F3N" firstAttribute="centerX" secondItem="eay-ne-V2a" secondAttribute="centerX" id="aTT-XH-ArL"/>
+                        <constraint firstItem="Zhx-QQ-WLg" firstAttribute="leading" secondItem="7BQ-z1-F3N" secondAttribute="trailing" constant="10" id="kiw-hj-mBA"/>
+                        <constraint firstAttribute="height" constant="90" id="lCP-eM-pwv"/>
+                        <constraint firstItem="7BQ-z1-F3N" firstAttribute="top" secondItem="Zhx-QQ-WLg" secondAttribute="bottom" constant="-40" id="lvB-r4-gMo"/>
+                        <constraint firstAttribute="bottom" secondItem="7BQ-z1-F3N" secondAttribute="bottom" constant="10" id="vXE-LN-0IW"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="QNr-HS-mqn"/>
+                            <exclude reference="kiw-hj-mBA"/>
+                        </mask>
+                    </variation>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="p81-kI-buo" secondAttribute="trailing" id="KHv-d9-GWQ"/>
+                <constraint firstItem="eay-ne-V2a" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Oj1-Y3-kM9"/>
+                <constraint firstItem="eay-ne-V2a" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Po2-Df-2uq"/>
+                <constraint firstItem="p81-kI-buo" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="eNw-FO-CMr"/>
+                <constraint firstItem="p81-kI-buo" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="rBx-Kj-8QX"/>
+                <constraint firstAttribute="trailing" secondItem="eay-ne-V2a" secondAttribute="trailing" id="sHf-6y-WHd"/>
+                <constraint firstAttribute="bottom" secondItem="p81-kI-buo" secondAttribute="bottom" id="vn9-bC-Wfm"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="283.5" y="241.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="形状 1" width="90" height="87"/>
+    </resources>
+</document>
