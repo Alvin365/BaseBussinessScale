@@ -1,0 +1,15 @@
+//
+//  ProccessDayHeader.h
+//  BusinessScale
+//
+//  Created by Alvin on 15/12/16.
+//  Copyright © 2015年 Alvin. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface ProccessDayHeader : UIView
+
++ (instancetype)loadXibView;
+
+@end

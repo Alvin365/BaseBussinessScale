@@ -1,0 +1,27 @@
+//
+//  PayAccountViewController.m
+//  BusinessScale
+//
+//  Created by Alvin on 15/12/19.
+//  Copyright © 2015年 Alvin. All rights reserved.
+//
+
+#import "PayAccountViewController.h"
+
+@interface PayAccountViewController ()
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+@end
+
+@implementation PayAccountViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
+@end

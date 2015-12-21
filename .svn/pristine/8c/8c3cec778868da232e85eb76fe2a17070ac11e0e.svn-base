@@ -1,0 +1,22 @@
+//
+//  RecordCell.h
+//  BusinessScale
+//
+//  Created by Alvin on 15/12/18.
+//  Copyright © 2015年 Alvin. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@interface RecordCellModel : BaseModel
+
+@property (nonatomic, copy) NSString *icon;
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *price;
+
+@end
+
+@interface RecordCell : UITableViewCell
+
+@property (nonatomic, strong) RecordCellModel *model;
+
+@end

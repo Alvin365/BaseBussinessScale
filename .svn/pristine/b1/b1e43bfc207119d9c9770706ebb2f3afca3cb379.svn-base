@@ -1,0 +1,21 @@
+//
+//  RecordHeader.m
+//  BusinessScale
+//
+//  Created by Alvin on 15/12/17.
+//  Copyright © 2015年 Alvin. All rights reserved.
+//
+
+#import "RecordHeader.h"
+
+@implementation RecordHeader
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+@end

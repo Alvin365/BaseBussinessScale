@@ -1,0 +1,27 @@
+//
+//  RecordViewController.m
+//  BusinessScale
+//
+//  Created by Alvin on 15/12/17.
+//  Copyright © 2015年 Alvin. All rights reserved.
+//
+
+#import "RecordViewController.h"
+#import "RecordHeader.h"
+@interface RecordViewController ()
+
+@end
+
+@implementation RecordViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end
