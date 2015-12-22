@@ -33,6 +33,7 @@
 #define ALTextColor [UIColor colorWithHexString:@"565656"]
 #define ALLightTextColor [UIColor colorWithHexString:@"a2a2a2"]
 #define ALRedColor [UIColor colorWithHexString:@"e84c55"]
+#define ALDisAbleColor [UIColor colorWithHexString:@"cccccc"]
 #define Color(r,g,b,a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
 // 导航栏标题的字体
 #define ALNavigationTitleFont [UIFont boldSystemFontOfSize:18]

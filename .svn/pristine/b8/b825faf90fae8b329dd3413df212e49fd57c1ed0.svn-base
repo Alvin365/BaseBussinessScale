@@ -83,7 +83,6 @@
     self.numberTextField.inputField.keyboardType = UIKeyboardTypeNumberPad;
     self.priceTextField.inputField.keyboardType = UIKeyboardTypeDecimalPad;
     self.nameTextField.backgroundColor = self.numberTextField.backgroundColor = self.priceTextField.backgroundColor = [UIColor clearColor];
-    self.priceTextField.inputField.textAlignment = NSTextAlignmentRight;
     
     self.unitFirstBtn.backgroundColor = [UIColor colorWithHexString:@"9a9a9a"];
     self.unitSecondBtn.backgroundColor = [UIColor whiteColor];

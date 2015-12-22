@@ -8,7 +8,6 @@
 
 #import "PayAccountViewController.h"
 #import "PayAccountCell.h"
-#import "AddPayAccountController.h"
 @interface PayAccountViewController ()<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -49,7 +48,6 @@
     WS(weakSelf);
     static NSString *cellInden = @"cellInden";
     PayAccountCell *cell = [tableView dequeueReusableCellWithIdentifier:cellInden];
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.type = (PayWayType)(indexPath.row%2);
     cell.isManager = indexPath.row%2;
     cell.callBack = ^(BOOL isManager){
@@ -69,9 +67,7 @@
         UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"确定删除该支付账号" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [actionSheet showInView:self.view];
     }else{
-        AddPayAccountController *add = [[AddPayAccountController alloc]init];
-        add.payTitle = indexPath.row%2==0?@"支付宝":@"微信支付";
-        [self.navigationController pushViewController:add animated:YES];
+        
     }
 }
 
