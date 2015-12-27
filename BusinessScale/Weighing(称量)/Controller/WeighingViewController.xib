@@ -13,6 +13,7 @@
                 <outlet property="goodImageTop" destination="iaa-f4-lro" id="2Fk-Ky-yWC"/>
                 <outlet property="goodsImageHeight" destination="dlr-Jj-fwG" id="8dk-de-o6y"/>
                 <outlet property="goodsImageWidth" destination="MLM-Pw-V4U" id="Dwu-U2-oZK"/>
+                <outlet property="goodsNameHeight" destination="3MF-xV-r7r" id="KAQ-V3-4pw"/>
                 <outlet property="payMoneyBtn" destination="g0z-1z-CaX" id="9Hl-IH-zn9"/>
                 <outlet property="payMoneyTailing" destination="sH9-OP-tGc" id="XHJ-Cr-FQV"/>
                 <outlet property="priceL" destination="6t4-AS-DNb" id="gF9-dh-i18"/>
@@ -45,9 +46,9 @@
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="西红柿：3.25斤" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vPA-i4-ITo">
-                    <rect key="frame" x="42" y="133" width="291" height="35"/>
+                    <rect key="frame" x="42" y="133" width="291" height="40"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="35" id="3MF-xV-r7r"/>
+                        <constraint firstAttribute="height" constant="40" id="3MF-xV-r7r"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -64,7 +65,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Alq-u5-2BC">
-                    <rect key="frame" x="42" y="198" width="120" height="55"/>
+                    <rect key="frame" x="42" y="203" width="120" height="55"/>
                     <color key="backgroundColor" red="1" green="0.23878901640162431" blue="0.19026465168779427" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="55" id="GhW-U9-Ubb"/>
@@ -79,11 +80,11 @@
                     </connections>
                 </button>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Pec-Zc-sv2">
-                    <rect key="frame" x="0.0" y="343" width="375" height="231"/>
+                    <rect key="frame" x="0.0" y="348" width="375" height="226"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </tableView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vaz-pU-HGd">
-                    <rect key="frame" x="0.0" y="283" width="375" height="60"/>
+                    <rect key="frame" x="0.0" y="288" width="375" height="60"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="总价：26.4元" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g23-ND-Mww">
                             <rect key="frame" x="0.0" y="28" width="375" height="30"/>
@@ -105,7 +106,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g0z-1z-CaX">
-                    <rect key="frame" x="212" y="198" width="120" height="55"/>
+                    <rect key="frame" x="212" y="203" width="120" height="55"/>
                     <color key="backgroundColor" red="1" green="0.34505725503029494" blue="0.4621216665512955" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                     <state key="normal" title="去结算">
@@ -155,7 +156,7 @@
             <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="581.5" y="99.5"/>
+            <point key="canvasLocation" x="567.5" y="16.5"/>
         </view>
     </objects>
     <resources>

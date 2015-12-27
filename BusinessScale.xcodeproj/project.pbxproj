@@ -109,6 +109,17 @@
 		E1FAEB4B1C2B8147001706CE /* BindingSuccessView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1FAEB4A1C2B8147001706CE /* BindingSuccessView.xib */; };
 		E1FAEB941C2BA14A001706CE /* WeightNoDatasView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEB921C2BA14A001706CE /* WeightNoDatasView.m */; };
 		E1FAEB951C2BA14A001706CE /* WeightNoDatasView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1FAEB931C2BA14A001706CE /* WeightNoDatasView.xib */; };
+		E1FAEB981C2CC733001706CE /* LocalDataTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEB971C2CC733001706CE /* LocalDataTool.m */; };
+		E1FAEBAD1C2CE9AA001706CE /* MJArgument.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEB9B1C2CE9AA001706CE /* MJArgument.m */; };
+		E1FAEBAE1C2CE9AA001706CE /* MJIvar.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEB9E1C2CE9AA001706CE /* MJIvar.m */; };
+		E1FAEBAF1C2CE9AA001706CE /* MJMember.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBA01C2CE9AA001706CE /* MJMember.m */; };
+		E1FAEBB01C2CE9AA001706CE /* MJMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBA21C2CE9AA001706CE /* MJMethod.m */; };
+		E1FAEBB11C2CE9AA001706CE /* MJType.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBA41C2CE9AA001706CE /* MJType.m */; };
+		E1FAEBB21C2CE9AA001706CE /* MJTypeEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBA61C2CE9AA001706CE /* MJTypeEncoding.m */; };
+		E1FAEBB31C2CE9AA001706CE /* NSObject+MJCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBA81C2CE9AA001706CE /* NSObject+MJCoding.m */; };
+		E1FAEBB41C2CE9AA001706CE /* NSObject+MJKeyValue.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBAA1C2CE9AA001706CE /* NSObject+MJKeyValue.m */; };
+		E1FAEBB51C2CE9AA001706CE /* NSObject+MJMember.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBAC1C2CE9AA001706CE /* NSObject+MJMember.m */; };
+		E1FAEBB81C2CED22001706CE /* ALSelfDefineDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FAEBB71C2CED22001706CE /* ALSelfDefineDatePickerView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -289,6 +300,29 @@
 		E1FAEB911C2BA14A001706CE /* WeightNoDatasView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeightNoDatasView.h; sourceTree = "<group>"; };
 		E1FAEB921C2BA14A001706CE /* WeightNoDatasView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeightNoDatasView.m; sourceTree = "<group>"; };
 		E1FAEB931C2BA14A001706CE /* WeightNoDatasView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WeightNoDatasView.xib; sourceTree = "<group>"; };
+		E1FAEB961C2CC72B001706CE /* LocalDataTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalDataTool.h; sourceTree = "<group>"; };
+		E1FAEB971C2CC733001706CE /* LocalDataTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalDataTool.m; sourceTree = "<group>"; };
+		E1FAEB9A1C2CE9AA001706CE /* MJArgument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJArgument.h; sourceTree = "<group>"; };
+		E1FAEB9B1C2CE9AA001706CE /* MJArgument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJArgument.m; sourceTree = "<group>"; };
+		E1FAEB9C1C2CE9AA001706CE /* MJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJExtension.h; sourceTree = "<group>"; };
+		E1FAEB9D1C2CE9AA001706CE /* MJIvar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJIvar.h; sourceTree = "<group>"; };
+		E1FAEB9E1C2CE9AA001706CE /* MJIvar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJIvar.m; sourceTree = "<group>"; };
+		E1FAEB9F1C2CE9AA001706CE /* MJMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJMember.h; sourceTree = "<group>"; };
+		E1FAEBA01C2CE9AA001706CE /* MJMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJMember.m; sourceTree = "<group>"; };
+		E1FAEBA11C2CE9AA001706CE /* MJMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJMethod.h; sourceTree = "<group>"; };
+		E1FAEBA21C2CE9AA001706CE /* MJMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJMethod.m; sourceTree = "<group>"; };
+		E1FAEBA31C2CE9AA001706CE /* MJType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJType.h; sourceTree = "<group>"; };
+		E1FAEBA41C2CE9AA001706CE /* MJType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJType.m; sourceTree = "<group>"; };
+		E1FAEBA51C2CE9AA001706CE /* MJTypeEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJTypeEncoding.h; sourceTree = "<group>"; };
+		E1FAEBA61C2CE9AA001706CE /* MJTypeEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJTypeEncoding.m; sourceTree = "<group>"; };
+		E1FAEBA71C2CE9AA001706CE /* NSObject+MJCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+MJCoding.h"; sourceTree = "<group>"; };
+		E1FAEBA81C2CE9AA001706CE /* NSObject+MJCoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MJCoding.m"; sourceTree = "<group>"; };
+		E1FAEBA91C2CE9AA001706CE /* NSObject+MJKeyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+MJKeyValue.h"; sourceTree = "<group>"; };
+		E1FAEBAA1C2CE9AA001706CE /* NSObject+MJKeyValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MJKeyValue.m"; sourceTree = "<group>"; };
+		E1FAEBAB1C2CE9AA001706CE /* NSObject+MJMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+MJMember.h"; sourceTree = "<group>"; };
+		E1FAEBAC1C2CE9AA001706CE /* NSObject+MJMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MJMember.m"; sourceTree = "<group>"; };
+		E1FAEBB61C2CED22001706CE /* ALSelfDefineDatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSelfDefineDatePickerView.h; sourceTree = "<group>"; };
+		E1FAEBB71C2CED22001706CE /* ALSelfDefineDatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALSelfDefineDatePickerView.m; sourceTree = "<group>"; };
 		EAF6DE446BE7EFFFFEC965CC /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -470,6 +504,7 @@
 		E1EEBC5A1C204CED00551A5E /* Lib */ = {
 			isa = PBXGroup;
 			children = (
+				E1FAEB991C2CE9AA001706CE /* MJExtension */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -492,6 +527,8 @@
 				E1EEBD511C22697000551A5E /* DateUtil.m */,
 				E1EEBCBD1C20E77900551A5E /* ALCommonTool.h */,
 				E1EEBCBE1C20E77900551A5E /* ALCommonTool.m */,
+				E1FAEB961C2CC72B001706CE /* LocalDataTool.h */,
+				E1FAEB971C2CC733001706CE /* LocalDataTool.m */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -512,6 +549,8 @@
 				E1FAEB1A1C28DCE5001706CE /* ALKeyBordTool.xib */,
 				E1FAEB1C1C28E182001706CE /* ALTextField.h */,
 				E1FAEB1D1C28E182001706CE /* ALTextField.m */,
+				E1FAEBB61C2CED22001706CE /* ALSelfDefineDatePickerView.h */,
+				E1FAEBB71C2CED22001706CE /* ALSelfDefineDatePickerView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -879,6 +918,32 @@
 			name = PayAccount;
 			sourceTree = "<group>";
 		};
+		E1FAEB991C2CE9AA001706CE /* MJExtension */ = {
+			isa = PBXGroup;
+			children = (
+				E1FAEB9A1C2CE9AA001706CE /* MJArgument.h */,
+				E1FAEB9B1C2CE9AA001706CE /* MJArgument.m */,
+				E1FAEB9C1C2CE9AA001706CE /* MJExtension.h */,
+				E1FAEB9D1C2CE9AA001706CE /* MJIvar.h */,
+				E1FAEB9E1C2CE9AA001706CE /* MJIvar.m */,
+				E1FAEB9F1C2CE9AA001706CE /* MJMember.h */,
+				E1FAEBA01C2CE9AA001706CE /* MJMember.m */,
+				E1FAEBA11C2CE9AA001706CE /* MJMethod.h */,
+				E1FAEBA21C2CE9AA001706CE /* MJMethod.m */,
+				E1FAEBA31C2CE9AA001706CE /* MJType.h */,
+				E1FAEBA41C2CE9AA001706CE /* MJType.m */,
+				E1FAEBA51C2CE9AA001706CE /* MJTypeEncoding.h */,
+				E1FAEBA61C2CE9AA001706CE /* MJTypeEncoding.m */,
+				E1FAEBA71C2CE9AA001706CE /* NSObject+MJCoding.h */,
+				E1FAEBA81C2CE9AA001706CE /* NSObject+MJCoding.m */,
+				E1FAEBA91C2CE9AA001706CE /* NSObject+MJKeyValue.h */,
+				E1FAEBAA1C2CE9AA001706CE /* NSObject+MJKeyValue.m */,
+				E1FAEBAB1C2CE9AA001706CE /* NSObject+MJMember.h */,
+				E1FAEBAC1C2CE9AA001706CE /* NSObject+MJMember.m */,
+			);
+			path = MJExtension;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1056,15 +1121,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1FAEAB01C23D44F001706CE /* BaseTableViewCell.m in Sources */,
+				E1FAEB981C2CC733001706CE /* LocalDataTool.m in Sources */,
 				E1EEBCC31C20EB1D00551A5E /* PalletViewController.m in Sources */,
 				E1FAEB2D1C28F565001706CE /* MBProgressHUD+AL.m in Sources */,
+				E1FAEBAD1C2CE9AA001706CE /* MJArgument.m in Sources */,
 				E1FAEB121C28D8EC001706CE /* AddPayAccountController.m in Sources */,
 				E1EEBC831C204D0F00551A5E /* ChartViewController.m in Sources */,
 				E1EEBC611C204CED00551A5E /* UIImage+Extension.m in Sources */,
 				E1FAEB491C2B8137001706CE /* BindingSuccessView.m in Sources */,
 				E1EEBD671C22841B00551A5E /* ALDatePickerView.m in Sources */,
+				E1FAEBB51C2CE9AA001706CE /* NSObject+MJMember.m in Sources */,
 				E1EEBCBC1C20674A00551A5E /* BaseModel.m in Sources */,
 				E1EEBD3E1C22474F00551A5E /* NavGestureView.m in Sources */,
+				E1FAEBAE1C2CE9AA001706CE /* MJIvar.m in Sources */,
+				E1FAEBAF1C2CE9AA001706CE /* MJMember.m in Sources */,
 				E187484C1C1EED730020F2FF /* main.m in Sources */,
 				E1EEBD4F1C2259B800551A5E /* NSDate+ALCalendar.m in Sources */,
 				E1FAEABB1C23D95C001706CE /* GoodsInfoModel.m in Sources */,
@@ -1080,16 +1150,20 @@
 				E1FAEAE51C252CC4001706CE /* PayAccountViewController.m in Sources */,
 				E1EEBC651C204CED00551A5E /* RootTabViewController.m in Sources */,
 				E1FAEAC31C23DE5C001706CE /* GoodsHeader.m in Sources */,
+				E1FAEBB01C2CE9AA001706CE /* MJMethod.m in Sources */,
 				E1EEBC791C204D0400551A5E /* ProcessingViewController.m in Sources */,
 				E1FAEB0C1C279204001706CE /* PayAccountCell.m in Sources */,
 				E1FAEAF31C2539BE001706CE /* GoodsAddView.m in Sources */,
 				E1EEBD2F1C21449500551A5E /* ALProcessView.m in Sources */,
 				E1FAEB1E1C28E182001706CE /* ALTextField.m in Sources */,
+				E1FAEBB21C2CE9AA001706CE /* MJTypeEncoding.m in Sources */,
 				E1FAEB411C294263001706CE /* VeryCodeViewController.m in Sources */,
 				E1F5A4A01C239793000B6C9A /* RecordCell.m in Sources */,
+				E1FAEBB41C2CE9AA001706CE /* NSObject+MJKeyValue.m in Sources */,
 				E1EEBCA31C204DAA00551A5E /* AppDelegate.m in Sources */,
 				E1F5A4B01C23B6BF000B6C9A /* ProcessCell.m in Sources */,
 				E1FAEAD61C252B54001706CE /* GoodsSettingViewController.m in Sources */,
+				E1FAEBB31C2CE9AA001706CE /* NSObject+MJCoding.m in Sources */,
 				E1EEBD321C214EBA00551A5E /* ProccessDayViewController.m in Sources */,
 				E1FAEB451C29471B001706CE /* NSTimer+Addition.m in Sources */,
 				E1EEBD4C1C2258B800551A5E /* NSDateFormatter+Category.m in Sources */,
@@ -1100,8 +1174,10 @@
 				E1FAEAD21C252204001706CE /* SettingCell.m in Sources */,
 				E1FAEAEF1C252D1D001706CE /* PrivacyViewController.m in Sources */,
 				E1EEBD521C22697000551A5E /* DateUtil.m in Sources */,
+				E1FAEBB11C2CE9AA001706CE /* MJType.m in Sources */,
 				E1EEBD1C1C210EF700551A5E /* palletCell.m in Sources */,
 				E1EEBC621C204CED00551A5E /* UIView+Extension.m in Sources */,
+				E1FAEBB81C2CED22001706CE /* ALSelfDefineDatePickerView.m in Sources */,
 				E1EEBCB01C20558400551A5E /* BaseViewController.m in Sources */,
 				E1FAEAC91C23E57A001706CE /* GoodsSettingCell.m in Sources */,
 				E1FAEB941C2BA14A001706CE /* WeightNoDatasView.m in Sources */,

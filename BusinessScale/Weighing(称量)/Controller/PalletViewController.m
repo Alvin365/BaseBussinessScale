@@ -9,7 +9,7 @@
 #import "PalletViewController.h"
 #import "palletCell.h"
 #import "PalletSecctionView.h"
-
+#import "PayWaySelectView.h"
 @interface PalletViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UIView *bottomBar;
 @property (weak, nonatomic) IBOutlet UILabel *allSelectedL;
@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *allSelecteImageV;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
+@property (nonatomic, strong) PayWaySelectView *paySelectView;
+
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
 @property (nonatomic, assign) BOOL allSelected;
@@ -27,6 +29,15 @@
 @end
 
 @implementation PalletViewController
+
+- (PayWaySelectView *)paySelectView
+{
+    if (!_paySelectView) {
+        _paySelectView = [PayWaySelectView loadXibView];
+        _paySelectView.frame = [UIScreen mainScreen].bounds;
+    }
+    return _paySelectView;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -42,6 +53,7 @@
     _totalL.textColor = ALLightTextColor;
     _totalPriceL.textColor = ALRedColor;
     _payMoneyBtn.backgroundColor = ALRedColor;
+    [_payMoneyBtn addTarget:self action:@selector(payMoney) forControlEvents:UIControlEventTouchUpInside];
     [_seletedBtn addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(seletedAll)]];
     
     UILabel *l = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 0.5)];
@@ -52,6 +64,21 @@
     _tableView.dataSource = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [_tableView registerNib:[UINib nibWithNibName:@"palletCell" bundle:nil] forCellReuseIdentifier:@"cellInde"];
+}
+
+- (void)datas
+{
+    _dataArray = [NSMutableArray array];
+    self.allSelected = YES;
+    for (int i = 0; i< 2; i++) {
+        NSMutableArray *arr = [NSMutableArray array];
+        for (int j = 0; j<10; j++) {
+            palletCellModel *model = [[palletCellModel alloc]init];
+            model.isSelected = YES;
+            [arr addObject:model];
+        }
+        [_dataArray addObject:arr];
+    }
 }
 
 - (void)seletedAll
@@ -70,24 +97,9 @@
     [self.tableView reloadData];
 }
 
-- (void)datas
+- (void)payMoney
 {
-    _dataArray = [NSMutableArray array];
-    self.allSelected = YES;
-    for (int i = 0; i< 2; i++) {
-        NSMutableArray *arr = [NSMutableArray array];
-        for (int j = 0; j<10; j++) {
-            palletCellModel *model = [[palletCellModel alloc]init];
-            model.isSelected = YES;
-            [arr addObject:model];
-        }
-        [_dataArray addObject:arr];
-    }
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [self.paySelectView showAnimate:YES];
 }
 
 #pragma mark - UITableViewDelegate&&UITableViewDataSource
@@ -113,6 +125,7 @@
     }
     NSArray *arr = self.dataArray[indexPath.section];
     if (indexPath.row < arr.count) {
+        cell.sepT.hidden = indexPath.row;
         cell.model = arr[indexPath.row];
         cell.callBack = ^(palletCell *cell){
             NSIndexPath *path = [tableView indexPathForCell:cell];

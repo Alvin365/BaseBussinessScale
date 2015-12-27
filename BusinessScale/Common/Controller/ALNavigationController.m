@@ -27,7 +27,7 @@
 /**  当第一次使用这个类的时候调用1次*/
 + (void)initialize
 {
-    // 设置UINavigationBarTheme的主
+    // 设置UINavigationBarTheme的主题
     [self setupNavigationBarTheme];
     // 设置UIBarButtonItem的主题
     [self setupBarButtonItemTheme];

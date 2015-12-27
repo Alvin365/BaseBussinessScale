@@ -16,6 +16,8 @@
 
 @interface palletCell : UITableViewCell
 
+@property (nonatomic, strong) UILabel *sepT;
+
 @property (nonatomic, copy) void(^callBack) (palletCell *);
 @property (nonatomic, strong) palletCellModel *model;
 

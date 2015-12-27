@@ -13,6 +13,7 @@
     BOOL _animate;
 }
 
+@property (weak, nonatomic) IBOutlet UIView *backGroudView;
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 
 @property (weak, nonatomic) IBOutlet UIView *goods;
@@ -64,12 +65,12 @@
 {
     [self initView];
     [self initConstraint];
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
+    [self.backGroudView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
 }
 
 - (void)initView
 {
-    self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
+    self.backGroudView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
     
     self.contentView.layer.cornerRadius = 10;
     self.contentView.layer.masksToBounds = YES;
@@ -165,7 +166,7 @@
 
 - (void)tap
 {
-    [self endEditing:YES];
+    [self hide];
 }
 
 @end

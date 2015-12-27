@@ -45,7 +45,6 @@
     WS(weakSelf);
     _inputField = [[UITextField alloc]init];
     _inputField.delegate = self;
-//    _inputField.backgroundColor = [UIColor redColor];
     _inputField.backgroundColor = [UIColor clearColor];
     _inputField.returnKeyType = UIReturnKeyDone;
     _keyBoarTool = [ALKeyBordTool loadXibView];

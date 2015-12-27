@@ -39,6 +39,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodImageTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodsImageWidth;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodsImageHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodsNameHeight;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *weightLeading;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *payMoneyTailing;
@@ -98,6 +99,7 @@
     self.goodImageTop.constant = 30*ALScreenScalHeight*scale;
     self.goodsImageWidth.constant = 65*ALScreenScalWidth;
     self.goodsImageHeight.constant = 65*ALScreenScalWidth;
+//    self.goodsNameHeight.constant = 40;
     self.sepTop.constant = 30*ALScreenScalHeight*scale;
     self.sepHeight.constant = 60*ALScreenScalHeight*scale;
     self.payMoneyTailing.constant = 42.5*ALScreenScalWidth;
@@ -106,7 +108,7 @@
     /**
      * 图片和价格居中显示
      */
-    CGFloat width = [self.priceL.text bundingWithSize:CGSizeMake(screenWidth, 65*ALScreenScalWidth) Font:65*ALScreenScalWidth].width;
+    CGFloat width = [self.priceL.text bundingWithSize:CGSizeMake(screenWidth, 50*ALScreenScalWidth) Font:50*ALScreenScalWidth].width;
     width = screenWidth-(width+self.goodsImageWidth.constant+40);
     self.goodImageLeading.constant = width/2.0f;
     self.priceTailing.constant = width/2.0f;
@@ -132,7 +134,7 @@
     _putInBtn.layer.masksToBounds = YES;
     
     _totalPrice.backgroundColor = [UIColor clearColor];
-    _totalPrice.attributedText = [ALCommonTool setAttrbute:@"总价：" andAttribute:@"26.4" Color1:ALTextColor Color2:ALTextColor Font1:15 Font2:22];
+    _totalPrice.attributedText = [ALCommonTool setAttrbute:@"总价：" andAttribute:@"26.4元" Color1:ALTextColor Color2:ALTextColor Font1:15 Font2:22];
     
     _table.separatorStyle = UITableViewCellSeparatorStyleNone;
     _table.delegate = self;
@@ -148,9 +150,20 @@
 {
     WS(weakSelf);
     self.navigationItem.title = @"OKOK计量";
+    
+    [self addNavLeftBarBtn:@"进入托盘" selectorBlock:^{
+        PalletViewController *pctl = [[PalletViewController alloc]init];
+        [weakSelf.navigationController pushViewController:pctl animated:YES];
+    }];
+    
     [self addNavRightBarBtn:@"蓝牙已连接" selectorBlock:^{
         [weakSelf.noDatasView hideAnimate:YES];
     }];
+}
+
+- (void)datas
+{
+    
 }
 
 - (void)didReceiveMemoryWarning {

@@ -59,11 +59,6 @@
     }];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-
-}
-
 - (void)keyboardWillShow:(NSNotification *)noti
 {
     // 获取键盘的高度

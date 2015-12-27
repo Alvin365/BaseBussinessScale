@@ -62,7 +62,7 @@
     [titleView addSubview:left];
     [titleView addSubview:right];
     
-    UIDatePicker *picker = [[UIDatePicker alloc]initWithFrame:CGRectMake(0, self.height+40, screenWidth, 160*ALScreenScalHeight)];
+    UIDatePicker *picker = [[UIDatePicker alloc]initWithFrame:CGRectMake(0, self.height+40, screenWidth, 200*ALScreenScalWidth)];
     picker.backgroundColor = [UIColor whiteColor];
     NSDate *date = [NSDate dateWithTimeInterval:0.0f sinceDate:[NSDate date]];
 //    picker.date = date;
@@ -100,8 +100,8 @@
     }
     [[[[UIApplication sharedApplication]windows]lastObject] addSubview:self];
     [UIView animateWithDuration:0.25 animations:^{
-        self.titleView.y = self.height-160*ALScreenScalHeight-40;
-        self.picker.y = self.height-160*ALScreenScalHeight;
+        self.titleView.y = self.height-200*ALScreenScalWidth-40;
+        self.picker.y = self.height-200*ALScreenScalWidth;
     }];
 }
 

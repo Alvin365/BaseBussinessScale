@@ -11,6 +11,8 @@
 @interface BaseViewController ()
 
 @property (nonatomic, strong) UIView *back;
+
+@property (nonatomic, copy) void(^leftBarBtnBlock)();
 @property (nonatomic, copy) void(^rightBarBtnBlock)();
 
 @end
@@ -54,6 +56,17 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (void)addNavLeftBarBtn:(NSString *)str selectorBlock:(void(^)())block
+{
+    UIImage *img = [UIImage orignImage:str];
+    if (img) {
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:img style:UIBarButtonItemStylePlain target:self action:@selector(leftClick)];
+    }else{
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:str style:UIBarButtonItemStylePlain target:self action:@selector(leftClick)];
+    }
+    _leftBarBtnBlock = [block copy];
+}
+
 - (void)addNavRightBarBtn:(NSString *)str selectorBlock:(void(^)())block
 {
     UIImage *img = [UIImage orignImage:str];
@@ -62,7 +75,14 @@
     }else{
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:str style:UIBarButtonItemStylePlain target:self action:@selector(rightClick)];
     }
-    _rightBarBtnBlock = block;
+    _rightBarBtnBlock = [block copy];
+}
+
+- (void)leftClick
+{
+    if (_leftBarBtnBlock) {
+        _leftBarBtnBlock();
+    }
 }
 
 - (void)rightClick

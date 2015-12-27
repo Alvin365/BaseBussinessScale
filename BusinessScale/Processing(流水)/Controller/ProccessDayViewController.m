@@ -13,6 +13,7 @@
 #import "ProcessCell.h"
 #import "RecordSectionView.h"
 #import "ProcessCell.h"
+#import "ALSelfDefineDatePickerView.h"
 @interface ProccessDayViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (strong, nonatomic)  UITableView *tableView;
@@ -20,10 +21,20 @@
 @property (nonatomic, strong) NavGestureView *titleGestureView; // 透明导航栏手势事件
 @property (nonatomic, strong) NSDate *titleDate;
 @property (nonatomic, strong) ALDatePickerView *pickerView;
+@property (nonatomic, strong) ALSelfDefineDatePickerView *otherPickView;
 
 @end
 
 @implementation ProccessDayViewController
+
+- (ALSelfDefineDatePickerView *)otherPickView
+{
+    if (!_otherPickView) {
+        _otherPickView = [[ALSelfDefineDatePickerView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        _otherPickView.type = self.tag;
+    }
+    return _otherPickView;
+}
 
 - (ALDatePickerView *)pickerView
 {
@@ -39,8 +50,11 @@
         WS(weakSelf);
         _titleGestureView = [[NavGestureView alloc]initWithFrame:CGRectMake(0, 0, screenWidth-160, 40)];
         _titleGestureView.callBack = ^(NavGestureViewTag tag){
-//            [weakSelf changDateWithTag:tag];
-            [weakSelf.pickerView show];
+            if (weakSelf.tag == ALProcessViewButtonTagDay) {
+                [weakSelf.pickerView show];
+            }else{
+                [weakSelf.otherPickView showAnimate:YES];
+            }
         };
     }
     return _titleGestureView;

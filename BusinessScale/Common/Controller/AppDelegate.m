@@ -8,19 +8,18 @@
 
 #import "AppDelegate.h"
 #import "RootTabViewController.h"
+#import "NSObject+MJMember.h"
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor]; //背景颜色为白色
     [self.window makeKeyAndVisible];
-    
     self.window.rootViewController = [[RootTabViewController alloc]init];
     
     return YES;

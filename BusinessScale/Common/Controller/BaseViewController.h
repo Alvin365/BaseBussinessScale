@@ -10,6 +10,8 @@
 
 @interface BaseViewController : UIViewController
 
+/** 设置导航栏左按钮*/
+- (void)addNavLeftBarBtn:(NSString *)str selectorBlock:(void(^)())block;
 /** 添加导航栏右按钮*/
 - (void)addNavRightBarBtn:(NSString *)str selectorBlock:(void(^)())block;
 

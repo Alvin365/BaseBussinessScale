@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface NSDate (ALCalendar)
+
 - (NSUInteger)numberOfDaysInCurrentMonth;
 - (NSDate *)firstDayOfCurrentMonth;
 - (NSUInteger)weeklyOrdinality;
@@ -23,4 +24,18 @@
 + (NSDate *)dateFromStringYYMMDD:(NSString *)dateString;
 
 - (NSString *)getDateStringByFormat:(NSString *)format;
+/**
+ * 获取指定日期 对应周的第一天
+ */
++ (NSDate *)getWeekFirstDate:(NSDate *)inputDate;
+/**
+ * 获取指定日期 对应周的最后一天
+ */
++(NSDate *)getWeekLastDate:(NSDate *)inputDate;
+/**
+ * 获取指定日期是周几
+ */
++ (int)weekdayFromDate:(NSDate*)inputDate;
+
 @end
+

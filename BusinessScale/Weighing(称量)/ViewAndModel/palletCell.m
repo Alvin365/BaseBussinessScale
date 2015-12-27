@@ -24,7 +24,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *seleteImageV;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodsImageLeadingConstraint;
 
-@property (nonatomic, strong) UILabel *sepT;
 @property (nonatomic, strong) UILabel *sepB;
 
 @end

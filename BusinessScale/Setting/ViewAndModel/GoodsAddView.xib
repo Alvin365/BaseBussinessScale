@@ -11,6 +11,10 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c2P-ek-Fa1">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ht8-aW-dFZ">
                     <rect key="frame" x="15" y="107" width="345" height="453"/>
                     <subviews>
@@ -214,7 +218,6 @@
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="FQJ-dL-UHb" firstAttribute="width" secondItem="KQu-nW-AeY" secondAttribute="width" id="11r-1o-XnD"/>
                 <constraint firstItem="7IZ-4W-hQ7" firstAttribute="top" secondItem="dvk-eU-39X" secondAttribute="bottom" id="57f-2N-HtK"/>
@@ -226,14 +229,19 @@
                 <constraint firstItem="ht8-aW-dFZ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="107" id="NBM-ID-2P5"/>
                 <constraint firstItem="7IZ-4W-hQ7" firstAttribute="height" secondItem="dvk-eU-39X" secondAttribute="height" id="NNV-56-3dC"/>
                 <constraint firstItem="dvk-eU-39X" firstAttribute="trailing" secondItem="FQJ-dL-UHb" secondAttribute="trailing" id="PN0-ac-yOA"/>
+                <constraint firstItem="FQJ-dL-UHb" firstAttribute="top" secondItem="c2P-ek-Fa1" secondAttribute="bottom" id="RQc-2V-gXf"/>
+                <constraint firstAttribute="bottom" secondItem="c2P-ek-Fa1" secondAttribute="bottom" id="RXp-OT-deo"/>
                 <constraint firstItem="7IZ-4W-hQ7" firstAttribute="leading" secondItem="dvk-eU-39X" secondAttribute="leading" id="SoO-mh-1kn"/>
                 <constraint firstItem="FQJ-dL-UHb" firstAttribute="top" secondItem="KQu-nW-AeY" secondAttribute="bottom" id="XP9-6I-Ncp"/>
                 <constraint firstItem="dvk-eU-39X" firstAttribute="width" secondItem="FQJ-dL-UHb" secondAttribute="width" id="aQv-Hh-p9L"/>
+                <constraint firstAttribute="trailing" secondItem="c2P-ek-Fa1" secondAttribute="trailing" id="bIW-EB-FDp"/>
                 <constraint firstItem="FQJ-dL-UHb" firstAttribute="leading" secondItem="KQu-nW-AeY" secondAttribute="leading" id="dm0-td-BfC"/>
                 <constraint firstItem="7IZ-4W-hQ7" firstAttribute="trailing" secondItem="dvk-eU-39X" secondAttribute="trailing" id="dzz-9D-fVW"/>
                 <constraint firstAttribute="bottom" secondItem="ht8-aW-dFZ" secondAttribute="bottom" constant="107" id="fxM-IG-aW3"/>
+                <constraint firstItem="c2P-ek-Fa1" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="iQq-hZ-1Ko"/>
                 <constraint firstItem="dvk-eU-39X" firstAttribute="leading" secondItem="FQJ-dL-UHb" secondAttribute="trailing" id="lwk-bC-gPn"/>
                 <constraint firstItem="ht8-aW-dFZ" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="15" id="nEZ-IX-VTC"/>
+                <constraint firstItem="c2P-ek-Fa1" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="z3q-Kb-1Aj"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
@@ -242,10 +250,12 @@
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
             <variation key="default">
                 <mask key="constraints">
+                    <exclude reference="RQc-2V-gXf"/>
                     <exclude reference="lwk-bC-gPn"/>
                 </mask>
             </variation>
             <connections>
+                <outlet property="backGroudView" destination="c2P-ek-Fa1" id="42i-fu-smk"/>
                 <outlet property="cancleButton" destination="gkx-Al-p07" id="E1r-Yh-DEc"/>
                 <outlet property="cancleButtonHeight" destination="BeG-GH-yhD" id="ifV-ug-yna"/>
                 <outlet property="contentView" destination="ht8-aW-dFZ" id="eQi-Jj-0jq"/>
@@ -277,7 +287,7 @@
                 <outlet property="unitSecondBtn" destination="FQJ-dL-UHb" id="cs0-HI-Wsh"/>
                 <outlet property="unitThirdBtn" destination="dvk-eU-39X" id="dlK-Od-cUh"/>
             </connections>
-            <point key="canvasLocation" x="-32.5" y="-204.5"/>
+            <point key="canvasLocation" x="2.5" y="-186.5"/>
         </view>
     </objects>
     <resources>

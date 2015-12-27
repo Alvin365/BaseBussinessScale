@@ -9,6 +9,7 @@
 #import "NSDate+ALCalendar.h"
 
 @implementation NSDate (ALCalendar)
+
 - (NSUInteger)numberOfDaysInCurrentMonth
 {
     return [[NSCalendar currentCalendar] rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit forDate:self].length;
@@ -52,8 +53,6 @@
     return date;
 }
 
-
-
 //输入的日期字符串形如：@"1992-05-21 13:08:08"
 
 + (NSDate *)dateFromString:(NSString *)dateString
@@ -95,5 +94,40 @@
     return currentDateStr;
 }
 
++ (NSDate *)getWeekFirstDate:(NSDate *)inputDate {
+    int dayOfWeek = [DateUtil weekdayFromDate:inputDate];
+    if (dayOfWeek == 7) {
+        return inputDate;
+    } else {
+        NSTimeInterval secondsPerDay1 = 24*60*60*(-dayOfWeek);
+        NSDate *firstDate = [inputDate dateByAddingTimeInterval:secondsPerDay1];
+        return firstDate;
+    }
+}
+/// 获得指定日期所在周最后一天的字符串(周六为最后一天) eg:2015-05-16 23:59:59
++(NSDate *)getWeekLastDate:(NSDate *)inputDate {
+    int dayOfWeek = [DateUtil weekdayFromDate:inputDate];
+    if (dayOfWeek == 7) {
+        NSTimeInterval secondsPerDay1 = 24*60*60*6;
+        NSDate *lastDate = [inputDate dateByAddingTimeInterval:secondsPerDay1];
+        return lastDate;
+    } else {
+        NSTimeInterval secondsPerDay1 = 24*60*60*(6-dayOfWeek);
+        NSDate *firstDate = [inputDate dateByAddingTimeInterval:secondsPerDay1];
+        return firstDate;
+    }
+}
+
++ (int)weekdayFromDate:(NSDate*)inputDate {
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    //    NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:@"Asia/Shanghai"];
+    //    [calendar setTimeZone: timeZone];
+    NSCalendarUnit calendarUnit = NSWeekdayCalendarUnit;
+    NSDateComponents *theComponents = [calendar components:calendarUnit fromDate:inputDate];
+    if (theComponents.weekday == 1) {
+        return 7;
+    }
+    return (int)theComponents.weekday - 1;
+}
 
 @end
