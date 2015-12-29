@@ -1,16 +1,16 @@
 {
-  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "a563b2b1-994b-4aaf-aa85-640b183cc1c2++8948",
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "a563b2b1-994b-4aaf-aa85-640b183cc1c2++4696",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
-    "a563b2b1-994b-4aaf-aa85-640b183cc1c2++8948" : {
+    "a563b2b1-994b-4aaf-aa85-640b183cc1c2++4696" : {
 
     }
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
-    "a563b2b1-994b-4aaf-aa85-640b183cc1c2++8948" : 0
+    "a563b2b1-994b-4aaf-aa85-640b183cc1c2++4696" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "8A4BBC39-8744-4F72-B902-53963907638D",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
-    "a563b2b1-994b-4aaf-aa85-640b183cc1c2++8948" : "ALBusinessScale\/"
+    "a563b2b1-994b-4aaf-aa85-640b183cc1c2++4696" : "ALBusinessScale\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "BusinessScale",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
@@ -19,7 +19,7 @@
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/192.168.0.90\/svn\/hygieia",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "a563b2b1-994b-4aaf-aa85-640b183cc1c2++8948"
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "a563b2b1-994b-4aaf-aa85-640b183cc1c2++4696"
     }
   ]
 }

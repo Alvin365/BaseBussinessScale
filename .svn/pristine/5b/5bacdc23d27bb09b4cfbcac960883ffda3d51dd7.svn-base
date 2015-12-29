@@ -1,0 +1,70 @@
+//
+//  ALBaseHttpTool.m
+//  BusinessScale
+//
+//  Created by Alvin on 15/12/28.
+//  Copyright © 2015年 Alvin. All rights reserved.
+//
+
+#import "ALBaseHttpTool.h"
+#import <AFNetworking/AFNetworking.h>
+@implementation ALBaseHttpTool
+
++ (void)get:(NSString *)url params:(NSDictionary *)params success:(void (^)(id responseObject))success failure:(void (^)(NSError *error))failure
+{
+    // 1.获得请求管理者
+    AFHTTPSessionManager *mgr = [AFHTTPSessionManager manager];
+    mgr.securityPolicy.allowInvalidCertificates = YES;
+    // 2.发送GET请求
+    [mgr GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (success) {
+            success(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (failure) {
+            failure(error);
+        }
+    }];
+}
+
++ (void)post:(NSString *)url params:(NSDictionary *)params success:(void (^)(id responseObject))success failure:(void (^)(NSError *error))failure
+{
+    // 1.获得请求管理者
+    AFHTTPSessionManager *mgr = [AFHTTPSessionManager manager];
+    mgr.securityPolicy.allowInvalidCertificates = YES;
+    // 2.发送POST请求
+    [mgr POST:url parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSLog(@"%@",responseObject);
+        if (success) {
+            success(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"error=%@",error.description);
+        if (failure) {
+            failure(error);
+        }
+    }];
+}
+
++ (void)put:(NSString *)url params:(NSDictionary *)params success:(void (^)(id responseObject))success failure:(void (^)(NSError *error))failure
+{
+    //     1.获得请求管理者
+    AFHTTPSessionManager *mgr = [AFHTTPSessionManager manager];
+    mgr.securityPolicy.allowInvalidCertificates = YES;
+    // 2.发送POST请求
+    [mgr PUT:url parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (success) {
+            success(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (failure) {
+            failure(error);
+        }
+    }];
+}
+
+@end
