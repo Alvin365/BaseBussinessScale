@@ -16,7 +16,7 @@
 @property (nonatomic, assign) float quantity; // 重量
 @property (nonatomic, copy) NSString *unit; // 单位
 @property (nonatomic, assign) float unit_price; // 价钱
-@property (nonatomic, strong) NSString *ts; // 交易时间
+@property (nonatomic, copy) NSString *ts; // 交易时间
 
 @end
 
@@ -25,8 +25,8 @@
  */
 @interface SaleTable : BaseModel
 
-@property (nonatomic, copy) NSString *title;// 商品信息
-@property (nonatomic, copy) NSString *randid;
+@property (nonatomic,copy) NSString *title;
+@property (nonatomic, copy) NSString *randid; // 随机字符串
 @property (nonatomic, strong) NSArray *items;
 @property (nonatomic, copy) NSString *ts; // 交易时间
 @property (nonatomic, assign) float total_fee;

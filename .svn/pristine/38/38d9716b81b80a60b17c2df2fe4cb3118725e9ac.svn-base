@@ -16,7 +16,7 @@
 
 + (NSArray *)getPrimaryKeyUnionArray
 {
-    return @[@"title"];
+    return @[@"ts"];
 }
 
 + (void)initialize
@@ -36,7 +36,7 @@
 
 + (NSArray *)getPrimaryKeyUnionArray
 {
-    return @[@"ts"];
+    return @[@"title"];
 }
 
 + (void)initialize

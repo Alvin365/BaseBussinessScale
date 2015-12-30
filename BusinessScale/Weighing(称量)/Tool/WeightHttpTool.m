@@ -10,16 +10,14 @@
 
 @implementation WeightHttpTool
 
-+ (void)uploadSaleRecord:(NSDictionary *)params completedBlock:(void (^)(id result))completedBlock
++ (void)uploadSaleRecord:(id)params completedBlock:(void (^)(id result))completedBlock
 {
-//    NSMutableDictionary *mp = [NSMutableDictionary dictionaryWithDictionary:params];
-//    NSDate *date = [NSDate date];
-//    [mp setObject:date.timeStempString forKey:@"ts"];
     [self put:[NSString stringWithFormat:@"%@po",TestServerce] params:params completedBlock:completedBlock];
 }
 
-+ (void)batchUploadSaleRecords:(NSDictionary *)params completedBlock:(void (^)(id))completedBlock
++ (void)batchUploadSaleRecords:(id)params completedBlock:(void (^)(id))completedBlock
 {
+        [self put:[NSString stringWithFormat:@"%@pobatch",TestServerce] paramsWithData:params completedBlock:completedBlock];
     
 }
 

@@ -12,9 +12,9 @@
 /**
  * 上传销售记录
  */
-+ (void)uploadSaleRecord:(NSDictionary *)params completedBlock:(void (^)(id result))completedBlock;
++ (void)uploadSaleRecord:(id)params completedBlock:(void (^)(id result))completedBlock;
 /**
  * 批量上传销售记录
  */
-+ (void)batchUploadSaleRecords:(NSDictionary *)params completedBlock:(void (^)(id result))completedBlock;
++ (void)batchUploadSaleRecords:(id)params completedBlock:(void (^)(id result))completedBlock;
 @end

@@ -30,4 +30,5 @@
 #import "MBProgressHUD+AL.h"
 #import "ALBaseHttpTool.h"
 #import "AccountTool.h"
+#import "MJExtension.h"
 #endif

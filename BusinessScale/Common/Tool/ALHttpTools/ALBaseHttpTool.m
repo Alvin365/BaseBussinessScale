@@ -10,7 +10,7 @@
 #import <AFNetworking/AFNetworking.h>
 @implementation ALBaseHttpTool
 
-+ (void)get:(NSString *)url params:(NSDictionary *)params completedBlock:(void (^)(id responseObject))completedBlock
++ (void)get:(NSString *)url params:(id)params completedBlock:(void (^)(id responseObject))completedBlock
 {
     ALLog(@"url = %@",url);
     ALLog(@"params = %@",params);
@@ -34,14 +34,13 @@
     }];
 }
 
-+ (void)post:(NSString *)url params:(NSDictionary *)params completedBlock:(void (^)(id))completedBlock
++ (void)post:(NSString *)url params:(id)params completedBlock:(void (^)(id))completedBlock
 {
     ALLog(@"url = %@",url);
     ALLog(@"params = %@",params);
     // 1.获得请求管理者
     AFHTTPSessionManager *mgr = [AFHTTPSessionManager manager];
     mgr.securityPolicy.allowInvalidCertificates = YES;
-    [mgr.requestSerializer setValue:[AccountTool account].token forHTTPHeaderField:@"cs-token"];
     [mgr setSecurityPolicy:[self customSecurityPolicy]];
     [self formHttpHeader:mgr];
     // 2.发送POST请求
@@ -77,7 +76,8 @@
     mgr.securityPolicy.allowInvalidCertificates = YES;
     [mgr setSecurityPolicy:[self customSecurityPolicy]];
     [self formHttpHeader:mgr];
-    // 2.发送POST请求
+//    [mgr.requestSerializer setValue:@"text/plain;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+    // 2.发送PUT请求
     [mgr PUT:url parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         ALLog(@"result = %@",responseObject);
         if (completedBlock) {
@@ -90,6 +90,25 @@
         }
     }];
 }
+
++ (void)put:(NSString *)url paramsWithData:(NSDictionary *)params completedBlock:(void (^)(id))completedBlock
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    if ([AccountTool account].token)
+    {
+        [request setValue:@"application/json;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+        [request setValue:[AccountTool account].token forHTTPHeaderField:@"cs-token"];
+    }
+    
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    [manager setSecurityPolicy:[self customSecurityPolicy]];
+    [manager uploadTaskWithRequest:request fromData:params[@"data"] progress:^(NSProgress * _Nonnull uploadProgress) {
+        
+    } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        ALLog(@"result = %@",responseObject);
+    }];
+}
+
 #pragma mark -privateMethod
 + (AFSecurityPolicy*)customSecurityPolicy
 {

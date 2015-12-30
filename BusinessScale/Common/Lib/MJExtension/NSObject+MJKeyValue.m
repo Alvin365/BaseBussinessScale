@@ -129,6 +129,9 @@
         
         // 4.赋值
         NSString *key = [self keyWithPropertyName:ivar.propertyName];
+        if ([value isKindOfClass:[NSArray class]]) {
+            value = [NSObject keyValuesArrayWithObjectArray:value];
+        }
         keyValues[key] = value;
     }];
     

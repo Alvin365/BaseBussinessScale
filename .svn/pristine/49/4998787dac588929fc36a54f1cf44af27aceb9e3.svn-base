@@ -25,9 +25,6 @@
 /** jason转字典*/
 + (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString;
 + (NSString *)converDateStringToString:(NSString *)string;
-/**
- * 随机11位字符串
- */
-+ (NSString *)radom11BitString;
-
+/** 返回11位随机字符串*/
++ (NSString *)ret11bitString;
 @end

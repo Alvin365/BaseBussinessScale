@@ -111,11 +111,13 @@
     return str;
 }
 
-+ (NSString *)radom11BitString
++ (NSString *)ret11bitString
+
 {
-    char data[32];
     
-    for (int x=0;x<11;data[x++] = (char)('A' + (arc4random_uniform(26))));
+    char data[11];
+    
+    for (int x=0;x<1;data[x++] = (char)('A' + (arc4random_uniform(26))));
     
     return [[NSString alloc] initWithBytes:data length:11 encoding:NSUTF8StringEncoding];
     
