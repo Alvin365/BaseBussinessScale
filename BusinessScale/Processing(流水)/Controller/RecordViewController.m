@@ -60,15 +60,15 @@
         for (int j = 0; j<10; j++) {
             GoodsInfoModel *model = [[GoodsInfoModel alloc]init];
             if (j%3==0) {
-                model.icon = @"支付宝";
+//                model.icon = @"支付宝";
                 model.name = @"张**";
                 model.price = @"80元";
             }else if (j%3==1){
-                model.icon = @"RMB";
+//                model.icon = @"RMB";
                 model.name = @"现金";
                 model.price = @"100元";
             }else{
-                model.icon = @"微信支付";
+//                model.icon = @"微信支付";
                 model.name = @"钟**";
                 model.price = @"160元";
             }

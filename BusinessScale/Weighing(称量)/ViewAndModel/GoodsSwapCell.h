@@ -8,15 +8,6 @@
 
 #import "SWTableViewCell.h"
 
-@interface GoodsSwapModel : BaseModel
-
-@property (nonatomic, copy) NSString *goodsImage;
-@property (nonatomic, copy) NSString *goodsName;
-@property (nonatomic, copy) NSString *weight;
-@property (nonatomic, copy) NSString *price;
-
-@end
-
 @interface GoodsSwapCell : SWTableViewCell
 
 @property (nonatomic, strong) UIImageView *goodsImageView;

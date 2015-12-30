@@ -1,0 +1,1 @@
+link ../../../ZXingObjC/ZXingObjC/core/ZXPlanarYUVLuminanceSource.h

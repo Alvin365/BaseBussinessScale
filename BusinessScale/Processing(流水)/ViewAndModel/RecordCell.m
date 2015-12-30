@@ -51,7 +51,7 @@
 - (void)setModel:(GoodsInfoModel *)model
 {
     _model = model;
-    self.imageView.image = [UIImage imageNamed:model.icon];
+//    self.imageView.image = [UIImage imageNamed:model.icon];
     self.textLabel.text = model.name;
     self.detailTextLabel.text = model.price;
 }
