@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NSObject+KIAdditions.h"
+#import "NSObject+ALAdditions.h"
 
 extern NSString * const ALHttpGet;
 extern NSString * const ALHttpPost;

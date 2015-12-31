@@ -6,7 +6,7 @@
 //  Copyright (c) 2012年 杨 烽. All rights reserved.
 //
 
-#import "NSData+KIAdditions.h"
+#import "NSData+ALAdditions.h"
 
 static char encodingTable[64] = {
     'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',

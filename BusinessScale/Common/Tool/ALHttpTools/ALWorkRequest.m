@@ -6,20 +6,20 @@
 //  Copyright © 2015年 Alvin. All rights reserved.
 //
 #import "ALWorkRequest.h"
-#import <AFHTTPSessionManager.h>
+#import <AFNetworking.h>
 
-@interface ALHTTPRequestOperationManager : AFHTTPRequestOperationManager
+@interface ALHTTPSessionManager : AFHTTPSessionManager
 
 @end
 
-@implementation ALHTTPRequestOperationManager
+@implementation ALHTTPSessionManager
 
 + (instancetype)shareManager
 {
     static dispatch_once_t onceToken;
-    static ALHTTPRequestOperationManager *manager = nil;
+    static ALHTTPSessionManager *manager = nil;
     dispatch_once(&onceToken, ^{
-        manager = [[ALHTTPRequestOperationManager alloc] init];
+        manager = [[ALHTTPSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
         [manager setSecurityPolicy:[self customSecurityPolicy]];
         NSMutableSet *contentTypes = [[NSMutableSet alloc] init];
         [contentTypes addObject:@"text/html"];
@@ -63,24 +63,20 @@
 @end
 
 @interface ALWorkRequest()
-@property (nonatomic, strong) ALHTTPRequestOperationManager *manager;
+@property (nonatomic, strong) ALHTTPSessionManager *manager;
 @end
 
 @implementation ALWorkRequest
 
-@synthesize identifier      = _identifier;
-@synthesize requestParam    = _requestParam;
-@synthesize error           = _error;
-
-- (void)dealloc {
-    _identifier = nil;
+- (void)dealloc
+{
     _requestParam = nil;
     _error = nil;
 }
 
 - (id)initWithParam:(ALRequestParam *)param {
     
-    self.manager = [ALHTTPRequestOperationManager shareManager];
+    self.manager = [ALHTTPSessionManager shareManager];
     
     [param.headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [self.manager.requestSerializer setValue:obj forHTTPHeaderField:key];
@@ -137,14 +133,10 @@
     
     [request setTimeoutInterval:param.timeout];
     
-    if (self = [super initWithRequest:request]) {
+    if (self = [super init]) {
+        self.request = request;
         _requestParam = param;
-        self.responseSerializer = self.manager.responseSerializer;
-        self.shouldUseCredentialStorage = self.manager.shouldUseCredentialStorage;
-        self.credential = self.manager.credential;
-        self.securityPolicy = self.manager.securityPolicy;
     }
-    
     return self;
 }
 
@@ -157,28 +149,44 @@
         ALLog(@"网络请求Body：%@", [[NSString alloc] initWithData:self.request.HTTPBody encoding:NSUTF8StringEncoding]);
     }
     
-    __weak ALWorkRequest *weakSelf = self;
-    
-    [self setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (block) {
-            block(operation);
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [weakSelf setError:error];
-        if (block) {
-            ALLog(@"网络请求错误：%@", error);
-            block(error);
-        }
-    }];
-    [self.manager.operationQueue addOperation:self];
+    if ([self.requestParam.method isEqualToString:ALHttpGet]) {
+        NSURLSessionDownloadTask *downloadTask = [self.manager downloadTaskWithRequest:self.request progress:nil destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+            NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+            return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+        } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+            NSLog(@"File downloaded to: %@", filePath);
+        }];
+        [downloadTask resume];
+    }else if ([self.requestParam.method isEqualToString:ALHttpPost]||[self.requestParam.method isEqualToString:ALHttpPut]){
+        NSURLSessionUploadTask *uploadTask;
+        uploadTask = [self.manager
+                      uploadTaskWithStreamedRequest:self.request
+                      progress:^(NSProgress * _Nonnull uploadProgress) {
+                          
+                      }
+                      completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+                          if (error) {
+                              NSLog(@"Error: %@", error);
+                          } else {
+                              NSLog(@"%@ %@", response, responseObject);
+                          }
+                      }];
+        
+        [uploadTask resume];
+    }else{
+        NSURLSessionDataTask *dataTask = [self.manager dataTaskWithRequest:self.request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            if (error) {
+                NSLog(@"Error: %@", error);
+            } else {
+                NSLog(@"%@ %@", response, responseObject);
+            }
+        }];
+        [dataTask resume];
+    }
 }
 
 - (void)setError:(NSError *)error {
     _error = error;
-}
-
-- (NSInteger)responseStatusCode {
-    return self.response.statusCode;
 }
 
 @end

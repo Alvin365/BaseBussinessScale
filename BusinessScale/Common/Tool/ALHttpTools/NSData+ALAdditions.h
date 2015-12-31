@@ -2,14 +2,14 @@
 //  NSData+KIData.h
 //  Kitalker
 //
-//  Created by 杨 烽 on 12-9-21.
-//  Copyright (c) 2012年 杨 烽. All rights reserved.
+//  Created by Alvin on 12-9-21.
+//  Copyright (c) 2012年 Alvin. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CommonCrypto/CommonDigest.h>
 
-@interface NSData (KIAdditions)
+@interface NSData (ALAdditions)
 
 /*md5 加密*/
 - (NSString *)md5;

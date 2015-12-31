@@ -123,20 +123,20 @@
         LoginHttpTool *request = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool loginWithParams:nil]];
         [request setReturnBlock:^(NSObject *obj) {
             ALLog(@"%@",obj);
-            if ([obj isKindOfClass:[AFHTTPRequestOperation class]]) {
-                AFHTTPRequestOperation *o = (AFHTTPRequestOperation *)obj;
-                NSDictionary *dic = o.response.allHeaderFields;
-                AccountModel *model = [[AccountModel alloc]init];
-                model.token = dic[@"cs-token"];
-                model.expirytime = dic[@"cs-token-expirytime"];
-                [AccountTool saveAccount:model];
-                [self doDatasFromNet:o.responseObject useFulData:^(NSObject *data) {
-                    if (data) {
-                        ALLog(@"%@",data);
-                    }
-                }];
+//            if ([obj isKindOfClass:[AFHTTPRequestSerializer class]]) {
+//                AFHTTPRequestOperation *o = (AFHTTPRequestOperation *)obj;
+//                NSDictionary *dic = o.response.allHeaderFields;
+//                AccountModel *model = [[AccountModel alloc]init];
+//                model.token = dic[@"cs-token"];
+//                model.expirytime = dic[@"cs-token-expirytime"];
+//                [AccountTool saveAccount:model];
+//                [self doDatasFromNet:o.responseObject useFulData:^(NSObject *data) {
+//                    if (data) {
+//                        ALLog(@"%@",data);
+//                    }
+//                }];
 //                ALLog(@"%@",o);
-            }
+//            }
             
         }];
     }

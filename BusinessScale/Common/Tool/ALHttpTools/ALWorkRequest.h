@@ -8,15 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "ALRequestParam.h"
-#import <AFNetworking.h>
-@interface ALWorkRequest : AFHTTPRequestOperation {
-    NSString                    *_identifier;
-    ALRequestParam              *_requestParam;
-    NSError                     *_error;
-}
 
-@property (nonatomic, strong, readonly) NSString        *identifier;
-@property (nonatomic, strong, readonly) ALRequestParam  *requestParam;
+@interface ALWorkRequest : NSObject
+
+@property (nonatomic, strong) NSURLRequest *request;
+@property (nonatomic, strong) ALRequestParam  *requestParam;
 @property (nonatomic, assign, readonly) NSInteger       responseStatusCode;
 @property (nonatomic, readonly)         NSError         *error;
 
