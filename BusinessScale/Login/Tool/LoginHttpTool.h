@@ -6,10 +6,10 @@
 //  Copyright © 2015年 Alvin. All rights reserved.
 //
 
-#import "ALBaseHttpTool.h"
+#import "ALWorkRequest.h"
 
-@interface LoginHttpTool : ALBaseHttpTool
+@interface LoginHttpTool : ALWorkRequest
 
-+ (void)loginWithParams:(NSDictionary *)params completedBlock:(void (^)(id result))completedBlock;
++ (ALRequestParam *)loginWithParams:(NSDictionary *)params;
 
 @end

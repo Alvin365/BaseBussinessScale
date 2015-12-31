@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '6C454A697A08A85566C0C498'
+               BlueprintIdentifier = '7AE6E645F465EF5E1FA28F99'
                BlueprintName = 'LKDBHelper'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libLKDBHelper.a'>

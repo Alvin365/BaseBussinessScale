@@ -93,11 +93,10 @@
                         }
                     }
 //                    NSData *data = [NSData ]
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [WeightHttpTool batchUploadSaleRecords:params completedBlock:^(id result) {
-                            
-                        }];
-                    });
+                    WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool batchUploadSaleRecords:params]];
+                    [request setReturnBlock:^(NSObject *obj) {
+                        
+                    }];
                 }];
             }
         };
@@ -121,12 +120,24 @@
         [self.paySelectView showAnimate:YES];
     }else{
         [self.progressHud show:YES];
-        [LoginHttpTool loginWithParams:@{@"uid":@"18682042276",@"password":@"123456",@"company_id":@"1"} completedBlock:^(id response) {
-            [self doDatasFromNet:response useFulData:^(NSObject *data) {
-                if (data) {
-                    [MBProgressHUD showMessage:@"登录成功"];
-                }
-            }];
+        LoginHttpTool *request = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool loginWithParams:nil]];
+        [request setReturnBlock:^(NSObject *obj) {
+            ALLog(@"%@",obj);
+            if ([obj isKindOfClass:[AFHTTPRequestOperation class]]) {
+                AFHTTPRequestOperation *o = (AFHTTPRequestOperation *)obj;
+                NSDictionary *dic = o.response.allHeaderFields;
+                AccountModel *model = [[AccountModel alloc]init];
+                model.token = dic[@"cs-token"];
+                model.expirytime = dic[@"cs-token-expirytime"];
+                [AccountTool saveAccount:model];
+                [self doDatasFromNet:o.responseObject useFulData:^(NSObject *data) {
+                    if (data) {
+                        ALLog(@"%@",data);
+                    }
+                }];
+//                ALLog(@"%@",o);
+            }
+            
         }];
     }
 }
@@ -220,10 +231,10 @@
 #pragma mark -URLRequest
 - (void)uploadRecords
 {
-    [WeightHttpTool uploadSaleRecord:@{@"randid":@"111",@"ts":[NSDate date].timeStempString,@"title":@"fsaf",@"total_fee":@"1",@"paid_fee":@"2",@"payment_type":@"cash",@"items":@[@{@"title":@"苹果",@"unit":@"g",@"unit_price":@"1",@"quantity":@"2"}]} completedBlock:^(id result) {
-        [self doDatasFromNet:result useFulData:^(NSObject *data) {
-            [MBProgressHUD showMessage:@"上传成功"];
-        }];
+    NSDictionary *params = @{@"randid":@"111",@"ts":[NSDate date].timeStempString,@"title":@"fsaf",@"total_fee":@"1",@"paid_fee":@"2",@"payment_type":@"cash",@"items":@[@{@"title":@"苹果",@"unit":@"g",@"unit_price":@"1",@"quantity":@"2"}]};
+    WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool uploadSaleRecord:params]];
+    [request setReturnBlock:^(NSObject *obj) {
+        
     }];
 }
 #pragma mark - UITableViewDelegate&&DataSource

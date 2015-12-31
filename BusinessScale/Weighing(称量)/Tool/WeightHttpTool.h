@@ -6,15 +6,15 @@
 //  Copyright © 2015年 Alvin. All rights reserved.
 //
 
-#import "ALBaseHttpTool.h"
+#import "ALWorkRequest.h"
 
-@interface WeightHttpTool : ALBaseHttpTool
+@interface WeightHttpTool : ALWorkRequest
 /**
  * 上传销售记录
  */
-+ (void)uploadSaleRecord:(id)params completedBlock:(void (^)(id result))completedBlock;
++ (ALRequestParam *)uploadSaleRecord:(NSDictionary *)params;
 /**
  * 批量上传销售记录
  */
-+ (void)batchUploadSaleRecords:(id)params completedBlock:(void (^)(id result))completedBlock;
++ (ALRequestParam *)batchUploadSaleRecords:(NSDictionary *)params;
 @end

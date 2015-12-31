@@ -120,7 +120,7 @@
         [MBProgressHUD showMessage:error.description];
     }
     else{
-        [MBProgressHUD showError:@"失败"];
+//        [MBProgressHUD showError:@"失败"];
         data(nil);
     }
 }

@@ -10,15 +10,32 @@
 
 @implementation WeightHttpTool
 
-+ (void)uploadSaleRecord:(id)params completedBlock:(void (^)(id result))completedBlock
++ (ALRequestParam *)uploadSaleRecord:(NSDictionary *)params
 {
-    [self put:[NSString stringWithFormat:@"%@po",TestServerce] params:params completedBlock:completedBlock];
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    [p addHeader:[AccountTool account].token forKey:@"cs-token"];
+    [p addHeader:@"application/json" forKey:@"Content-Type"];
+    p.method = ALHttpPut;
+    for (NSString *key in params.allKeys) {
+        [p addParam:params[key] forKey:key];
+    }
+    [p setHttpBody:params];
+    p.urlString = [NSString stringWithFormat:@"%@po",TestServerce];
+    return p;
 }
 
-+ (void)batchUploadSaleRecords:(id)params completedBlock:(void (^)(id))completedBlock
++ (ALRequestParam *)batchUploadSaleRecords:(NSDictionary *)params
 {
-        [self put:[NSString stringWithFormat:@"%@pobatch",TestServerce] paramsWithData:params completedBlock:completedBlock];
-    
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    [p addHeader:[AccountTool account].token forKey:@"cs-token"];
+    [p addHeader:@"text/plain" forKey:@"Content-Type"];
+    p.method = ALHttpPut;
+//    for (NSString *key in params.allKeys) {
+//        [p addParam:params[key] forKey:key];
+//    }
+    [p setHttpBody:params];
+    p.urlString = [NSString stringWithFormat:@"%@pobatch",TestServerce];
+    return p;
 }
 
 @end

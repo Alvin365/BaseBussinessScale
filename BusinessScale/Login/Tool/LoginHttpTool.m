@@ -10,9 +10,15 @@
 
 @implementation LoginHttpTool
 
-+ (void)loginWithParams:(NSDictionary *)params completedBlock:(void (^)(id))completedBlock
++ (ALRequestParam *)loginWithParams:(NSDictionary *)params
 {
-    [self post:[NSString stringWithFormat:@"%@account/login",TestServerce] params:params completedBlock:completedBlock];
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    p.urlString = [NSString stringWithFormat:@"%@account/login",TestServerce];
+    [p addParam:@"18682042276" forKey:@"uid"];
+    [p addParam:@"123456" forKey:@"password"];
+    [p addParam:@"1" forKey:@"company_id"];
+    [p addHeader:@"application/json" forKey:@"Content-Type"];
+    return p;
 }
 
 @end

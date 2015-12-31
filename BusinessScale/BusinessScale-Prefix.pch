@@ -28,7 +28,7 @@
 #import "CALayer+ALAnimation.h"
 #import "ALTextField.h"
 #import "MBProgressHUD+AL.h"
-#import "ALBaseHttpTool.h"
+//#import "ALBaseHttpTool.h"
 #import "AccountTool.h"
 #import "MJExtension.h"
 #endif

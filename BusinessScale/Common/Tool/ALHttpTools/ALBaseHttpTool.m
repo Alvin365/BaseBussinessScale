@@ -98,9 +98,12 @@
     {
         [request setValue:@"application/json;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
         [request setValue:[AccountTool account].token forHTTPHeaderField:@"cs-token"];
+//        request.HTTPBody = [@[@"aa"] d];
     }
     
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+
+    
     [manager setSecurityPolicy:[self customSecurityPolicy]];
     [manager uploadTaskWithRequest:request fromData:params[@"data"] progress:^(NSProgress * _Nonnull uploadProgress) {
         
@@ -140,6 +143,8 @@
         mgr.requestSerializer = [AFJSONRequestSerializer serializer];
         [mgr.requestSerializer setValue:@"application/json;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
         [mgr.requestSerializer setValue:[AccountTool account].token forHTTPHeaderField:@"cs-token"];
+//        mgr.requestSerializer.HTTPRequestHeaders
+//        mgr.requestSerializer requestBySerializingRequest:<#(nonnull NSURLRequest *)#> withParameters:<#(nullable id)#> error:<#(NSError *__autoreleasing  _Nullable * _Nullable)#>
     }
 }
 

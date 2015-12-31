@@ -8,14 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		433783F8CE4C06EE88EDA605 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C26648C7842A71A6DC6BE74E /* libPods.a */; };
-		E12F17581C33F9A900F5BA67 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F17571C33F9A900F5BA67 /* main.m */; };
-		E12F175B1C33F9A900F5BA67 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F175A1C33F9A900F5BA67 /* AppDelegate.m */; };
-		E12F175E1C33F9A900F5BA67 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F175D1C33F9A900F5BA67 /* ViewController.m */; };
-		E12F17611C33F9A900F5BA67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E12F175F1C33F9A900F5BA67 /* Main.storyboard */; };
-		E12F17631C33F9A900F5BA67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E12F17621C33F9A900F5BA67 /* Assets.xcassets */; };
-		E12F17661C33F9AA00F5BA67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E12F17641C33F9A900F5BA67 /* LaunchScreen.storyboard */; };
-		E12F17711C33F9AA00F5BA67 /* AFNetWorkingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F17701C33F9AA00F5BA67 /* AFNetWorkingTests.m */; };
-		E12F177C1C33F9AA00F5BA67 /* AFNetWorkingUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F177B1C33F9AA00F5BA67 /* AFNetWorkingUITests.m */; };
+		E12F18691C34C61200F5BA67 /* ALRequestParam.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F18681C34C61200F5BA67 /* ALRequestParam.m */; };
+		E12F186E1C34C81700F5BA67 /* NSData+KIAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F186B1C34C81700F5BA67 /* NSData+KIAdditions.m */; };
+		E12F186F1C34C81700F5BA67 /* NSObject+KIAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F186D1C34C81700F5BA67 /* NSObject+KIAdditions.m */; };
+		E12F18721C34C91900F5BA67 /* ALWorkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F18711C34C91900F5BA67 /* ALWorkRequest.m */; };
 		E144E3931C22AFDF00701154 /* RecordHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = E144E3921C22AFDE00701154 /* RecordHeader.m */; };
 		E144E3951C22B00300701154 /* RecordHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E144E3941C22B00300701154 /* RecordHeader.xib */; };
 		E183E8D91C32B9A2004403F4 /* ChineseToPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = E183E8D81C32B9A2004403F4 /* ChineseToPinyin.m */; };
@@ -32,7 +28,6 @@
 		E187485B1C1EED730020F2FF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E18748431C1EED730020F2FF /* UIKit.framework */; };
 		E18748631C1EED730020F2FF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E18748611C1EED730020F2FF /* InfoPlist.strings */; };
 		E18748651C1EED730020F2FF /* BusinessScaleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E18748641C1EED730020F2FF /* BusinessScaleTests.m */; };
-		E1E86BC21C30C99E00EBA227 /* ALBaseHttpTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E1E86BC11C30C99E00EBA227 /* ALBaseHttpTool.m */; };
 		E1E86BCD1C310CEC00EBA227 /* cs_new.cer in Resources */ = {isa = PBXBuildFile; fileRef = E1E86BCC1C310CEC00EBA227 /* cs_new.cer */; };
 		E1E86BD01C310E5400EBA227 /* WeightHttpTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E1E86BCF1C310E5400EBA227 /* WeightHttpTool.m */; };
 		E1E86BD31C311DEB00EBA227 /* AccountTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E1E86BD21C311DEB00EBA227 /* AccountTool.m */; };
@@ -1152,21 +1147,16 @@
 		01396191564E94325D988249 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		C26648C7842A71A6DC6BE74E /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E12F17541C33F9A900F5BA67 /* AFNetWorking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AFNetWorking.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E12F17571C33F9A900F5BA67 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		E12F17591C33F9A900F5BA67 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		E12F175A1C33F9A900F5BA67 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		E12F175C1C33F9A900F5BA67 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		E12F175D1C33F9A900F5BA67 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		E12F17601C33F9A900F5BA67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		E12F17621C33F9A900F5BA67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E12F17651C33F9AA00F5BA67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		E12F17671C33F9AA00F5BA67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E12F176C1C33F9AA00F5BA67 /* AFNetWorkingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AFNetWorkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E12F17701C33F9AA00F5BA67 /* AFNetWorkingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFNetWorkingTests.m; sourceTree = "<group>"; };
-		E12F17721C33F9AA00F5BA67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E12F17771C33F9AA00F5BA67 /* AFNetWorkingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AFNetWorkingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E12F177B1C33F9AA00F5BA67 /* AFNetWorkingUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFNetWorkingUITests.m; sourceTree = "<group>"; };
-		E12F177D1C33F9AA00F5BA67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E12F18671C34C61200F5BA67 /* ALRequestParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALRequestParam.h; sourceTree = "<group>"; };
+		E12F18681C34C61200F5BA67 /* ALRequestParam.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALRequestParam.m; sourceTree = "<group>"; };
+		E12F186A1C34C81700F5BA67 /* NSData+KIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+KIAdditions.h"; sourceTree = "<group>"; };
+		E12F186B1C34C81700F5BA67 /* NSData+KIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+KIAdditions.m"; sourceTree = "<group>"; };
+		E12F186C1C34C81700F5BA67 /* NSObject+KIAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+KIAdditions.h"; sourceTree = "<group>"; };
+		E12F186D1C34C81700F5BA67 /* NSObject+KIAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+KIAdditions.m"; sourceTree = "<group>"; };
+		E12F18701C34C91900F5BA67 /* ALWorkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALWorkRequest.h; sourceTree = "<group>"; };
+		E12F18711C34C91900F5BA67 /* ALWorkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALWorkRequest.m; sourceTree = "<group>"; };
 		E144E3911C22AFDE00701154 /* RecordHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordHeader.h; sourceTree = "<group>"; };
 		E144E3921C22AFDE00701154 /* RecordHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordHeader.m; sourceTree = "<group>"; };
 		E144E3941C22B00300701154 /* RecordHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordHeader.xib; sourceTree = "<group>"; };
@@ -1190,8 +1180,6 @@
 		E18748601C1EED730020F2FF /* BusinessScaleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BusinessScaleTests-Info.plist"; sourceTree = "<group>"; };
 		E18748621C1EED730020F2FF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E18748641C1EED730020F2FF /* BusinessScaleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BusinessScaleTests.m; sourceTree = "<group>"; };
-		E1E86BC01C30C99E00EBA227 /* ALBaseHttpTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALBaseHttpTool.h; sourceTree = "<group>"; };
-		E1E86BC11C30C99E00EBA227 /* ALBaseHttpTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALBaseHttpTool.m; sourceTree = "<group>"; };
 		E1E86BC81C30F19400EBA227 /* ALDefinesEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDefinesEnum.h; sourceTree = "<group>"; };
 		E1E86BCC1C310CEC00EBA227 /* cs_new.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = cs_new.cer; sourceTree = "<group>"; };
 		E1E86BCE1C310E5400EBA227 /* WeightHttpTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeightHttpTool.h; sourceTree = "<group>"; };
@@ -2417,56 +2405,11 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		E12F17551C33F9A900F5BA67 /* AFNetWorking */ = {
-			isa = PBXGroup;
-			children = (
-				E12F17591C33F9A900F5BA67 /* AppDelegate.h */,
-				E12F175A1C33F9A900F5BA67 /* AppDelegate.m */,
-				E12F175C1C33F9A900F5BA67 /* ViewController.h */,
-				E12F175D1C33F9A900F5BA67 /* ViewController.m */,
-				E12F175F1C33F9A900F5BA67 /* Main.storyboard */,
-				E12F17621C33F9A900F5BA67 /* Assets.xcassets */,
-				E12F17641C33F9A900F5BA67 /* LaunchScreen.storyboard */,
-				E12F17671C33F9AA00F5BA67 /* Info.plist */,
-				E12F17561C33F9A900F5BA67 /* Supporting Files */,
-			);
-			path = AFNetWorking;
-			sourceTree = "<group>";
-		};
-		E12F17561C33F9A900F5BA67 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				E12F17571C33F9A900F5BA67 /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		E12F176F1C33F9AA00F5BA67 /* AFNetWorkingTests */ = {
-			isa = PBXGroup;
-			children = (
-				E12F17701C33F9AA00F5BA67 /* AFNetWorkingTests.m */,
-				E12F17721C33F9AA00F5BA67 /* Info.plist */,
-			);
-			path = AFNetWorkingTests;
-			sourceTree = "<group>";
-		};
-		E12F177A1C33F9AA00F5BA67 /* AFNetWorkingUITests */ = {
-			isa = PBXGroup;
-			children = (
-				E12F177B1C33F9AA00F5BA67 /* AFNetWorkingUITests.m */,
-				E12F177D1C33F9AA00F5BA67 /* Info.plist */,
-			);
-			path = AFNetWorkingUITests;
-			sourceTree = "<group>";
-		};
 		E18748331C1EED730020F2FF = {
 			isa = PBXGroup;
 			children = (
 				E18748451C1EED730020F2FF /* BusinessScale */,
 				E187485E1C1EED730020F2FF /* BusinessScaleTests */,
-				E12F17551C33F9A900F5BA67 /* AFNetWorking */,
-				E12F176F1C33F9AA00F5BA67 /* AFNetWorkingTests */,
-				E12F177A1C33F9AA00F5BA67 /* AFNetWorkingUITests */,
 				E187483E1C1EED730020F2FF /* Frameworks */,
 				E187483D1C1EED730020F2FF /* Products */,
 				C7BF2DE754C5C3C5AE422494 /* Pods */,
@@ -2548,8 +2491,14 @@
 		E1E86BBF1C30C96400EBA227 /* ALHttpTools */ = {
 			isa = PBXGroup;
 			children = (
-				E1E86BC01C30C99E00EBA227 /* ALBaseHttpTool.h */,
-				E1E86BC11C30C99E00EBA227 /* ALBaseHttpTool.m */,
+				E12F18701C34C91900F5BA67 /* ALWorkRequest.h */,
+				E12F18711C34C91900F5BA67 /* ALWorkRequest.m */,
+				E12F18671C34C61200F5BA67 /* ALRequestParam.h */,
+				E12F18681C34C61200F5BA67 /* ALRequestParam.m */,
+				E12F186A1C34C81700F5BA67 /* NSData+KIAdditions.h */,
+				E12F186B1C34C81700F5BA67 /* NSData+KIAdditions.m */,
+				E12F186C1C34C81700F5BA67 /* NSObject+KIAdditions.h */,
+				E12F186D1C34C81700F5BA67 /* NSObject+KIAdditions.m */,
 			);
 			path = ALHttpTools;
 			sourceTree = "<group>";
@@ -4215,9 +4164,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E12F17661C33F9AA00F5BA67 /* LaunchScreen.storyboard in Resources */,
-				E12F17631C33F9A900F5BA67 /* Assets.xcassets in Resources */,
-				E12F17611C33F9A900F5BA67 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5322,9 +5268,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E12F175E1C33F9A900F5BA67 /* ViewController.m in Sources */,
-				E12F175B1C33F9A900F5BA67 /* AppDelegate.m in Sources */,
-				E12F17581C33F9A900F5BA67 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5332,7 +5275,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E12F17711C33F9AA00F5BA67 /* AFNetWorkingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5340,7 +5282,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E12F177C1C33F9AA00F5BA67 /* AFNetWorkingUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5379,11 +5320,13 @@
 				E1EEBCBF1C20E77900551A5E /* ALCommonTool.m in Sources */,
 				E1EEBCB61C20664C00551A5E /* GoodsSwapCell.m in Sources */,
 				E1FAEAE51C252CC4001706CE /* PayAccountViewController.m in Sources */,
+				E12F18721C34C91900F5BA67 /* ALWorkRequest.m in Sources */,
 				E1EEBC651C204CED00551A5E /* RootTabViewController.m in Sources */,
 				E1FAEAC31C23DE5C001706CE /* GoodsHeader.m in Sources */,
 				E1FAEBB01C2CE9AA001706CE /* MJMethod.m in Sources */,
 				E1EEBC791C204D0400551A5E /* ProcessingViewController.m in Sources */,
 				E1FAEB0C1C279204001706CE /* PayAccountCell.m in Sources */,
+				E12F18691C34C61200F5BA67 /* ALRequestParam.m in Sources */,
 				E1FAEAF31C2539BE001706CE /* GoodsAddView.m in Sources */,
 				E1EEBD2F1C21449500551A5E /* ALProcessView.m in Sources */,
 				E1FAEB1E1C28E182001706CE /* ALTextField.m in Sources */,
@@ -5395,7 +5338,6 @@
 				E1F5A4B01C23B6BF000B6C9A /* ProcessCell.m in Sources */,
 				E1FAEAD61C252B54001706CE /* GoodsSettingViewController.m in Sources */,
 				E1E873991C3290E400EBA227 /* foods.m in Sources */,
-				E1E86BC21C30C99E00EBA227 /* ALBaseHttpTool.m in Sources */,
 				E1FAEBB31C2CE9AA001706CE /* NSObject+MJCoding.m in Sources */,
 				E1EEBD321C214EBA00551A5E /* ProccessDayViewController.m in Sources */,
 				E1FAEB451C29471B001706CE /* NSTimer+Addition.m in Sources */,
@@ -5403,6 +5345,7 @@
 				E1FAEAEA1C252CF2001706CE /* SuggestFeeBackController.m in Sources */,
 				E1E86BD01C310E5400EBA227 /* WeightHttpTool.m in Sources */,
 				E1FAEAB31C23D5ED001706CE /* GoodListCell.m in Sources */,
+				E12F186E1C34C81700F5BA67 /* NSData+KIAdditions.m in Sources */,
 				E1EEBC631C204CED00551A5E /* ALNavigationController.m in Sources */,
 				E1EEBD421C22527000551A5E /* RecordViewController.m in Sources */,
 				E1FAEAD21C252204001706CE /* SettingCell.m in Sources */,
@@ -5425,6 +5368,7 @@
 				E1FAEAB71C23D692001706CE /* GoodsListController.m in Sources */,
 				E183E8D91C32B9A2004403F4 /* ChineseToPinyin.m in Sources */,
 				E1EEBC601C204CED00551A5E /* UIColor+addtions.m in Sources */,
+				E12F186F1C34C81700F5BA67 /* NSObject+KIAdditions.m in Sources */,
 				E1FAEAE01C252CB3001706CE /* MyDeviceViewController.m in Sources */,
 				E1EEBC971C204D1800551A5E /* SettingViewController.m in Sources */,
 				E1F5A4A41C239C28000B6C9A /* RecordSectionView.m in Sources */,
@@ -5461,22 +5405,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		E12F175F1C33F9A900F5BA67 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E12F17601C33F9A900F5BA67 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		E12F17641C33F9A900F5BA67 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E12F17651C33F9AA00F5BA67 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
 		E18748481C1EED730020F2FF /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -5758,6 +5686,7 @@
 				E12F177F1C33F9AA00F5BA67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E12F17851C33F9AA00F5BA67 /* Build configuration list for PBXNativeTarget "AFNetWorkingTests" */ = {
 			isa = XCConfigurationList;
@@ -5766,6 +5695,7 @@
 				E12F17811C33F9AA00F5BA67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E12F17861C33F9AA00F5BA67 /* Build configuration list for PBXNativeTarget "AFNetWorkingUITests" */ = {
 			isa = XCConfigurationList;
@@ -5774,6 +5704,7 @@
 				E12F17831C33F9AA00F5BA67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E18748371C1EED730020F2FF /* Build configuration list for PBXProject "BusinessScale" */ = {
 			isa = XCConfigurationList;
