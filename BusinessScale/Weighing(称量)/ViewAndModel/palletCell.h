@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface palletCellModel : BaseModel
+#import "SaleModel.h"
+@interface palletCellModel : SaleItem
 
 @property (nonatomic, assign) BOOL isSelected;
 

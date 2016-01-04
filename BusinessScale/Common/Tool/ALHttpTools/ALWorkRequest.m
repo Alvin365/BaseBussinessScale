@@ -140,7 +140,7 @@
     return self;
 }
 
-- (void)setReturnBlock:(void(^)(NSObject *obj))block
+- (void)setReturnBlock:(void(^)(NSURLResponse *response,id responseObject))block
 {
     ALLog(@"发起网络请求[%@]：%@", self.request.HTTPMethod, self.request.URL.absoluteString);
     ALLog(@"网络请求参数：%@", self.requestParam.param);
@@ -154,7 +154,14 @@
             NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
             return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
         } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
-            NSLog(@"File downloaded to: %@", filePath);
+            if (!error) {
+                if (block) {
+                    block(response,filePath);
+                }
+            }else{
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+            }
+            ALLog(@"File downloaded to: %@", filePath);
         }];
         [downloadTask resume];
     }else if ([self.requestParam.method isEqualToString:ALHttpPost]||[self.requestParam.method isEqualToString:ALHttpPut]){

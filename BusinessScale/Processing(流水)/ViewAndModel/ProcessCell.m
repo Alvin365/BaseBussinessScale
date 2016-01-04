@@ -18,6 +18,7 @@
 @implementation ProcessCell
 
 - (void)awakeFromNib {
+    self.clipsToBounds = YES;
     _goodsImageV.layer.cornerRadius = 22.5f;
     _goodsImageV.layer.masksToBounds = YES;
     _goodsImageV.backgroundColor = [UIColor greenColor];
@@ -45,6 +46,20 @@
     [super layoutSubviews];
     self.sepT.frame = CGRectMake(0, 0, self.width, 0.5);
     self.sepB.frame = CGRectMake(0, self.height-0.5, self.width, 0.5);
+}
+
+- (void)setItem:(SaleItem *)item
+{
+    _item = item;
+    NSString *icon = [[item.icon componentsSeparatedByString:@"/"]lastObject];
+    _goodsImageV.image = [UIImage imageNamed:icon];
+    _goods.text = item.title;
+    _priceL.text = [NSString stringWithFormat:@"%g元",(item.unit_price*item.quantity)/100.0f];
+    if ([[_priceL.text componentsSeparatedByString:@"."] lastObject].length>2) {
+        _priceL.text = [NSString stringWithFormat:@"%.2f元",(item.unit_price*item.quantity)/100.0f];
+    }
+    _weight.text = [NSString stringWithFormat:@"%li%@",(long)item.quantity,item.unit];
+    [self setNeedsDisplay];
 }
 
 - (void)showTopSeparaLine

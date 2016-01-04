@@ -17,6 +17,8 @@
 #import "LoginHttpTool.h"
 #import "WeightBussiness.h"
 #import "LocalDataTool.h"
+
+#define palletList @"palletList"
 @interface WeighingViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *SepView;
@@ -50,6 +52,8 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *weightTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *priceTailing;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodImageLeading;
+
+@property (nonatomic, strong) NSMutableArray *dataArray;
 
 @end
 
@@ -94,7 +98,7 @@
                     }
 //                    NSData *data = [NSData ]
                     WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool batchUploadSaleRecords:params]];
-                    [request setReturnBlock:^(NSObject *obj) {
+                    [request setReturnBlock:^(NSURLResponse *response,id responseObject) {
                         
                     }];
                 }];
@@ -119,26 +123,16 @@
     if ([sender tag]) {
         [self.paySelectView showAnimate:YES];
     }else{
-        [self.progressHud show:YES];
-        LoginHttpTool *request = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool loginWithParams:nil]];
-        [request setReturnBlock:^(NSObject *obj) {
-            ALLog(@"%@",obj);
-//            if ([obj isKindOfClass:[AFHTTPRequestSerializer class]]) {
-//                AFHTTPRequestOperation *o = (AFHTTPRequestOperation *)obj;
-//                NSDictionary *dic = o.response.allHeaderFields;
-//                AccountModel *model = [[AccountModel alloc]init];
-//                model.token = dic[@"cs-token"];
-//                model.expirytime = dic[@"cs-token-expirytime"];
-//                [AccountTool saveAccount:model];
-//                [self doDatasFromNet:o.responseObject useFulData:^(NSObject *data) {
-//                    if (data) {
-//                        ALLog(@"%@",data);
-//                    }
-//                }];
-//                ALLog(@"%@",o);
-//            }
-            
-        }];
+//        [self.progressHud show:YES];
+//        LoginHttpTool *request = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool loginWithParams:nil]];
+//        [request setReturnBlock:^(NSURLResponse *response,id responseObject) {
+//            [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+//                if (data) {
+//                    
+//                }
+//            }];
+//        }];
+        
     }
 }
 
@@ -146,7 +140,9 @@
     [super viewDidLoad];
     [self initFromXib];
     [self buildNavBarItems];
+    [self datas];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(SWTableViewCellScrollNotice:) name:SWTableViewCellBeginScrollNotice object:nil];
+    
     [self.noDatasView showAnimate:YES];
 }
 
@@ -213,8 +209,8 @@
     self.navigationItem.title = @"OKOK计量";
     
     [self addNavLeftBarBtn:@"进入托盘" selectorBlock:^{
-//        PalletViewController *pctl = [[PalletViewController alloc]init];
-        GoodsListController *pctl = [[GoodsListController alloc]init];
+        PalletViewController *pctl = [[PalletViewController alloc]init];
+//        GoodsListController *pctl = [[GoodsListController alloc]init];
         [weakSelf.navigationController pushViewController:pctl animated:YES];
     }];
     
@@ -225,7 +221,46 @@
 
 - (void)datas
 {
+    WS(weakSelf);
+    SaleItem *sal = [[SaleItem alloc]init];
+    sal.title = @"牛肉(前腿)";
+    sal.unit_price = 50;
+    sal.quantity = 100;
+    sal.unit = @"克";
     
+    NSString *icon = [[[LocalDataTool getGoodsList][sal.title] componentsSeparatedByString:@"/"] lastObject];
+//    sal.icon = [LocalDataTool getGoodsList][sal.title];
+    [[SaleItem getUsingLKDBHelper] insertToDB:sal];
+    _goodImage.image = [UIImage imageNamed:icon];
+    _weightL.text = [NSString stringWithFormat:@"%@：%li%@",sal.title,(long)sal.quantity,sal.unit];
+    
+    _dataArray = [NSMutableArray array];
+    /**
+     * 托盘列表数据
+     */
+    NSArray *array = [LocalDataTool loadLocalArrayFromPath:palletList];
+    if (array) {
+        [_dataArray addObjectsFromArray:[array lastObject]];
+    }
+    
+    for (int i = 0; i<10; i++) {
+        SaleItem *sal = [[SaleItem alloc]init];
+        if (i%2) {
+            sal.title = @"牛肉(前腿)";
+            sal.unit_price = 50;
+            sal.quantity = 100;
+            sal.unit = @"克";
+            sal.icon = @"img/cn_img470.png";
+        }else{
+            sal.title = @"豆腐卷";
+            sal.unit_price = 8;
+            sal.quantity = 20;
+            sal.unit = @"克";
+            sal.icon = @"img/cn_img077.png";
+        }
+        [_dataArray addObject:sal];
+    }
+    [self caculateTotal];
 }
 
 #pragma mark -URLRequest
@@ -233,18 +268,19 @@
 {
     NSDictionary *params = @{@"randid":@"111",@"ts":[NSDate date].timeStempString,@"title":@"fsaf",@"total_fee":@"1",@"paid_fee":@"2",@"payment_type":@"cash",@"items":@[@{@"title":@"苹果",@"unit":@"g",@"unit_price":@"1",@"quantity":@"2"}]};
     WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool uploadSaleRecord:params]];
-    [request setReturnBlock:^(NSObject *obj) {
+    [request setReturnBlock:^(NSURLResponse *response,id responseObject) {
         
     }];
 }
 #pragma mark - UITableViewDelegate&&DataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 10;
+    return _dataArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    WS(weakSelf);
     static NSString *cellIden = @"cell";
     GoodsSwapCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIden];
     if (!cell) {
@@ -257,10 +293,29 @@
                                  leftUtilityButtons:nil
                                 rightUtilityButtons:rightUtilityButtons];
     }
+    if (indexPath.row < _dataArray.count) {
+        cell.item = _dataArray[indexPath.row];
+        cell.sepB.hidden = indexPath.row != _dataArray.count-1;
+        cell.rightBtnBlock = ^(NSInteger index){
+            [weakSelf deleteRowAtIndexPath:indexPath];
+        };
+    }
     return cell;
 }
 
 #pragma mark - Notice
+- (void)deleteRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    YSAlertView *alert = [[YSAlertView alloc]initWithTitle:@"" message:@"确定删除么？" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定" click:^(NSInteger index) {
+        if (index) {
+            [_dataArray removeObjectAtIndex:indexPath.row];
+            [self caculateTotal];
+            [self.table reloadData];
+        }
+    }];
+    [alert show];
+}
+
 - (void)SWTableViewCellScrollNotice:(NSNotification *)notice
 {
     static SWTableViewCell *formerCell = nil;
@@ -269,6 +324,18 @@
         [formerCell hideUtilityButtonsAnimated:YES];
     }
     formerCell = currentCell;
+}
+
+/**
+ * 计算总价
+ */
+- (void)caculateTotal
+{
+    CGFloat total = 0.0f;
+    for (SaleItem *item in self.dataArray) {
+        total += (item.unit_price*item.quantity)/100.0f;
+    }
+    _totalPrice.attributedText = [ALCommonTool setAttrbute:@"总价：" andAttribute:[NSString stringWithFormat:@"%.2f元",total] Color1:ALTextColor Color2:ALTextColor Font1:15 Font2:22];
 }
 
 - (void)dealloc

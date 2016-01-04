@@ -23,6 +23,8 @@
 @property (nonatomic, strong) ALDatePickerView *pickerView;
 @property (nonatomic, strong) ALSelfDefineDatePickerView *otherPickView;
 
+@property (nonatomic, strong) NSMutableArray *dataArray;
+
 @end
 
 @implementation ProccessDayViewController
@@ -103,6 +105,7 @@
     self.view.backgroundColor = backGroudColor;
     [self buildView];
     [self buildNavItems];
+    [self datas];
 }
 
 - (void)buildView
@@ -142,18 +145,45 @@
     }
 }
 
+- (void)datas
+{
+    _dataArray = [NSMutableArray array];
+    for (int i = 0; i< 2; i++) {
+        NSMutableArray *arr = [NSMutableArray array];
+        for (int j = 0; j<10; j++) {
+            SaleItem *sal = [[SaleItem alloc]init];
+            if (j%2) {
+                sal.title = @"牛肉(前腿)";
+                sal.unit_price = 20;
+                sal.quantity = 80;
+                sal.unit = @"克";
+                sal.icon = @"img/cn_img470.png";
+            }else{
+                sal.title = @"豆腐卷";
+                sal.unit_price = 8;
+                sal.quantity = 20;
+                sal.unit = @"克";
+                sal.icon = @"img/cn_img077.png";
+            }
+            [arr addObject:sal];
+        }
+        [_dataArray addObject:arr];
+    }
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return _dataArray.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 50;
+    NSArray *arr = _dataArray[section];
+    return arr.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -161,6 +191,12 @@
     static NSString *cellIn = @"cellIn";
     ProcessCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIn];
     if (!indexPath.row) [cell showTopSeparaLine];
+    if (indexPath.section < _dataArray.count) {
+        NSArray *arr = _dataArray[indexPath.section];
+        if (indexPath.row < arr.count) {
+            cell.item = arr[indexPath.row];
+        }
+    }
     return cell;
 }
 
@@ -177,7 +213,7 @@
         RecordSectionView *view = [RecordSectionView loadXibView];
         [view turnIntoProcessSecctionView];
         view.dateL.text = @"09:30";
-        view.priceL.text = @"1800.9元";
+        view.priceL.text = [NSString stringWithFormat:@"%.2f元",[self caculateTotalPriceInSection:section]];
         return view;
     }
 }
@@ -189,9 +225,13 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if (scrollView.contentOffset.y>86) {
+        return;
+    }
     CGFloat alpha = (scrollView.contentOffset.y+128.0f)/214.0f;
     UIColor *navigationBarColor = ALNavBarColor;
     Class className = NSClassFromString(@"_UINavigationBarBackground");
+    ALLog(@"%.f",scrollView.contentOffset.y);
     for (UIView *view in self.navigationController.navigationBar.subviews) {
         if ([view isKindOfClass:className]) {
             view.backgroundColor = navigationBarColor;
@@ -239,6 +279,19 @@
         _header.dateL.text = [newDate getDateStringByFormat:@"yyyy年MM月"];
     }
     _header.date = newDate;
+}
+
+/**
+ * 计算区域价格 section
+ */
+- (CGFloat)caculateTotalPriceInSection:(NSInteger)section
+{
+    CGFloat total = 0.0f;
+    NSArray *arr = self.dataArray[section];
+    for (SaleItem *model in arr) {
+        total += (model.unit_price*model.quantity)/100.0f;
+    }
+    return total;
 }
 
 @end

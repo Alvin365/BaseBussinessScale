@@ -40,12 +40,18 @@
     [[NSUserDefaults standardUserDefaults]synchronize];
     BOOL haveCopy = [[[NSUserDefaults standardUserDefaults]objectForKey:@"haveCopyDataBase"] boolValue];
     if (!haveCopy) {
-        NSString *path = [[NSBundle mainBundle]pathForResource:@"dataBase" ofType:@"db"];
-        NSString *daPath = [ALDocuMentPath stringByAppendingPathComponent:@"dataBase.db"];
-        BOOL isWrite = [[NSFileManager defaultManager]copyItemAtPath:path toPath:daPath error:nil];
-        if (isWrite) {
-            ALLog(@"复制外部数据库成功");
+        NSString *path = [[NSBundle mainBundle]pathForResource:@"kind" ofType:@"txt"];
+        
+        NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:path] options:NSJSONReadingMutableContainers error:nil];
+        
+        LKDBHelper *help = [BaseModel getUsingLKDBHelper];
+        for (NSString *key in dic.allKeys) {
+            GoodsInfoModel *model = [[GoodsInfoModel alloc]init];
+            model.title = key;
+            model.icon = dic[key];
+            [help insertWhenNotExists:model callback:nil];
         }
+        
         [[NSUserDefaults standardUserDefaults]setObject:@(YES) forKey:@"haveCopyDataBase"];
         [[NSUserDefaults standardUserDefaults]synchronize];
     }

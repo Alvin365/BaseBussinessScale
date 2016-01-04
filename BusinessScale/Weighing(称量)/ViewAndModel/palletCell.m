@@ -73,6 +73,15 @@
     }else{
         _seleteImageV.image = [UIImage imageNamed:@"icon_nor"];
     }
+    
+    NSString *icon = [[model.icon componentsSeparatedByString:@"/"]lastObject];
+    _goodsImageV.image = [UIImage imageNamed:icon];
+    _goods.text = model.title;
+    _priceL.text = [NSString stringWithFormat:@"%g元",(model.unit_price*model.quantity)/100.0f];
+    if ([[_priceL.text componentsSeparatedByString:@"."] lastObject].length>2) {
+        _priceL.text = [NSString stringWithFormat:@"%.2f元",(model.unit_price*model.quantity)/100.0f];
+    }
+    _weight.text = [NSString stringWithFormat:@"%li%@",(long)model.quantity,model.unit];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

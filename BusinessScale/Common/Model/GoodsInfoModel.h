@@ -11,7 +11,7 @@
 @interface GoodsInfoModel : BaseModel
 
 @property (nonatomic, copy) NSString *icon;
-@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *price;
 @property (nonatomic, copy) NSString *number;
 @property (nonatomic, copy) NSString *unit;

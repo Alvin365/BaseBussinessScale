@@ -23,6 +23,8 @@
 
 - (void)awakeFromNib
 {
+    self.clipsToBounds = YES;
+    
     self.dateL.textColor = [UIColor whiteColor];
     _totalFlagL.layer.cornerRadius = 12.5f;
     _totalFlagL.layer.masksToBounds = YES;

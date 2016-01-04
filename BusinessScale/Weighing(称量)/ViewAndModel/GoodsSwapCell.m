@@ -7,6 +7,7 @@
 //
 
 #import "GoodsSwapCell.h"
+#import "SaleModel.h"
 @interface GoodsSwapCell ()
 
 @property (nonatomic, strong) UILabel *topL;
@@ -56,6 +57,9 @@
     _topL.backgroundColor = separateLabelColor;
     [self addSubview:_topL];
     
+    _sepB = [[UILabel alloc]init];
+    _sepB.backgroundColor = separateLabelColor;
+    [self addSubview:_sepB];
 }
 
 - (void)layoutSubviews
@@ -65,6 +69,21 @@
     _goodsL.y = self.height/2.0f-10;
     _weightL.y = self.height/2.0f-10;
     _priceL.y = self.height/2.0f-10;
+    _sepB.frame = CGRectMake(0, self.height-ALSeparaLineHeight, screenWidth, 0.5);
+}
+
+- (void)setItem:(SaleItem *)item
+{
+    _item = item;
+    NSString *icon = [[item.icon componentsSeparatedByString:@"/"]lastObject];
+    _goodsImageView.image = [UIImage imageNamed:icon];
+    _goodsL.text = item.title;
+    _priceL.text = [NSString stringWithFormat:@"%g元",(item.unit_price*item.quantity)/100.0f];
+    if ([[_priceL.text componentsSeparatedByString:@"."] lastObject].length>2) {
+        _priceL.text = [NSString stringWithFormat:@"%.2f元",(item.unit_price*item.quantity)/100.0f];
+    }
+    _weightL.text = [NSString stringWithFormat:@"%li%@",(long)item.quantity,item.unit];
+    [self setNeedsDisplay];
 }
 
 @end

@@ -7,13 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "SaleModel.h"
 @interface ProcessCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *goods;
 @property (weak, nonatomic) IBOutlet UILabel *weight;
 @property (weak, nonatomic) IBOutlet UILabel *priceL;
 @property (weak, nonatomic) IBOutlet UIImageView *goodsImageV;
+
+@property (nonatomic, strong) SaleItem *item;
 
 - (void)showTopSeparaLine;
 

@@ -52,7 +52,7 @@
     // 名字分section
     for (GoodsInfoModel *model in dataArray) {
         // getUserName是实现中文拼音检索的核心，见NameIndex类
-        NSString *firstLetter = [ChineseToPinyin pinyinFromChineseString:model.name];
+        NSString *firstLetter = [ChineseToPinyin pinyinFromChineseString:model.title];
         if (firstLetter) {
             NSInteger section = [indexCollation sectionForObject:[firstLetter substringToIndex:1] collationStringSelector:@selector(uppercaseString)];
             
@@ -64,10 +64,10 @@
     // 每个section内的数组排序
     for (int i = 0; i < [sortedArray count]; i++) {
         NSArray *array = [[sortedArray objectAtIndex:i] sortedArrayUsingComparator:^NSComparisonResult(GoodsInfoModel *obj1, GoodsInfoModel *obj2) {
-            NSString *firstLetter1 = [ChineseToPinyin pinyinFromChineseString:obj1.name];
+            NSString *firstLetter1 = [ChineseToPinyin pinyinFromChineseString:obj1.title];
             firstLetter1 = [[firstLetter1 substringToIndex:1] uppercaseString];
             
-            NSString *firstLetter2 = [ChineseToPinyin pinyinFromChineseString:obj2.name];
+            NSString *firstLetter2 = [ChineseToPinyin pinyinFromChineseString:obj2.title];
             firstLetter2 = [[firstLetter2 substringToIndex:1] uppercaseString];
             
             return [firstLetter1 caseInsensitiveCompare:firstLetter2];

@@ -53,6 +53,7 @@
     if (self.navigationController.viewControllers.count > 1) {
         [self buildBack];
     }
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(requestFail:) name:@"ALWorkRequestError" object:nil];
 }
 
 - (void)buildBack
@@ -130,8 +131,15 @@
     [super didReceiveMemoryWarning];
 }
 
+- (void)requestFail:(NSNotification *)notice
+{
+    NSString *error = [notice.object description];
+    [MBProgressHUD showMessage:error];
+}
+
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
     ALLog(@"%s",__func__);
 }
 

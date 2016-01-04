@@ -73,12 +73,26 @@
     for (int i = 0; i< 2; i++) {
         NSMutableArray *arr = [NSMutableArray array];
         for (int j = 0; j<10; j++) {
-            palletCellModel *model = [[palletCellModel alloc]init];
-            model.isSelected = YES;
-            [arr addObject:model];
+            palletCellModel *sal = [[palletCellModel alloc]init];
+            if (j%2) {
+                sal.title = @"牛肉(前腿)";
+                sal.unit_price = 20;
+                sal.quantity = 80;
+                sal.unit = @"克";
+                sal.icon = @"img/cn_img470.png";
+            }else{
+                sal.title = @"豆腐卷";
+                sal.unit_price = 8;
+                sal.quantity = 20;
+                sal.unit = @"克";
+                sal.icon = @"img/cn_img077.png";
+            }
+            sal.isSelected = YES;
+            [arr addObject:sal];
         }
         [_dataArray addObject:arr];
     }
+    [self caculateTotals];
 }
 
 - (void)seletedAll
@@ -94,6 +108,7 @@
             model.isSelected = self.allSelected;
         }
     }
+    [self caculateTotals];
     [self.tableView reloadData];
 }
 
@@ -131,6 +146,8 @@
             NSIndexPath *path = [tableView indexPathForCell:cell];
             [weakSelf.tableView reloadRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
             [weakSelf.tableView reloadSections:[NSIndexSet indexSetWithIndex:path.section] withRowAnimation:UITableViewRowAnimationFade];
+            [weakSelf caculateTotalPriceInSection:indexPath.section];
+            [weakSelf caculateTotals];
 //            [weakSelf.tableView reloadData];
         };
     }
@@ -152,6 +169,8 @@
 {
     WS(weakSelf);
     PalletSecctionView *p = [PalletSecctionView loadXibView];
+    p.palletNameL.text = [NSString stringWithFormat:@"托盘%i",(int)(section+1)];
+    p.TotalPriceL.text = [NSString stringWithFormat:@"%.2f",[self caculateTotalPriceInSection:section]];
     p.selected = [self secctionDidAllSelected:section];
     __weak typeof (PalletSecctionView *)weakP = p;
     weakP.callBack = ^{
@@ -159,7 +178,9 @@
     };
     return p;
 }
-
+/**
+ * 判断该区域是否 全选择状态
+ */
 - (BOOL)secctionDidAllSelected:(NSInteger)section
 {
     BOOL isSelected = YES;
@@ -172,14 +193,45 @@
     }
     return isSelected;
 }
-
+/**
+ * 点击托盘按钮 取消或全选 section
+ */
 - (void)secctionChange:(NSInteger )section isSelecte:(BOOL)selected
 {
     NSArray *arr = self.dataArray[section];
     for (palletCellModel *model in arr) {
         model.isSelected = selected;
     }
+    [self caculateTotalPriceInSection:section];
+    [self caculateTotals];
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+/**
+ * 计算区域价格 section
+ */
+- (CGFloat)caculateTotalPriceInSection:(NSInteger)section
+{
+    CGFloat total = 0.0f;
+    NSArray *arr = self.dataArray[section];
+    for (palletCellModel *model in arr) {
+        if (model.isSelected) {
+            total += (model.unit_price*model.quantity)/100.0f;
+        }
+    }
+    return total;
+}
+
+/**
+ * 计算全部物品总价
+ */
+- (void)caculateTotals
+{
+    CGFloat total = 0.0f;
+    for (int i = 0; i<_dataArray.count; i++) {
+        total += [self caculateTotalPriceInSection:i];
+    }
+    _totalPriceL.text = [NSString stringWithFormat:@"￥%.2f",total];
 }
 
 @end

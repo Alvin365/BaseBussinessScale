@@ -7,7 +7,6 @@
 //
 
 #import "LocalDataTool.h"
-
 #define ALDocuMentPath [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
 @implementation LocalDataTool
 
@@ -128,6 +127,13 @@
 //    NSString *Libaray =  [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
 //    folderSize += [self folderSizeAtPath:Libaray];
     return folderSize;
+}
+
++ (NSDictionary *)getGoodsList
+{
+    NSString *path = [[NSBundle mainBundle]pathForResource:@"kind" ofType:@"txt"];
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:path] options:NSJSONReadingMutableContainers error:nil];
+    return dic;
 }
 
 @end

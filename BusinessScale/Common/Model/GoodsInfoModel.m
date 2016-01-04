@@ -17,7 +17,7 @@
 
 + (NSArray *)getPrimaryKeyUnionArray
 {
-    return @[@"name"];
+    return @[@"title"];
 }
 
 +(NSDictionary *)getTableMapping

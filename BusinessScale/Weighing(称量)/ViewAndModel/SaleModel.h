@@ -13,9 +13,10 @@
 @interface SaleItem : BaseModel
 
 @property (nonatomic, copy) NSString *title;// 商品信息
-@property (nonatomic, assign) float quantity; // 重量
+@property (nonatomic, copy) NSString *icon;
+@property (nonatomic, assign) NSInteger quantity; // 重量
 @property (nonatomic, copy) NSString *unit; // 单位
-@property (nonatomic, assign) float unit_price; // 价钱
+@property (nonatomic, assign) NSInteger unit_price; // 价钱
 @property (nonatomic, strong) NSString *ts; // 交易时间
 
 @end
@@ -29,8 +30,8 @@
 @property (nonatomic, copy) NSString *randid;
 @property (nonatomic, strong) NSArray *items;
 @property (nonatomic, copy) NSString *ts; // 交易时间
-@property (nonatomic, assign) float total_fee;
-@property (nonatomic, assign) float paid_fee;
+@property (nonatomic, assign) NSInteger total_fee;
+@property (nonatomic, assign) NSInteger paid_fee;
 @property (nonatomic, copy) NSString *payment_type;
 @property (nonatomic, assign) BOOL isUpLoad; // 是否已经上传
 

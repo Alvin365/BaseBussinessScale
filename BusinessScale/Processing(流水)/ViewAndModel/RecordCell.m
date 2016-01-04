@@ -52,7 +52,7 @@
 {
     _model = model;
 //    self.imageView.image = [UIImage imageNamed:model.icon];
-    self.textLabel.text = model.name;
+    self.textLabel.text = model.title;
     self.detailTextLabel.text = model.price;
 }
 

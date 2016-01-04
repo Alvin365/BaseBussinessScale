@@ -26,4 +26,6 @@
 
 + (float)allFolderSize;
 
++ (NSDictionary *)getGoodsList;
+
 @end

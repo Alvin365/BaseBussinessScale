@@ -1018,7 +1018,6 @@
 		E1E873931C3268D000EBA227 /* en_sort095.png in Resources */ = {isa = PBXBuildFile; fileRef = E1E86FBC1C3268CE00EBA227 /* en_sort095.png */; };
 		E1E873941C3268D000EBA227 /* en_sort096.png in Resources */ = {isa = PBXBuildFile; fileRef = E1E86FBD1C3268CE00EBA227 /* en_sort096.png */; };
 		E1E873991C3290E400EBA227 /* foods.m in Sources */ = {isa = PBXBuildFile; fileRef = E1E873981C3290E400EBA227 /* foods.m */; };
-		E1E8739B1C32A0EE00EBA227 /* dataBase.db in Resources */ = {isa = PBXBuildFile; fileRef = E1E8739A1C32A0EE00EBA227 /* dataBase.db */; };
 		E1EEBC601C204CED00551A5E /* UIColor+addtions.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EEBC4D1C204CED00551A5E /* UIColor+addtions.m */; };
 		E1EEBC611C204CED00551A5E /* UIImage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EEBC4F1C204CED00551A5E /* UIImage+Extension.m */; };
 		E1EEBC621C204CED00551A5E /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EEBC511C204CED00551A5E /* UIView+Extension.m */; };
@@ -1057,6 +1056,9 @@
 		E1EEBD4C1C2258B800551A5E /* NSDateFormatter+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EEBD4B1C2258B800551A5E /* NSDateFormatter+Category.m */; };
 		E1EEBD521C22697000551A5E /* DateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EEBD511C22697000551A5E /* DateUtil.m */; };
 		E1EEBD671C22841B00551A5E /* ALDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EEBD661C22841B00551A5E /* ALDatePickerView.m */; };
+		E1EF094F1C3A0B390093E55C /* kind.txt in Resources */ = {isa = PBXBuildFile; fileRef = E1EF094E1C3A0B390093E55C /* kind.txt */; };
+		E1EF09521C3A5B5E0093E55C /* YSAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1EF09511C3A5B5E0093E55C /* YSAlertView.m */; };
+		E1EF09541C3A6D670093E55C /* ProccessDayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1EF09531C3A6D670093E55C /* ProccessDayViewController.xib */; };
 		E1F5A4A01C239793000B6C9A /* RecordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E1F5A49F1C239793000B6C9A /* RecordCell.m */; };
 		E1F5A4A41C239C28000B6C9A /* RecordSectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1F5A4A31C239C28000B6C9A /* RecordSectionView.m */; };
 		E1F5A4A61C239C4C000B6C9A /* RecordSectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1F5A4A51C239C4C000B6C9A /* RecordSectionView.xib */; };
@@ -2160,7 +2162,6 @@
 		E1E86FBD1C3268CE00EBA227 /* en_sort096.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = en_sort096.png; sourceTree = "<group>"; };
 		E1E873971C3290E400EBA227 /* foods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = foods.h; sourceTree = "<group>"; };
 		E1E873981C3290E400EBA227 /* foods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = foods.m; sourceTree = "<group>"; };
-		E1E8739A1C32A0EE00EBA227 /* dataBase.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = dataBase.db; sourceTree = "<group>"; };
 		E1EEBC4C1C204CED00551A5E /* UIColor+addtions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+addtions.h"; sourceTree = "<group>"; };
 		E1EEBC4D1C204CED00551A5E /* UIColor+addtions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+addtions.m"; sourceTree = "<group>"; };
 		E1EEBC4E1C204CED00551A5E /* UIImage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extension.h"; sourceTree = "<group>"; };
@@ -2229,6 +2230,10 @@
 		E1EEBD511C22697000551A5E /* DateUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DateUtil.m; path = ../Category/DateUtil.m; sourceTree = "<group>"; };
 		E1EEBD651C22841B00551A5E /* ALDatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALDatePickerView.h; sourceTree = "<group>"; };
 		E1EEBD661C22841B00551A5E /* ALDatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALDatePickerView.m; sourceTree = "<group>"; };
+		E1EF094E1C3A0B390093E55C /* kind.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = kind.txt; sourceTree = "<group>"; };
+		E1EF09501C3A5B5E0093E55C /* YSAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSAlertView.h; sourceTree = "<group>"; };
+		E1EF09511C3A5B5E0093E55C /* YSAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSAlertView.m; sourceTree = "<group>"; };
+		E1EF09531C3A6D670093E55C /* ProccessDayViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProccessDayViewController.xib; sourceTree = "<group>"; };
 		E1F5A49E1C239793000B6C9A /* RecordCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordCell.h; sourceTree = "<group>"; };
 		E1F5A49F1C239793000B6C9A /* RecordCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordCell.m; sourceTree = "<group>"; };
 		E1F5A4A21C239C28000B6C9A /* RecordSectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordSectionView.h; sourceTree = "<group>"; };
@@ -2418,7 +2423,7 @@
 		E18748461C1EED730020F2FF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				E1E8739A1C32A0EE00EBA227 /* dataBase.db */,
+				E1EF094E1C3A0B390093E55C /* kind.txt */,
 				E1E86BE61C3268C500EBA227 /* img */,
 				E1E86BCC1C310CEC00EBA227 /* cs_new.cer */,
 				E18748471C1EED730020F2FF /* BusinessScale-Info.plist */,
@@ -3557,6 +3562,8 @@
 		E1EEBC5D1C204CED00551A5E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E1EF09501C3A5B5E0093E55C /* YSAlertView.h */,
+				E1EF09511C3A5B5E0093E55C /* YSAlertView.m */,
 				E1EEBD651C22841B00551A5E /* ALDatePickerView.h */,
 				E1EEBD661C22841B00551A5E /* ALDatePickerView.m */,
 				E1EEBC5E1C204CED00551A5E /* ALWellComeView.h */,
@@ -3684,6 +3691,7 @@
 				E1EEBC761C204D0400551A5E /* ProcessingViewController.xib */,
 				E1EEBD301C214EBA00551A5E /* ProccessDayViewController.h */,
 				E1EEBD311C214EBA00551A5E /* ProccessDayViewController.m */,
+				E1EF09531C3A6D670093E55C /* ProccessDayViewController.xib */,
 				E1EEBD3F1C22527000551A5E /* RecordViewController.h */,
 				E1EEBD401C22527000551A5E /* RecordViewController.m */,
 				E1EEBD411C22527000551A5E /* RecordViewController.xib */,
@@ -4087,6 +4095,7 @@
 				E1E872511C3268CF00EBA227 /* cn_img716.png in Resources */,
 				E1E870F41C3268CF00EBA227 /* cn_img345.png in Resources */,
 				E1E871241C3268CF00EBA227 /* cn_img393.png in Resources */,
+				E1EF09541C3A6D670093E55C /* ProccessDayViewController.xib in Resources */,
 				E1E872C01C3268CF00EBA227 /* cn_img854.png in Resources */,
 				E1E873271C3268D000EBA227 /* cn_img970.png in Resources */,
 				E1E871C81C3268CF00EBA227 /* cn_img566.png in Resources */,
@@ -4428,7 +4437,6 @@
 				E1E86FF71C3268CE00EBA227 /* cn_img060.png in Resources */,
 				E1E8733A1C3268D000EBA227 /* cn_img994.png in Resources */,
 				E1E872B41C3268CF00EBA227 /* cn_img839.png in Resources */,
-				E1E8739B1C32A0EE00EBA227 /* dataBase.db in Resources */,
 				E1E871611C3268CF00EBA227 /* cn_img457.png in Resources */,
 				E1E870D11C3268CF00EBA227 /* cn_img308.png in Resources */,
 				E1E8729A1C3268CF00EBA227 /* cn_img803.png in Resources */,
@@ -4960,6 +4968,7 @@
 				E1E8700E1C3268CE00EBA227 /* cn_img083.png in Resources */,
 				E1E871201C3268CF00EBA227 /* cn_img389.png in Resources */,
 				E1E873381C3268D000EBA227 /* cn_img992.png in Resources */,
+				E1EF094F1C3A0B390093E55C /* kind.txt in Resources */,
 				E1E8728A1C3268CF00EBA227 /* cn_img783.png in Resources */,
 				E1E873151C3268D000EBA227 /* cn_img949.png in Resources */,
 				E1EEBC701C204CFA00551A5E /* WeighingViewController.xib in Resources */,
@@ -5202,6 +5211,7 @@
 				E1FAEAEF1C252D1D001706CE /* PrivacyViewController.m in Sources */,
 				E1E86BE51C3262D700EBA227 /* WeightBussiness.m in Sources */,
 				E1EEBD521C22697000551A5E /* DateUtil.m in Sources */,
+				E1EF09521C3A5B5E0093E55C /* YSAlertView.m in Sources */,
 				E1FAEBB11C2CE9AA001706CE /* MJType.m in Sources */,
 				E1EEBD1C1C210EF700551A5E /* palletCell.m in Sources */,
 				E1EEBC621C204CED00551A5E /* UIView+Extension.m in Sources */,

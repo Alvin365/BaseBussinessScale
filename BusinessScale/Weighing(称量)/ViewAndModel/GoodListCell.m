@@ -24,6 +24,6 @@
     _model = model;
     NSString *icon = [[model.icon componentsSeparatedByString:@"/"]lastObject];
     self.imageView.image = [UIImage imageNamed:icon];
-    self.textLabel.text = _model.name;
+    self.textLabel.text = _model.title;
 }
 @end
