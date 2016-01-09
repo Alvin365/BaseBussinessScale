@@ -10,7 +10,11 @@
 #import "palletCell.h"
 #import "PalletSecctionView.h"
 #import "PayWaySelectView.h"
+#import "WeightHttpTool.h"
 @interface PalletViewController ()<UITableViewDataSource,UITableViewDelegate>
+{
+    NSString *code_url;
+}
 @property (weak, nonatomic) IBOutlet UIView *bottomBar;
 @property (weak, nonatomic) IBOutlet UILabel *allSelectedL;
 @property (weak, nonatomic) IBOutlet UIButton *payMoneyBtn;
@@ -30,11 +34,32 @@
 
 @implementation PalletViewController
 
+- (MBProgressHUD *)progressHud
+{
+    if (!_progressHud) {
+        _progressHud = [[MBProgressHUD alloc]initWithView:self.view];
+        [[[[UIApplication sharedApplication] windows] lastObject] addSubview:_progressHud];
+    }
+    return _progressHud;
+}
+
 - (PayWaySelectView *)paySelectView
 {
     if (!_paySelectView) {
+        WS(weakSelf);
         _paySelectView = [PayWaySelectView loadXibView];
         _paySelectView.frame = [UIScreen mainScreen].bounds;
+        _paySelectView.callBack = ^(PayWayType type){
+            if (weakSelf.dataArray.count==0) {
+                [MBProgressHUD showMessage:@"当前托盘中还没物品哦~"];
+            }else if (weakSelf.dataArray.count){
+                if ([weakSelf.paySelectView.realPriceTextField.inputField.text floatValue]<=0) {
+                    [MBProgressHUD showMessage:@"请输入折扣后的价格"];
+                    return ;
+                }
+                [weakSelf upLoadRecordWithType:type];
+            }
+        };
     }
     return _paySelectView;
 }
@@ -70,27 +95,16 @@
 {
     _dataArray = [NSMutableArray array];
     self.allSelected = YES;
-    for (int i = 0; i< 2; i++) {
-        NSMutableArray *arr = [NSMutableArray array];
-        for (int j = 0; j<10; j++) {
+    NSArray *array = [LocalDataTool loadLocalArrayFromPath:palletList];
+    for (NSArray *arr in array) {
+        NSMutableArray *mu = [NSMutableArray array];
+        for (NSDictionary *dic in arr) {
             palletCellModel *sal = [[palletCellModel alloc]init];
-            if (j%2) {
-                sal.title = @"牛肉(前腿)";
-                sal.unit_price = 20;
-                sal.quantity = 80;
-                sal.unit = @"克";
-                sal.icon = @"img/cn_img470.png";
-            }else{
-                sal.title = @"豆腐卷";
-                sal.unit_price = 8;
-                sal.quantity = 20;
-                sal.unit = @"克";
-                sal.icon = @"img/cn_img077.png";
-            }
+            [sal setValuesForKeysWithDictionary:dic];
             sal.isSelected = YES;
-            [arr addObject:sal];
+            [mu addObject:sal];
         }
-        [_dataArray addObject:arr];
+        [_dataArray addObject:mu];
     }
     [self caculateTotals];
 }
@@ -117,8 +131,81 @@
     [self.paySelectView showAnimate:YES];
 }
 
-#pragma mark - UITableViewDelegate&&UITableViewDataSource
+#pragma mark - netRequest
+- (void)upLoadRecordWithType:(PayWayType )type
+{
+    [self.progressHud show:YES];
+    NSMutableArray *muArr = [NSMutableArray array];
+    SaleTable *salT = [[SaleTable alloc]init];
+    salT.title = @"支付测试";
+    salT.randid = [NSString radom11BitString];
+    salT.total_fee = [[[_totalPriceL.text componentsSeparatedByString:@"￥"] lastObject] floatValue]*100;
+    salT.paid_fee = [self.paySelectView.realPriceTextField.inputField.text floatValue]*100;
+    salT.payment_type = type==PayWayTypeCrash?(type==PayWayTypeAlipay?@"alipay":@"weixin"):@"weixin";
+    for (NSArray *array in _dataArray) {
+        for (palletCellModel *model in array) {
+            model.unit = WeightUnit_Gram;
+            if (model.isSelected) {
+                [muArr addObject:model];
+            }
+        }
+    }
+    salT.items = muArr;
+    /**
+     * 插入数据库
+     */
+    [[SaleTable getUsingLKDBHelper]insertToDB:salT callback:nil];
+    
+    WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool uploadSaleRecord:salT.keyValues]];
+    [request setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response,id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                if (type!=PayWayTypeCrash) {
+                    code_url = ((NSDictionary *)data)[@"code_url"];
+                    [self.paySelectView showSuccessQrImage:code_url];
+                    [self getPoStatusWithOrderID:((NSDictionary *)data)[@"po_uuid"]];
+                }else{
+                    [self paySuccessEvent];
+                }
 
+            }
+        }];
+    }];
+}
+
+- (void)getPoStatusWithOrderID:(NSString *)orderId
+{
+    WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool getPoStatusWithOrderID:orderId]];
+    [request setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                NSString *status = ((NSDictionary *)data)[@"payment_status"];
+                if ([status isEqualToString:@"completed"]) {
+                    [MBProgressHUD showSuccess:@"支付成功"];
+                    [self.paySelectView hide];
+                    [self paySuccessEvent];
+                }else{
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        if (!self.paySelectView.superview) return;
+                        [self getPoStatusWithOrderID:orderId];
+                    });
+                }
+            }
+        }];
+    }];
+}
+
+- (void)paySuccessEvent
+{
+    [MBProgressHUD showSuccess:@"支付成功"];
+    [self.dataArray removeAllObjects];
+    [self caculateTotals];
+    [self.tableView reloadData];
+    [self.paySelectView hide];
+    [LocalDataTool removeDocumAtPath:palletList];
+}
+
+#pragma mark - UITableViewDelegate&&UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return self.dataArray.count;
@@ -148,7 +235,6 @@
             [weakSelf.tableView reloadSections:[NSIndexSet indexSetWithIndex:path.section] withRowAnimation:UITableViewRowAnimationFade];
             [weakSelf caculateTotalPriceInSection:indexPath.section];
             [weakSelf caculateTotals];
-//            [weakSelf.tableView reloadData];
         };
     }
     return cell;
@@ -221,7 +307,6 @@
     }
     return total;
 }
-
 /**
  * 计算全部物品总价
  */
@@ -232,6 +317,7 @@
         total += [self caculateTotalPriceInSection:i];
     }
     _totalPriceL.text = [NSString stringWithFormat:@"￥%.2f",total];
+    self.paySelectView.priceL.text = [NSString stringWithFormat:@"结算价：￥%.2f",total];
 }
 
 @end

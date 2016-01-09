@@ -7,6 +7,7 @@
 //
 
 #import "BaseModel.h"
+
 /**
  * 这个类 用来记录每次交易具体的交易商品信息
  */
@@ -15,9 +16,10 @@
 @property (nonatomic, copy) NSString *title;// 商品信息
 @property (nonatomic, copy) NSString *icon;
 @property (nonatomic, assign) NSInteger quantity; // 重量
-@property (nonatomic, copy) NSString *unit; // 单位
+@property (nonatomic, assign) WeightUnit unit; // 单位
 @property (nonatomic, assign) NSInteger unit_price; // 价钱
-@property (nonatomic, strong) NSString *ts; // 交易时间
+@property (nonatomic, assign) NSTimeInterval ts; // 交易时间
+@property (nonatomic, assign) float discount;
 
 @end
 
@@ -29,7 +31,7 @@
 @property (nonatomic, copy) NSString *title;// 商品信息
 @property (nonatomic, copy) NSString *randid;
 @property (nonatomic, strong) NSArray *items;
-@property (nonatomic, copy) NSString *ts; // 交易时间
+@property (nonatomic, assign) NSTimeInterval ts; // 交易时间
 @property (nonatomic, assign) NSInteger total_fee;
 @property (nonatomic, assign) NSInteger paid_fee;
 @property (nonatomic, copy) NSString *payment_type;

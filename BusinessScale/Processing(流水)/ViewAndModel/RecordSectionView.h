@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface RecordSectionView : UIView
+
 @property (weak, nonatomic) IBOutlet UILabel *dateL;
 @property (weak, nonatomic) IBOutlet UILabel *priceL;
+@property (nonatomic, copy) void(^callBack)();
 
 - (void)turnIntoProcessSecctionView;
-
 + (instancetype)loadXibView;
 
 @end

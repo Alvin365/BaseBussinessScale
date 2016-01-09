@@ -24,6 +24,7 @@
 - (NSString *)minuteDescription;/*精确到分钟的日期描述*/
 - (NSString *)formattedTime;
 - (NSString *)formattedDateDescription;//格式化日期描述
+/** 毫秒*/
 - (double)timeIntervalSince1970InMilliSecond;
 + (NSDate *)dateWithTimeIntervalInMilliSecondSince1970:(double)timeIntervalInMilliSecond;
 + (NSString *)formattedTimeFromTimeInterval:(long long)time;
@@ -90,7 +91,20 @@
 @property (readonly) NSInteger week;
 @property (readonly) NSInteger weekday;
 @property (readonly) NSInteger nthWeekday; // e.g. 2nd Tuesday of the month == 2
+/**
+ * 周一、二.....
+ */
+@property (readonly) NSString *chineaseWeekDay;
 @property (readonly) NSInteger year;
+/** 当月的第几周  0对应第一周*/
+@property (readonly) NSInteger weekLevel;
+
+/** 时间戳*/
+@property (nonatomic, readonly) NSTimeInterval timeStempString;
+/** 某一天 的00:00点*/
+@property (nonatomic, readonly) NSDate *zeroTime;
+/** 某一天 的23:59*/
+@property (nonatomic, readonly) NSDate *dayEndTime;
 
 
 #pragma mark -Alvin add
@@ -119,9 +133,22 @@
  * 获取指定日期是周几
  */
 + (int)weekdayFromDate:(NSDate*)inputDate;
+
 /**
- * 时间戳
+ * 是否是同一天
  */
-@property (nonatomic, readonly) NSString *timeStempString;
+- (BOOL)isTheSameDayWithDate:(NSDate *)date;
+/**
+ * 根据年、月、日创建日期
+ */
++ (NSDate *)dateWithYear:(NSInteger)year Month:(NSInteger)month Day:(NSInteger)day;
+/**
+ * 日期所在月 指定周 开始日期 第一周传0
+ */
+- (NSDate *)beginDateByWeekLevel:(NSInteger)level;
+/**
+ * 日期所在月 指定周 结束日期 第一周传0
+ */
+- (NSDate *)endDateByWeekLevel:(NSInteger)level;
 
 @end

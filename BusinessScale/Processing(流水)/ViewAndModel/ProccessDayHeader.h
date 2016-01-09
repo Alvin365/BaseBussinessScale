@@ -16,6 +16,7 @@
 
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, assign) ALProcessViewButtonTag dateTag;
+@property (nonatomic, copy) void(^callBack)(NSInteger index);
 
 + (instancetype)loadXibView;
 

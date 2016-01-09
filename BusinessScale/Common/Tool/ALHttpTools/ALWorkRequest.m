@@ -37,25 +37,15 @@
 
 + (AFSecurityPolicy*)customSecurityPolicy
 {
-    // /先导入证书
+    // 先导入证书
     NSString *cerPath = [[NSBundle mainBundle] pathForResource:@"cs_new" ofType:@"cer"];//证书的路径
     NSData *certData = [NSData dataWithContentsOfFile:cerPath];
     
-    // AFSSLPinningModeCertificate 使用证书验证模式
-//    policyWithPinningMode:AFSSLPinningModePublicKey
     AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModePublicKey];
     
-    // allowInvalidCertificates 是否允许无效证书（也就是自建的证书），默认为NO
-    // 如果是需要验证自建证书，需要设置为YES
     securityPolicy.allowInvalidCertificates = YES;
-    
-    //validatesDomainName 是否需要验证域名，默认为YES；
-    //假如证书的域名与你请求的域名不一致，需把该项设置为NO；如设成NO的话，即服务器使用其他可信任机构颁发的证书，也可以建立连接，这个非常危险，建议打开。
-    //置为NO，主要用于这种情况：客户端请求的是子域名，而证书上的是另外一个域名。因为SSL证书上的域名是独立的，假如证书上注册的域名是www.google.com，那么mail.google.com是无法验证通过的；当然，有钱可以注册通配符的域名*.google.com，但这个还是比较贵的。
-    //如置为NO，建议自己添加对应域名的校验逻辑。
     securityPolicy.validatesDomainName = NO;
-    
-    securityPolicy.pinnedCertificates = @[certData];
+    securityPolicy.pinnedCertificates = [NSSet setWithObject:certData];
     
     return securityPolicy;
 }
@@ -70,6 +60,7 @@
 
 - (void)dealloc
 {
+    _request = nil;
     _requestParam = nil;
     _error = nil;
 }
@@ -140,7 +131,7 @@
     return self;
 }
 
-- (void)setReturnBlock:(void(^)(NSURLResponse *response,id responseObject))block
+- (void)setReturnBlock:(void(^)(NSURLSessionTask *task,NSURLResponse *response,id responseObject))block
 {
     ALLog(@"发起网络请求[%@]：%@", self.request.HTTPMethod, self.request.URL.absoluteString);
     ALLog(@"网络请求参数：%@", self.requestParam.param);
@@ -148,15 +139,14 @@
     if (self.request.HTTPBody != nil) {
         ALLog(@"网络请求Body：%@", [[NSString alloc] initWithData:self.request.HTTPBody encoding:NSUTF8StringEncoding]);
     }
-    
-    if ([self.requestParam.method isEqualToString:ALHttpGet]) {
+    if (self.requestParam.taskType == ALTaskType_DownLoad) {
         NSURLSessionDownloadTask *downloadTask = [self.manager downloadTaskWithRequest:self.request progress:nil destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
             NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
             return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
         } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
             if (!error) {
                 if (block) {
-                    block(response,filePath);
+                    block(downloadTask,response,filePath);
                 }
             }else{
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
@@ -164,7 +154,7 @@
             ALLog(@"File downloaded to: %@", filePath);
         }];
         [downloadTask resume];
-    }else if ([self.requestParam.method isEqualToString:ALHttpPost]||[self.requestParam.method isEqualToString:ALHttpPut]){
+    }else if (self.requestParam.taskType == ALTaskType_UpLoad){
         NSURLSessionUploadTask *uploadTask;
         uploadTask = [self.manager
                       uploadTaskWithStreamedRequest:self.request
@@ -172,20 +162,26 @@
                           
                       }
                       completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-                          if (error) {
-                              NSLog(@"Error: %@", error);
+                          if (!error) {
+                              if (block) {
+                                  block(uploadTask,response,responseObject);
+                              }
+                              ALLog(@"URLResponse = %@\nresponseObject = %@",response,responseObject);
                           } else {
-                              NSLog(@"%@ %@", response, responseObject);
+                              [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
                           }
                       }];
         
         [uploadTask resume];
     }else{
         NSURLSessionDataTask *dataTask = [self.manager dataTaskWithRequest:self.request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-            if (error) {
-                NSLog(@"Error: %@", error);
+            if (!error) {
+                ALLog(@"URLResponse = %@\nresponseObject = %@",response,responseObject);
+                if (block) {
+                    block(dataTask,response,responseObject);
+                }
             } else {
-                NSLog(@"%@ %@", response, responseObject);
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
             }
         }];
         [dataTask resume];

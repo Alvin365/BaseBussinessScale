@@ -47,7 +47,9 @@
 }
 
 - (IBAction)segMentselectedIndex:(UISegmentedControl *)sender {
-    
+    if (self.callBack) {
+        self.callBack(sender.selectedSegmentIndex);
+    }
 }
 
 - (void)setDateTag:(ALProcessViewButtonTag)dateTag
@@ -57,6 +59,10 @@
     ALLog(@"%@",_date);
 }
 
+- (NSDate *)date
+{
+    return [NSDate convertDateFromString:_dateL.text];
+}
 
 
 @end

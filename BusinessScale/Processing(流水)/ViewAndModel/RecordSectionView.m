@@ -47,6 +47,7 @@
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     self.backgroundColor = backGroudColor;
     _dateL.textColor = ALTextColor;
     _priceL.textColor = ALTextColor;
@@ -56,6 +57,9 @@
     _priceFlag.layer.masksToBounds = YES;
     
     self.timeImageV.hidden = YES;
+    
+    self.userInteractionEnabled = YES;
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
 }
 
 - (void)layoutSubviews
@@ -69,6 +73,13 @@
 {
     self.timeImageV.hidden = NO;
     self.dateLeadingCons.constant = 50;
+}
+
+- (void)tap
+{
+    if (self.callBack) {
+        self.callBack();
+    }
 }
 
 @end

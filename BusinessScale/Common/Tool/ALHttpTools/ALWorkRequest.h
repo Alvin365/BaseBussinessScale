@@ -17,6 +17,6 @@
 @property (nonatomic, readonly)         NSError         *error;
 
 - (id)initWithParam:(ALRequestParam *)param;
-- (void)setReturnBlock:(void(^)(NSURLResponse *response,id responseObject))block;
+- (void)setReturnBlock:(void(^)(NSURLSessionTask *task,NSURLResponse *response,id responseObject))block;
 
 @end

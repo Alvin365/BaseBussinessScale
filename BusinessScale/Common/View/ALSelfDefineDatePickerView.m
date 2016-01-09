@@ -11,6 +11,9 @@
 @interface ALSelfDefineDatePickerView()<UIPickerViewDataSource,UIPickerViewDelegate>
 {
     BOOL _animate;
+    NSInteger _weeksSelectedRow;
+    NSInteger _yearRow;
+    NSInteger _monthRow;
 }
 @property (nonatomic, strong) UIView *backGroundView;
 @property (nonatomic, strong) UIView *titleView;
@@ -20,7 +23,8 @@
 @property (nonatomic, strong) NSMutableArray *weekdays;
 @property (nonatomic, copy) NSString *yearStr;
 @property (nonatomic, copy) NSString *monthStr;
-@property (nonatomic, copy) NSDate *currentMonth;
+@property (nonatomic, copy) NSDate *selectedMonth;
+
 
 @end
 
@@ -112,8 +116,18 @@
 
 - (void)btnClick:(UIButton *)btn
 {
-    if (self.callBack) {
-        self.callBack((ALSelfDefineDatePickerViewTag)btn.tag);
+    if (btn.tag == ALWeekDatePickerView_confirmTag) {
+        if (self.type == ALProcessViewButtonTagMonth) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(monthPickCallBackDate:)]) {
+                [self.delegate monthPickCallBackDate:[NSDate dateFromStringYYMMDD:[NSString stringWithFormat:@"%i-%i-1",[_yearStr intValue],[_monthStr intValue]]]];
+            }
+        }else if (self.type == ALProcessViewButtonTagWeek){
+            if (self.delegate && [self.delegate respondsToSelector:@selector(weekPickCallBackBeginDate:endDate:)]) {
+                NSDate *beginDate = [_selectedMonth beginDateByWeekLevel:_weeksSelectedRow];
+                NSDate *endDate = [_selectedMonth endDateByWeekLevel:_weeksSelectedRow];
+                [self.delegate weekPickCallBackBeginDate:beginDate endDate:endDate];
+            }
+        }
     }
     [self hide];
 }
@@ -145,25 +159,26 @@
 #pragma mark -初始化 时间选择器当前选择时间
 - (void)initializePickerRow
 {
-    NSDate *now = [NSDate date];
-    NSInteger yearRow = 0;
-    NSInteger monthRow = 0;
     for (NSInteger i = 0; i<_years.count; i++) {
-        if (now.year == [_years[i] integerValue]) {
-            yearRow = i;
+        if (_currentDate.year == [_years[i] integerValue]) {
+            _yearRow = i;
             break;
         }
     }
     for (NSInteger i = 0; i<_month.count; i++) {
-        if (now.month == [_month[i] integerValue]) {
-            monthRow = i;
+        if (_currentDate.month == [_month[i] integerValue]) {
+            _monthRow = i;
             break;
         }
     }
-    [self.picker selectRow:yearRow inComponent:0 animated:NO];
-    [self.picker selectRow:monthRow inComponent:1 animated:NO];
-    [self pickerView:self.picker didSelectRow:yearRow inComponent:0];
-    [self pickerView:self.picker didSelectRow:monthRow inComponent:1];
+    [self.picker selectRow:_yearRow inComponent:0 animated:NO];
+    [self.picker selectRow:_monthRow inComponent:1 animated:NO];
+    [self pickerView:self.picker didSelectRow:_yearRow inComponent:0];
+    [self pickerView:self.picker didSelectRow:_monthRow inComponent:1];
+    if (self.type == ALProcessViewButtonTagWeek) {
+        [self pickerView:self.picker didSelectRow:_weeksSelectedRow inComponent:2];
+        [self.picker selectRow:_weeksSelectedRow inComponent:2 animated:NO];
+    }
 }
 
 - (void)hide
@@ -185,7 +200,6 @@
 }
 
 #pragma mark -pickerDele&&DataSource
-
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
     if (self.type == ALProcessViewButtonTagMonth) {
         return 2;
@@ -211,11 +225,12 @@
     }else if (component == 1){
         _monthStr =  self.month[row];
     }else{
+        _weeksSelectedRow = row;
         return;
     }
     if (self.type == ALProcessViewButtonTagWeek) {
         [self.weekdays removeAllObjects];
-        [self caculateCurrentMonthWeeks];
+        [self caculateselectedMonthWeeks];
     }
 }
 
@@ -231,7 +246,12 @@
     }else if (component == 1){
         string = self.month[row];
     }else{
-        string = self.weekdays[row];
+        NSArray *arr = self.weekdays[row];
+        NSDate *weekFirstDate = [arr firstObject];
+        NSDate *weekEndDate = [arr lastObject];
+        NSString *weekFirstStr = [NSString stringWithFormat:@"%02d月%02d日",(int)weekFirstDate.month,(int)weekFirstDate.day];
+        NSString *weekEndStr = [NSString stringWithFormat:@"%02d月%02d日",(int)weekEndDate.month,(int)weekEndDate.day];
+        string = [NSString stringWithFormat:@"%@~%@",weekFirstStr,weekEndStr];
     }
     label.text = string;
     return label;
@@ -249,32 +269,36 @@
 }
 
 #pragma mark -Caculate monthTotalWeeks
-- (void)caculateCurrentMonthWeeks
+- (void)caculateselectedMonthWeeks
 {
     NSDate *weekFirstDate = nil;
     NSDate *weekEndDate = nil;
-    _currentMonth = [NSDate dateFromStringYYMMDD:[NSString stringWithFormat:@"%i-%i-1",[_yearStr intValue],[_monthStr intValue]]];
-    NSInteger weeks = [_currentMonth numberOfWeeksInCurrentMonth];
+    _selectedMonth = [NSDate dateWithYear:[_yearStr integerValue] Month:[_monthStr integerValue] Day:1];
+    NSInteger weeks = [_selectedMonth numberOfWeeksInCurrentMonth];
     for (NSInteger i = 0; i<weeks; i++) {
-        NSString *weekFirstStr = nil;
-        NSString *weekEndStr = nil;
-        if (!i) {
-            weekFirstDate = [NSDate getWeekFirstDate:_currentMonth];
-            weekEndDate = [NSDate getWeekLastDate:_currentMonth];
-        }else{
-            weekFirstDate = [weekFirstDate dateByAddingDays:7];
-            weekEndDate = [weekEndDate dateByAddingDays:7];
-        }
-        weekFirstStr = [NSString stringWithFormat:@"%02d月%02d日",(int)weekFirstDate.month,(int)weekFirstDate.day];
-        weekEndStr = [NSString stringWithFormat:@"%02d月%02d日",(int)weekEndDate.month,(int)weekEndDate.day];
-        [self.weekdays addObject:[NSString stringWithFormat:@"%@~%@",weekFirstStr,weekEndStr]];
+//        if (!i) {
+//            weekFirstDate = [NSDate getWeekFirstDate:_selectedMonth];
+//            weekEndDate = [NSDate getWeekLastDate:_selectedMonth];
+//        }else{
+//            weekFirstDate = [weekFirstDate dateByAddingDays:7];
+//            weekEndDate = [weekEndDate dateByAddingDays:7];
+//        }
+        weekFirstDate = [_selectedMonth beginDateByWeekLevel:i];
+        weekEndDate = [_selectedMonth endDateByWeekLevel:i];
+        [self.weekdays addObject:@[weekFirstDate,weekEndDate]];
     }
-    
     [self.picker reloadComponent:2];
     [self.picker selectRow:0 inComponent:2 animated:YES];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self pickerView:self.picker didSelectRow:0 inComponent:2];
     });
+}
+
+- (void)setCurrentDate:(NSDate *)currentDate
+{
+    _currentDate = currentDate;
+    _selectedMonth = [NSDate dateWithYear:_currentDate.year Month:_currentDate.month Day:1];
+    _weeksSelectedRow = _currentDate.weekLevel;
 }
 
 @end

@@ -32,4 +32,7 @@
 #import "AccountTool.h"
 #import "MJExtension.h"
 #import "YSAlertView.h"
+#import "LocalDataTool.h"
+#import "UnitTool.h"
+#import "SaleModel.h"
 #endif

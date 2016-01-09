@@ -14,10 +14,10 @@
     return @"saleItem";
 }
 
-//+ (NSArray *)getPrimaryKeyUnionArray
-//{
-//    return @[@"title"];
-//}
++ (NSArray *)getPrimaryKeyUnionArray
+{
+    return nil;
+}
 
 + (void)initialize
 {

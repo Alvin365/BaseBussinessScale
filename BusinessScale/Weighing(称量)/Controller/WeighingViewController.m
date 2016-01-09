@@ -17,10 +17,13 @@
 #import "LoginHttpTool.h"
 #import "WeightBussiness.h"
 #import "LocalDataTool.h"
+#import "QrCodeViewController.h"
 
-#define palletList @"palletList"
+
 @interface WeighingViewController ()<UITableViewDataSource,UITableViewDelegate>
-
+{
+    NSString *code_url;
+}
 @property (weak, nonatomic) IBOutlet UIView *SepView;
 @property (weak, nonatomic) IBOutlet UITableView *table;
 @property (weak, nonatomic) IBOutlet UILabel *unitL;
@@ -59,6 +62,15 @@
 
 @implementation WeighingViewController
 
+- (MBProgressHUD *)progressHud
+{
+    if (!_progressHud) {
+        _progressHud = [[MBProgressHUD alloc]initWithView:self.view];
+        [[[[UIApplication sharedApplication] windows] lastObject] addSubview:_progressHud];
+    }
+    return _progressHud;
+}
+
 - (PayWaySelectView *)paySelectView
 {
     if (!_paySelectView) {
@@ -66,42 +78,14 @@
         _paySelectView = [PayWaySelectView loadXibView];
         _paySelectView.frame = [UIScreen mainScreen].bounds;
         _paySelectView.callBack = ^(PayWayType type){
-            if (type == PayWayTypeCrash) {
-                SaleTable *saleT = [[SaleTable alloc]init];
-                saleT.total_fee = 20.5;
-                saleT.paid_fee = 19.5;
-                saleT.randid = [NSString radom11BitString];
-                saleT.ts = [NSDate date].timeStempString;
-                saleT.title = @"苹果等";
-                saleT.payment_type = @"Wechat";
-                NSMutableArray *arr = [NSMutableArray array];
-                for (int i = 0; i<3; i++) {
-                    SaleItem *item = [[SaleItem alloc]init];
-                    item.title = @[@"苹果",@"雪碧",@"手机"][i];
-                    item.unit = @"g";
-                    item.unit_price = 200.0f;
-                    item.ts = [NSDate date].timeStempString;
-                    item.quantity = 2;
-                    [arr addObject:item];
+            if (weakSelf.dataArray.count==0) {
+                [MBProgressHUD showMessage:@"当前托盘中还没物品哦~"];
+            }else if (weakSelf.dataArray.count){
+                if ([weakSelf.paySelectView.realPriceTextField.inputField.text floatValue]<=0) {
+                    [MBProgressHUD showMessage:@"请输入折扣后的价格"];
+                    return ;
                 }
-                saleT.items = arr;
-                WeightBussiness *bussiness = [[WeightBussiness alloc]init];
-                [bussiness saveSaleToDb:saleT];
-                [weakSelf uploadRecords];
-            }else if (type == PayWayTypeAlipay){
-                NSMutableArray *params = [NSMutableArray array];
-                [[SaleTable getUsingLKDBHelper] search:[SaleTable class] where:nil orderBy:nil offset:0 count:100 callback:^(NSMutableArray *array) {
-                    for (SaleTable *t in array) {
-                        if (!t.isUpLoad) {
-                            [params addObject:[t keyValues]];
-                        }
-                    }
-//                    NSData *data = [NSData ]
-                    WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool batchUploadSaleRecords:params]];
-                    [request setReturnBlock:^(NSURLResponse *response,id responseObject) {
-                        
-                    }];
-                }];
+                [weakSelf uploadRecordsWithType:type];
             }
         };
     }
@@ -123,16 +107,25 @@
     if ([sender tag]) {
         [self.paySelectView showAnimate:YES];
     }else{
-//        [self.progressHud show:YES];
-//        LoginHttpTool *request = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool loginWithParams:nil]];
-//        [request setReturnBlock:^(NSURLResponse *response,id responseObject) {
-//            [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-//                if (data) {
-//                    
-//                }
-//            }];
-//        }];
-        
+        NSArray *array = [LocalDataTool loadLocalArrayFromPath:palletList];
+        NSMutableArray *muArr = [NSMutableArray array];
+        if (array) {
+            [muArr addObjectsFromArray:array];
+        }
+        NSMutableArray *temp = [NSMutableArray array];
+        for (SaleItem *item in _dataArray) {
+            [temp addObject:[item keyValues]];
+        }
+        [muArr addObject:temp];
+        if (!muArr.count) {
+            [MBProgressHUD showMessage:@"没有东西可以放入托盘哦~"];
+            return;
+        }
+        [LocalDataTool saveAsLocalArrayWithPath:palletList data:muArr];
+        [_dataArray removeAllObjects];
+        [self.table reloadData];
+        [MBProgressHUD showMessage:@"放入托盘成功"];
+        [self caculateTotal];
     }
 }
 
@@ -216,7 +209,31 @@
     
     [self addNavRightBarBtn:@"蓝牙已连接" selectorBlock:^{
         [weakSelf.noDatasView hideAnimate:YES];
+        [weakSelf addDatas];
+        [weakSelf caculateTotal];
+        [weakSelf.table reloadData];
     }];
+}
+
+- (void)addDatas
+{
+    for (int i = 0; i<2; i++) {
+        SaleItem *sal = [[SaleItem alloc]init];
+        if (i%2) {
+            sal.title = @"牛肉(前腿)";
+            sal.unit_price = 2000;
+            sal.quantity = 1;
+            sal.unit = WeightUnit_500Gram;
+            sal.icon = @"img/cn_img470.png";
+        }else{
+            sal.title = @"豆腐卷";
+            sal.unit_price = 1000;
+            sal.quantity = 1;
+            sal.unit = WeightUnit_500Gram;
+            sal.icon = @"img/cn_img077.png";
+        }
+        [_dataArray addObject:sal];
+    }
 }
 
 - (void)datas
@@ -226,13 +243,11 @@
     sal.title = @"牛肉(前腿)";
     sal.unit_price = 50;
     sal.quantity = 100;
-    sal.unit = @"克";
-    
+    sal.unit = WeightUnit_500Gram;
     NSString *icon = [[[LocalDataTool getGoodsList][sal.title] componentsSeparatedByString:@"/"] lastObject];
-//    sal.icon = [LocalDataTool getGoodsList][sal.title];
-    [[SaleItem getUsingLKDBHelper] insertToDB:sal];
+    
     _goodImage.image = [UIImage imageNamed:icon];
-    _weightL.text = [NSString stringWithFormat:@"%@：%li%@",sal.title,(long)sal.quantity,sal.unit];
+    _weightL.text = [NSString stringWithFormat:@"%@：%li%@",sal.title,(long)sal.quantity,[UnitTool stringFromWeight:sal.unit]];
     
     _dataArray = [NSMutableArray array];
     /**
@@ -240,36 +255,87 @@
      */
     NSArray *array = [LocalDataTool loadLocalArrayFromPath:palletList];
     if (array) {
-        [_dataArray addObjectsFromArray:[array lastObject]];
-    }
-    
-    for (int i = 0; i<10; i++) {
-        SaleItem *sal = [[SaleItem alloc]init];
-        if (i%2) {
-            sal.title = @"牛肉(前腿)";
-            sal.unit_price = 50;
-            sal.quantity = 100;
-            sal.unit = @"克";
-            sal.icon = @"img/cn_img470.png";
-        }else{
-            sal.title = @"豆腐卷";
-            sal.unit_price = 8;
-            sal.quantity = 20;
-            sal.unit = @"克";
-            sal.icon = @"img/cn_img077.png";
+        for (NSDictionary *dic in [array lastObject]) {
+            SaleItem *item = [[SaleItem alloc]init];
+            [item setValuesForKeysWithDictionary:dic];
+            [_dataArray addObject:item];
         }
-        [_dataArray addObject:sal];
     }
     [self caculateTotal];
 }
 
 #pragma mark -URLRequest
-- (void)uploadRecords
+- (void)uploadRecordsWithType:(PayWayType)type
 {
-    NSDictionary *params = @{@"randid":@"111",@"ts":[NSDate date].timeStempString,@"title":@"fsaf",@"total_fee":@"1",@"paid_fee":@"2",@"payment_type":@"cash",@"items":@[@{@"title":@"苹果",@"unit":@"g",@"unit_price":@"1",@"quantity":@"2"}]};
+    [self.progressHud show:YES];
+    NSString *payWay = nil;
+    if (type == PayWayTypeCrash) {
+        payWay = @"cash";
+    }else if (type == PayWayTypeWechatPay){
+        payWay = @"weixin";
+    }else{
+        payWay = @"alipay";
+    }
+    NSString *price = [[self.paySelectView.priceL.text componentsSeparatedByString:@"￥"] lastObject];
+    NSMutableArray *datas = [NSMutableArray array];
+    for (SaleItem *item in _dataArray) {
+        item.discount = [self.paySelectView.realPriceTextField.inputField.text floatValue]/[price floatValue];
+        item.ts = [NSDate date].timeStempString;
+        NSDictionary *dic = [item keyValues];
+        [dic setValue:@"g" forKey:@"unit"];
+        NSNumber *number = dic[@"quantity"];
+        [dic setValue:@([number integerValue]*item.unit) forKey:@"quantity"];
+        [datas addObject:dic];
+    }
+    
+    NSDictionary *params = @{@"randid":[NSString radom11BitString],@"ts":@([NSDate date].timeStempString),@"title":@"支付测试",@"total_fee":@([price floatValue]*100),@"paid_fee":@([self.paySelectView.realPriceTextField.inputField.text floatValue]*100),@"payment_type":payWay,@"items":datas};
+    /**
+     * 数据库插入新数据 (异步)
+     */
+    SaleTable *salT = [[SaleTable alloc]init];
+    [salT setValuesForKeysWithDictionary:params];
+    salT.items = _dataArray;
+    [[SaleTable getUsingLKDBHelper] insertToDB:salT callback:nil];
+    /**
+     * 网络请求
+     */
     WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool uploadSaleRecord:params]];
-    [request setReturnBlock:^(NSURLResponse *response,id responseObject) {
-        
+    [request setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response,id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                if (type!=PayWayTypeCrash) {
+                    code_url = ((NSDictionary *)data)[@"code_url"];
+                    [self.paySelectView showSuccessQrImage:code_url];
+                    [self getPoStatusWithOrderID:((NSDictionary *)data)[@"po_uuid"]];
+                }else{
+                    [MBProgressHUD showSuccess:@"支付成功"];
+                    [self.dataArray removeAllObjects];
+                    [self.table reloadData];
+                    [self.paySelectView hide];
+                }
+            }
+        }];
+    }];
+}
+
+- (void)getPoStatusWithOrderID:(NSString *)orderId
+{
+    WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool getPoStatusWithOrderID:orderId]];
+    [request setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                NSString *status = ((NSDictionary *)data)[@"payment_status"];
+                if ([status isEqualToString:@"completed"]) {
+                    [MBProgressHUD showSuccess:@"支付成功"];
+                    [self.paySelectView hide];
+                }else{
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        if (!self.paySelectView.superview) return;
+                        [self getPoStatusWithOrderID:orderId];
+                    });
+                }
+            }
+        }];
     }];
 }
 #pragma mark - UITableViewDelegate&&DataSource
@@ -336,6 +402,7 @@
         total += (item.unit_price*item.quantity)/100.0f;
     }
     _totalPrice.attributedText = [ALCommonTool setAttrbute:@"总价：" andAttribute:[NSString stringWithFormat:@"%.2f元",total] Color1:ALTextColor Color2:ALTextColor Font1:15 Font2:22];
+    self.paySelectView.priceL.text = [NSString stringWithFormat:@"结算价：￥%.2f",total];
 }
 
 - (void)dealloc

@@ -10,6 +10,12 @@
 #import "RootTabViewController.h"
 #import "NSObject+MJMember.h"
 #import "ALCommonTool.h"
+#import "ALWellComeView.h"
+#import "LogonController.h"
+#import "ALNavigationController.h"
+
+
+
 @interface AppDelegate ()
 
 @end
@@ -21,11 +27,28 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor]; //背景颜色为白色
     [self.window makeKeyAndVisible];
-    self.window.rootViewController = [[RootTabViewController alloc]init];
+    /**
+     * 未登录状态显示登录界面
+     */
+    if ([AccountTool account].token.length) {
+        self.window.rootViewController = [[RootTabViewController alloc]init];
+    }else{
+        LogonController *ctl = [[LogonController alloc]init];
+        ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:ctl];
+       self.window.rootViewController = nav;
+    }
+    /**
+     * 新特性、新版本时显示引导页
+     */
+//    if ([ALCommonTool isNewFeature]) {
+        ALWellComeView *wellcom = [[ALWellComeView alloc]init];
+        [wellcom show];
+//    }
+    
     ALLog(@"%@",NSHomeDirectory());
     
     
-    [ALCommonTool copyDataBase];
+//    [ALCommonTool copyDataBase];
     return YES;
 }
 

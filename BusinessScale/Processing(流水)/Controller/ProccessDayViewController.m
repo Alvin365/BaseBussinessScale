@@ -14,7 +14,9 @@
 #import "RecordSectionView.h"
 #import "ProcessCell.h"
 #import "ALSelfDefineDatePickerView.h"
-@interface ProccessDayViewController ()<UITableViewDataSource,UITableViewDelegate>
+#import "CategoryCell.h"
+#import "CategorySection.h"
+@interface ProccessDayViewController ()<UITableViewDataSource,UITableViewDelegate,ALSelfDefineDatePickerViewDelegate>
 
 @property (strong, nonatomic)  UITableView *tableView;
 @property (nonatomic, strong) ProccessDayHeader *header;
@@ -24,6 +26,10 @@
 @property (nonatomic, strong) ALSelfDefineDatePickerView *otherPickView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
+@property (nonatomic, strong) NSMutableDictionary *isOpens; // 区域是否打开
+@property (nonatomic, assign) NSInteger currentIndex;
+@property (nonatomic, copy) NSDate *beginDate;
+@property (nonatomic, copy) NSDate *endDate;
 
 @end
 
@@ -33,6 +39,7 @@
 {
     if (!_otherPickView) {
         _otherPickView = [[ALSelfDefineDatePickerView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        _otherPickView.delegate = self;
         _otherPickView.type = self.tag;
     }
     return _otherPickView;
@@ -41,7 +48,12 @@
 - (ALDatePickerView *)pickerView
 {
     if (!_pickerView) {
+        WS(weakSelf);
         _pickerView = [[ALDatePickerView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        _pickerView.callBack = ^(NSDate *date){
+            weakSelf.header.dateL.text = [NSString stringWithFormat:@"%i年%i月%i日",(int)date.year,(int)date.month,(int)date.day];
+            [weakSelf selectDate:date endDate:date];
+        };
     }
     return _pickerView;
 }
@@ -65,9 +77,14 @@
 - (ProccessDayHeader *)header
 {
     if (!_header) {
+        WS(weakSelf);
         _header = [ProccessDayHeader loadXibView];
         _header.frame = CGRectMake(0, 0, screenWidth, 214);
         _header.dateTag = _tag;
+        _header.callBack = ^(NSInteger index){
+            weakSelf.currentIndex = index;
+            [weakSelf selectDate:weakSelf.beginDate endDate:weakSelf.endDate];
+        };
     }
     return _header;
 }
@@ -75,7 +92,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.navigationController.navigationBar.translucent = YES;
     UIColor *navigationBarColor = ALNavBarColor;
     Class className = NSClassFromString(@"_UINavigationBarBackground");
     for (UIView *view in self.navigationController.navigationBar.subviews) {
@@ -102,79 +118,38 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationController.navigationBar.translucent = YES;
+    self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.backgroundColor = backGroudColor;
+    self.navigationItem.titleView = self.titleGestureView;
     [self buildView];
-    [self buildNavItems];
     [self datas];
 }
 
 - (void)buildView
 {
-    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, -64, screenWidth, screenHeight+64) style:UITableViewStylePlain];
+    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, screenHeight) style:UITableViewStylePlain];
     _tableView.dataSource = self;
     _tableView.delegate = self;
     _tableView.bounces = NO;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [_tableView registerNib:[UINib nibWithNibName:@"ProcessCell" bundle:nil] forCellReuseIdentifier:@"cellIn"];
     
     _tableView.tableHeaderView = self.header;
     [self.view addSubview:_tableView];
 }
 
-- (void)buildNavItems
-{
-    self.navigationItem.titleView = self.titleGestureView;
-    switch (self.tag) {
-        case ALProcessViewButtonTagDay:
-        {
-            self.header.dateL.text = @"2015年11月15日";
-        }
-            break;
-        case ALProcessViewButtonTagWeek:
-        {
-            self.header.dateL.text = @"2015年11月15日~11月22日";
-        }
-            break;
-        case ALProcessViewButtonTagMonth:
-        {
-            self.header.dateL.text = @"2015年11月";
-        }
-            break;
-        default:
-            break;
-    }
-}
-
 - (void)datas
 {
     _dataArray = [NSMutableArray array];
-    for (int i = 0; i< 2; i++) {
-        NSMutableArray *arr = [NSMutableArray array];
-        for (int j = 0; j<10; j++) {
-            SaleItem *sal = [[SaleItem alloc]init];
-            if (j%2) {
-                sal.title = @"牛肉(前腿)";
-                sal.unit_price = 20;
-                sal.quantity = 80;
-                sal.unit = @"克";
-                sal.icon = @"img/cn_img470.png";
-            }else{
-                sal.title = @"豆腐卷";
-                sal.unit_price = 8;
-                sal.quantity = 20;
-                sal.unit = @"克";
-                sal.icon = @"img/cn_img077.png";
-            }
-            [arr addObject:sal];
-        }
-        [_dataArray addObject:arr];
-    }
+    _isOpens = [NSMutableDictionary dictionary];
+    [_isOpens setValue:@(YES) forKey:@"0"];
+    NSDate *date = [NSDate date];
+//    if (self.tag == ALProcessViewButtonTagDay) {
+        [self selectDate:date endDate:date];
+//    }
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
+#pragma mark - TableViewDelegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return _dataArray.count;
@@ -182,6 +157,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (![[_isOpens valueForKey:[NSString stringWithFormat:@"%i",(int)section]] boolValue]) {
+        return 0;
+    }
+    if (!_currentIndex) {
+        SaleTable *salT = _dataArray[section];
+        return salT.items.count;
+    }
     NSArray *arr = _dataArray[section];
     return arr.count;
 }
@@ -189,20 +171,38 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *cellIn = @"cellIn";
-    ProcessCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIn];
-    if (!indexPath.row) [cell showTopSeparaLine];
-    if (indexPath.section < _dataArray.count) {
-        NSArray *arr = _dataArray[indexPath.section];
-        if (indexPath.row < arr.count) {
-            cell.item = arr[indexPath.row];
+    static NSString *cellIden = @"cellIden2";
+    if (!_currentIndex) {
+        [_tableView registerNib:[UINib nibWithNibName:@"ProcessCell" bundle:nil] forCellReuseIdentifier:cellIn];
+        ProcessCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIn];
+        if (!indexPath.row) [cell showTopSeparaLine];
+        if (indexPath.section < _dataArray.count) {
+            SaleTable *salT = _dataArray[indexPath.section];
+            if (indexPath.row < salT.items.count) {
+                cell.item = salT.items[indexPath.row];
+            }
         }
+        return cell;
+    }else{
+        [_tableView registerNib:[UINib nibWithNibName:@"CategoryCell" bundle:nil] forCellReuseIdentifier:cellIden];
+        CategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIden];
+        if (indexPath.section < _dataArray.count) {
+            NSArray *arr = _dataArray[indexPath.section];
+            if (indexPath.row < arr.count) {
+                cell.item = arr[indexPath.row];
+                cell.sepT.hidden = indexPath.row;
+            }
+        }
+        return cell;
     }
-    return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70.0f;
+    if (!_currentIndex) {
+        return 70;
+    }
+    return 50.f;
 }
 
 #pragma mark -sectionView
@@ -210,75 +210,68 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     @autoreleasepool {
-        RecordSectionView *view = [RecordSectionView loadXibView];
-        [view turnIntoProcessSecctionView];
-        view.dateL.text = @"09:30";
-        view.priceL.text = [NSString stringWithFormat:@"%.2f元",[self caculateTotalPriceInSection:section]];
-        return view;
+        WS(weakSelf);
+        if (!_currentIndex) {
+            RecordSectionView *view = [RecordSectionView loadXibView];
+            SaleTable *salT = _dataArray[section];
+            CGFloat price = salT.paid_fee/100.0f;
+            NSDate *date = [NSDate dateWithTimeIntervalInMilliSecondSince1970:salT.ts];
+            view.callBack = ^{
+                [weakSelf sectionEvent:section];
+            };
+            [view turnIntoProcessSecctionView];
+            if (self.tag == ALProcessViewButtonTagDay) {
+                view.dateL.text = [NSString stringWithFormat:@"%02d:%02d",(int)date.hour,(int)date.minute];
+            }else if (self.tag == ALProcessViewButtonTagWeek){
+                view.dateL.text = [NSString stringWithFormat:@"%i/%i/%i(%@)",(int)date.year,(int)date.month,(int)date.day,date.chineaseWeekDay];
+            }
+            
+            view.priceL.text = [NSString stringWithFormat:@"%.2f元",price];
+            return view;
+        }else{
+            CategorySection *view = [CategorySection loadXibView];
+            view.dataArray = _dataArray[section];
+            view.callBack = ^{
+                [weakSelf sectionEvent:section];
+            };
+            return view;
+        }
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 50;
+    if (!_currentIndex) {
+        return 50;
+    }
+    return 70.f;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (scrollView.contentOffset.y>86) {
-        return;
-    }
-    CGFloat alpha = (scrollView.contentOffset.y+128.0f)/214.0f;
+    CGFloat alpha = (scrollView.contentOffset.y)/(214.0f-64);
     UIColor *navigationBarColor = ALNavBarColor;
     Class className = NSClassFromString(@"_UINavigationBarBackground");
     ALLog(@"%.f",scrollView.contentOffset.y);
     for (UIView *view in self.navigationController.navigationBar.subviews) {
         if ([view isKindOfClass:className]) {
             view.backgroundColor = navigationBarColor;
-            if (scrollView.contentOffset.y+128.0f-214.0f>-60) {
+            if (scrollView.contentOffset.y>214-64) {
                 self.navigationItem.titleView = nil;
                 self.title = @"日报表";
-                view.alpha = alpha;
             }else{
                 self.title = nil;
-                view.alpha = 0;
                 if (!self.navigationItem.titleView) self.navigationItem.titleView = self.titleGestureView;
             }
+            view.alpha = alpha;
             break;
         }
     }
-}
-#pragma mark -点击换日期事件
-- (void)changDateWithTag:(NavGestureViewTag )navTag
-{
-    NSDate *newDate = nil;
-    NSInteger count = 0;
-    NSString *begDate = nil;
-    if (_tag == ALProcessViewButtonTagDay) {
-        count = 1;
-    }else if (_tag == ALProcessViewButtonTagWeek){
-        count = 7;
-    }else if (_tag == ALProcessViewButtonTagMonth){
-        count = (NSInteger)[DateUtil getMonthDays:_header.date];
-    }
-    if (navTag == NavGestureViewClick_Right) {
-        newDate = [_header.date dateByAddingDays:count];
+    if (scrollView.contentOffset.y>150) {
+        _tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
     }else{
-        newDate = [_header.date dateBySubtractingDays:count];
+        _tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     }
-    begDate = [NSString stringFromDate:newDate];
-    begDate = [NSString converDateStringToString:begDate];
-    _header.dateL.text = begDate;
-    if (_tag == ALProcessViewButtonTagWeek) {
-        NSString *endDate = [DateUtil getWeekLastDateStr:newDate];
-        endDate = [endDate componentsSeparatedByString:@" "][0];
-//        NSString *endString = [endDate getDateStringByFormat:@"MM月DD日"];
-        endDate = [NSString converDateStringToString:endDate];
-        _header.dateL.text = [NSString stringWithFormat:@"%@~%@",begDate,endDate];
-    }else if (_tag == ALProcessViewButtonTagMonth){
-        _header.dateL.text = [newDate getDateStringByFormat:@"yyyy年MM月"];
-    }
-    _header.date = newDate;
 }
 
 /**
@@ -294,4 +287,156 @@
     return total;
 }
 
+#pragma mark -ALSelfDefineDatePickerViewDelegate
+- (void)monthPickCallBackDate:(NSDate *)date
+{
+    NSInteger days = [date numberOfDaysInCurrentMonth];
+    NSDate *endDate = [date dateByAddingDays:days];
+    [self selectDate:date endDate:endDate];
+}
+
+- (void)weekPickCallBackBeginDate:(NSDate *)beginDate endDate:(NSDate *)endDate
+{
+    [self selectDate:beginDate endDate:endDate];
+}
+
+#pragma mark - selectEvent  日期选择触发事件
+- (void)selectDate:(NSDate *)beginDate endDate:(NSDate *)endDate
+{
+    [self.progressHud show:YES];
+    _beginDate = beginDate;
+    _endDate = endDate;
+    if (!_currentIndex) {
+        [self datasAccordingTime:beginDate endDate:endDate];
+    }else{
+        [self datasAccordingCategery:beginDate endDate:endDate];
+    }
+}
+/**
+ * 按时间查看
+ */
+- (void)datasAccordingTime:(NSDate *)beginDate endDate:(NSDate *)endDate
+{
+    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>%.2f and ts<%.2f",beginDate.zeroTime.timeStempString,endDate.dayEndTime.timeStempString] orderBy:nil offset:0 count:1000 callback:^(NSMutableArray *array) {
+        ALLog(@"%@",array);
+        CGFloat totalPrice = 0.0f;
+        CGFloat payPrice = 0.0f;
+        [_dataArray removeAllObjects];
+        if (self.tag == ALProcessViewButtonTagDay) { // 天
+            for (SaleTable *salT in array) {
+                totalPrice += salT.total_fee/100.0f;
+                payPrice += salT.paid_fee/100.0f;
+            }
+            [_dataArray addObjectsFromArray:array];
+        }else{
+            NSDate *flagDate = nil;
+            NSInteger i = 0;
+            for (SaleTable *salT in array) { // 月与周的数据处理
+                NSDate *date = [NSDate dateWithTimeIntervalInMilliSecondSince1970:salT.ts];
+                if (![flagDate isTheSameDayWithDate:date]) {
+                    flagDate = date;
+                    NSMutableArray *arr =[NSMutableArray array];
+                    SaleTable *tempSal = array[i];
+                    NSInteger temTotal = tempSal.total_fee;
+                    NSInteger paidTotal = tempSal.paid_fee;
+                    for (SaleTable *sal in array) {
+                        if ([flagDate isTheSameDayWithDate:[NSDate dateWithTimeIntervalInMilliSecondSince1970:sal.ts]]) {
+                            tempSal.total_fee += sal.total_fee;
+                            tempSal.paid_fee += sal.paid_fee;
+                            [arr addObjectsFromArray:sal.items];
+                        }
+                    }
+                    tempSal.items = arr;
+                    tempSal.total_fee -= temTotal;
+                    tempSal.paid_fee -= paidTotal;
+                    totalPrice += tempSal.total_fee/100.0f;
+                    payPrice += tempSal.paid_fee/100.0f;
+                    [_dataArray addObject:tempSal];
+                }
+                i++;
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.progressHud hide:YES];
+            [self showHeaderDate];
+            self.header.totalPriceL.attributedText = [ALCommonTool setAttrbute:[NSString stringWithFormat:@"%.2f",payPrice] andAttribute:[NSString stringWithFormat:@"(%.2f)",totalPrice] Color1:[UIColor whiteColor] Color2:[UIColor whiteColor] Font1:25 Font2:15];
+            
+            [self.tableView reloadData];
+        });
+    }];
+}
+/**
+ * 按品类查看
+ */
+- (void)datasAccordingCategery:(NSDate *)beginDate endDate:(NSDate *)endDate
+{
+    [[SaleItem getUsingLKDBHelper]search:[SaleItem class] where:[NSString stringWithFormat:@"ts>%.2f and ts<%.2f",beginDate.zeroTime.timeStempString,endDate.dayEndTime.timeStempString] orderBy:@"title" offset:0 count:1000 callback:^(NSMutableArray *array) {
+        ALLog(@"%@",array);
+        CGFloat totalPrice = 0.0f;
+        CGFloat payPrice = 0.0f;
+        NSString *key = nil;
+        [_dataArray removeAllObjects];
+        for (SaleItem *item in array) {
+            CGFloat price = item.unit_price*item.quantity/100.0f;
+            if (![key isEqualToString:item.title]) {
+                key = item.title;
+                NSMutableArray *arr = [NSMutableArray array];
+                for (SaleItem *item in array) {
+                    if ([item.title isEqualToString:key]) {
+                        [arr addObject:item];
+                    }
+                }
+                [_dataArray addObject:arr];
+            }
+            totalPrice += price;
+            payPrice += price*item.discount;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.progressHud hide:YES];
+            [self showHeaderDate];
+            self.header.totalPriceL.attributedText = [ALCommonTool setAttrbute:[NSString stringWithFormat:@"%.2f",payPrice] andAttribute:[NSString stringWithFormat:@"(%.2f)",totalPrice] Color1:[UIColor whiteColor] Color2:[UIColor whiteColor] Font1:25 Font2:15];
+            
+            [self.tableView reloadData];
+        });
+    }];
+}
+
+#pragma mark - sectionHideOrShow 某区域是打开还是收藏
+- (void)sectionEvent:(NSInteger)section
+{
+    BOOL isOpen = [[self.isOpens valueForKey:[NSString stringWithFormat:@"%i",(int)section]] boolValue];
+    [self.isOpens setValue:@(!isOpen) forKey:[NSString stringWithFormat:@"%i",(int)section]];
+    [self.tableView reloadData];
+    if (!isOpen) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:section] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
+}
+// 显示日期
+- (void)showHeaderDate
+{
+    if (self.tag == ALProcessViewButtonTagDay) {
+        [self dayHeader];
+    }else if (self.tag == ALProcessViewButtonTagWeek){
+        [self weekHeader];
+    }else{
+        [self monthHeader];
+    }
+}
+/** 周的header日期显示*/
+- (void)weekHeader
+{
+    NSString *beginStr = [NSString stringWithFormat:@"%i-%i-%i",(int)_beginDate.year,(int)_beginDate.month,(int)_beginDate.day];
+    NSString *endStr = [NSString stringWithFormat:@"%i-%02d-%02d",(int)_endDate.year,(int)_endDate.month,(int)_endDate.day];
+    self.header.dateL.text = [NSString stringWithFormat:@"%@~%@",beginStr,endStr];
+}
+/** 月*/
+- (void)monthHeader
+{
+    self.header.dateL.text = [NSString stringWithFormat:@"%i年%i月",(int)_beginDate.year,(int)_beginDate.month];
+}
+/** 日*/
+- (void)dayHeader
+{
+    self.header.dateL.text = [NSString stringWithFormat:@"%i年%i月%i日",(int)_beginDate.year,(int)_beginDate.month,(int)_beginDate.day];
+}
 @end

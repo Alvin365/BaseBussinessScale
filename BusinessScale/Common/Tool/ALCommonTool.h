@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#define CURR_LANG ([[NSLocale preferredLanguages] objectAtIndex:0])
 @interface ALCommonTool : NSObject
 
 /** 手机号正则匹配*/
@@ -18,5 +19,15 @@
  * 拷贝外部数据库
  */
 + (void)copyDataBase;
+/**
+ * 是否是新特性 (新版本)
+ */
++ (BOOL)isNewFeature;
+/**
+ * 本地化
+ */
+NSString * DPLocalizedString(NSString * translation_key, id comment);
+
+
 
 @end

@@ -51,6 +51,7 @@ NSString * const ALHttpHead     = @"HEAD";
         _method = ALHttpPost;
         _timeout = 60.0f;
         _requestType = ALRequestTypeOfRemote;
+        _taskType = ALTaskType_DataTask;
         _httpBody = nil;
     }
     return self;
@@ -79,7 +80,8 @@ NSString * const ALHttpHead     = @"HEAD";
             || [propertyName isEqualToString:@"command"]
             || [propertyName isEqualToString:@"files"]
             || [propertyName isEqualToString:@"headers"]
-            || [propertyName isEqualToString:@"param"]) {
+            || [propertyName isEqualToString:@"param"]
+            || [propertyName isEqualToString:@"taskType"]) {
             continue;
         }
         
@@ -145,7 +147,6 @@ NSString * const ALHttpHead     = @"HEAD";
         return nil;
     } else if ([_httpBody isKindOfClass:[NSArray class]]) {
         NSMutableArray *items = [[NSMutableArray alloc] init];
-        
         NSUInteger count = ((NSArray *)_httpBody).count;
         for (int i=0; i<count; i++) {
             id item = [_httpBody objectAtIndex:i];

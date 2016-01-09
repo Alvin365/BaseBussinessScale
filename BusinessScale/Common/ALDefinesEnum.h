@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, ALSelfDefineDatePickerViewTag){
  * ALPickerView
  */
 typedef NS_ENUM(NSInteger ,DatebtnTag){
-    DateCanleTag,
+    DateCanleTag = 0,
     DateConfirmTag
 };
 /**
@@ -58,8 +58,8 @@ typedef NS_ENUM(NSInteger, RecordHeaderTag) {
  */
 typedef NS_ENUM(NSInteger, PayWayType) {
     PayWayTypeCrash = 0,
-    PayWayTypeAlipay,
-    PayWayTypeWechatPay
+    PayWayTypeWechatPay,
+    PayWayTypeAlipay
 };
 /**
  * GoodsAddView
@@ -72,5 +72,7 @@ typedef NS_ENUM(NSInteger,GoodsAddViewButtonTag) {
     GoodsAddViewButtonTagUnit50Gram,
     GoodsAddViewButtonTagUnitGram
 };
+
+
 
 #endif /* ALDefinesEnum_h */

@@ -51,6 +51,9 @@
 - (void)setItem:(SaleItem *)item
 {
     _item = item;
+    CGFloat scale = [UnitTool defaultUnit]/item.unit;
+    CGFloat quantity = item.quantity/scale;
+    
     NSString *icon = [[item.icon componentsSeparatedByString:@"/"]lastObject];
     _goodsImageV.image = [UIImage imageNamed:icon];
     _goods.text = item.title;
@@ -58,7 +61,11 @@
     if ([[_priceL.text componentsSeparatedByString:@"."] lastObject].length>2) {
         _priceL.text = [NSString stringWithFormat:@"%.2f元",(item.unit_price*item.quantity)/100.0f];
     }
-    _weight.text = [NSString stringWithFormat:@"%li%@",(long)item.quantity,item.unit];
+    _weight.text = [NSString stringWithFormat:@"%.2f%@",quantity,[UnitTool stringFromWeight:[UnitTool defaultUnit]]];
+    if ([UnitTool defaultUnit]==WeightUnit_Gram) {
+        _weight.text = [NSString stringWithFormat:@"%li%@",(long)quantity,[UnitTool stringFromWeight:[UnitTool defaultUnit]]];
+    }
+
     [self setNeedsDisplay];
 }
 

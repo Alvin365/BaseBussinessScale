@@ -353,6 +353,27 @@
     return ![self isTypicallyWeekend];
 }
 
+- (NSInteger)weekLevel
+{
+    NSDate *date = [NSDate dateWithYear:self.year Month:self.month Day:1];
+    /** 第一周第一天*/
+    NSDate *weekFirstDate = [NSDate getWeekFirstDate:date];
+    NSInteger weeks = [self numberOfWeeksInCurrentMonth];
+    NSInteger i = 0;
+//    for (i = 0; i<weeks; i++) {
+//        if ([self compare:weekFirstDate]==NSOrderedAscending||[self isTheSameDayWithDate:weekFirstDate]) {
+//            break;
+//        }else{
+//            weekFirstDate = [weekFirstDate dateByAddingDays:7];
+//        }
+//    }
+    while ([self compare:weekFirstDate]==NSOrderedDescending) {
+        weekFirstDate = [weekFirstDate dateByAddingDays:7];
+        i++;
+    }
+    return i;
+}
+
 #pragma mark Adjusting Dates
 
 - (NSDate *) dateByAddingDays: (NSInteger) dDays
@@ -505,6 +526,12 @@
 	return components.weekday;
 }
 
+- (NSString *)chineaseWeekDay
+{
+    NSDictionary *dic = @{@"1":@"周日",@"2":@"周一",@"3":@"周二",@"4":@"周三",@"5":@"周四",@"6":@"周五",@"7":@"周六"};
+    return dic[[NSString stringWithFormat:@"%i",(int)self.weekday]];
+}
+
 - (NSInteger) nthWeekday // e.g. 2nd Tuesday of the month is 2
 {
 	NSDateComponents *components = [CURRENT_CALENDAR components:DATE_COMPONENTS fromDate:self];
@@ -515,6 +542,26 @@
 {
 	NSDateComponents *components = [CURRENT_CALENDAR components:DATE_COMPONENTS fromDate:self];
 	return components.year;
+}
+
+- (NSTimeInterval )timeStempString
+{
+    NSTimeInterval timeSp = [[NSString stringWithFormat:@"%lld000", (long long)[self timeIntervalSince1970]] doubleValue];
+    return timeSp;
+}
+
+- (NSDate *)zeroTime
+{
+    NSString *zero = [NSString stringWithFormat:@"%i-%i-%i 00:00:00",(int)self.year,(int)self.month,(int)self.day];
+    NSDate *date = [NSDate dateFromString:zero];
+    return date;
+}
+
+- (NSDate *)dayEndTime
+{
+    NSString *zero = [NSString stringWithFormat:@"%i-%i-%i 23:59:59",(int)self.year,(int)self.month,(int)self.day];
+    NSDate *date = [NSDate dateFromString:zero];
+    return date;
 }
 
 #pragma mark -Alvin add
@@ -569,7 +616,7 @@
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
-    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm"];
+    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     
     NSDate *destDate= [dateFormatter dateFromString:dateString];
     return destDate;
@@ -639,10 +686,35 @@
     return (int)theComponents.weekday - 1;
 }
 
-- (NSString *)timeStempString
+
+- (BOOL)isTheSameDayWithDate:(NSDate *)date
 {
-    NSString *timeSp = [NSString stringWithFormat:@"%lld000", (long long)[self timeIntervalSince1970]];
-    return timeSp;
+    return self.year==date.year&&self.month==date.month&&self.day==date.day;
+}
+
++ (NSDate *)dateWithYear:(NSInteger)year Month:(NSInteger)month Day:(NSInteger)day
+{
+    return [NSDate dateFromStringYYMMDD:[NSString stringWithFormat:@"%i-%i-%i",(int)year,(int)month,(int)day]];
+}
+
+/**
+ * 日期所在月 指定周 开始日期 第一周传0
+ */
+- (NSDate *)beginDateByWeekLevel:(NSInteger)level;
+{
+    NSDate *date = [NSDate dateWithYear:self.year Month:self.month Day:1];
+    date = [NSDate getWeekFirstDate:date];
+    return [date dateByAddingDays:7*(level)];
+}
+
+/**
+ * 日期所在月 指定周 结束日期 第一周传0
+ */
+- (NSDate *)endDateByWeekLevel:(NSInteger)level;
+{
+    NSDate *date = [NSDate dateWithYear:self.year Month:self.month Day:1];
+    date = [NSDate getWeekLastDate:date];
+    return [date dateByAddingDays:7*(level)];
 }
 
 @end

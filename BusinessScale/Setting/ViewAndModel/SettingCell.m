@@ -30,7 +30,7 @@
     _segMent.layer.borderColor = ALNavBarColor.CGColor;
     _segMent.layer.borderWidth = 0.7;
     _segMent.layer.masksToBounds = YES;
-    _segMent.selectedSegmentIndex = 0;
+    _segMent.selectedSegmentIndex = 1;
     [_segMent setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateSelected];
     [_segMent setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateNormal];
     [_segMent addTarget:self action:@selector(segComponseSelected:) forControlEvents:UIControlEventValueChanged];
@@ -42,6 +42,26 @@
     if (self.segItemChanged) {
         self.segItemChanged(seg.selectedSegmentIndex);
     }
+    NSInteger mut = 0;
+    switch (seg.selectedSegmentIndex) {
+        case 0:
+            mut = 1;
+            break;
+        case 1:
+            mut = 50;
+            break;
+        case 2:
+            mut = 500;
+            break;
+        case 3:
+            mut = 1000;
+            break;
+        default:
+            break;
+    }
+    
+    [[NSUserDefaults standardUserDefaults]setObject:@(mut) forKey:unitGlobal];
+    [[NSUserDefaults standardUserDefaults]synchronize];
 }
 
 - (void)layoutSubviews

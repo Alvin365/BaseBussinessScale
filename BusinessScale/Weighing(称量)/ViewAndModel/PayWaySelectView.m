@@ -7,21 +7,27 @@
 //
 
 #import "PayWaySelectView.h"
-
+#import <ZXMultiFormatWriter.h>
+#import <ZXImage.h>
 @interface PayWaySelectView()
 {
     BOOL _animate;
 }
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet UIView *realView;
-@property (weak, nonatomic) IBOutlet ALTextField *realPriceTextField;
+
 @property (weak, nonatomic) IBOutlet UILabel *realFlag;
 @property (weak, nonatomic) IBOutlet UILabel *realUnit;
 
-@property (weak, nonatomic) IBOutlet UILabel *priceL;
+
 @property (weak, nonatomic) IBOutlet UILabel *crashPay;
 @property (weak, nonatomic) IBOutlet UILabel *wechatPay;
 @property (weak, nonatomic) IBOutlet UILabel *alipay;
+
+@property (weak, nonatomic) IBOutlet UIView *successView;
+@property (weak, nonatomic) IBOutlet UIImageView *qrCodeImageView;
+@property (weak, nonatomic) IBOutlet UILabel *plsScanL;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *qrTop;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentViewBottom;
@@ -41,7 +47,7 @@
 {
     [self initUIFromXib];
     [self initConstraint];
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
+//    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
     [_crashPay addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(payWay:)]];
     [_wechatPay addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(payWay:)]];
     [_alipay addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(payWay:)]];
@@ -67,6 +73,9 @@
     _crashPay.backgroundColor = [UIColor colorWithHexString:@"ff9928"];
     _wechatPay.backgroundColor = [UIColor colorWithHexString:@"60c90f"];
     _alipay.backgroundColor = [UIColor colorWithHexString:@"00abe8"];
+    
+    _qrCodeImageView.backgroundColor = backGroudColor;
+    _plsScanL.textColor = ALTextColor;
 }
 
 - (void)initConstraint
@@ -77,6 +86,8 @@
     _realPriceHeight.constant = 110*ALScreenScalHeight;
     _realTextFieldHeight.constant = 50*ALScreenScalHeight;
     _crashHeight.constant = 75*ALScreenScalHeight;
+    _qrTop.constant = 15*ALScreenScalHeight;
+    
 }
 
 - (IBAction)btnClick:(UIButton *)sender
@@ -94,6 +105,7 @@
 {
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     _animate = animate;
+    self.successView.hidden = YES;
     if (!animate) {
         return;
     }
@@ -112,10 +124,28 @@
     });
 }
 
-- (void)tap
+- (void)showSuccessQrImage:(NSString *)codeURL
 {
-    [self hide];
+    self.successView.hidden = NO;
+    self.successView.backgroundColor = [UIColor whiteColor];
+    ZXMultiFormatWriter *writer = [[ZXMultiFormatWriter alloc] init];
+    ZXBitMatrix *result = [writer encode:codeURL
+                                  format:kBarcodeFormatQRCode
+                                   width:self.qrCodeImageView.frame.size.width
+                                  height:self.qrCodeImageView.frame.size.height
+                                   error:nil];
+    if (result) {
+        ZXImage *image = [ZXImage imageWithMatrix:result];
+        self.qrCodeImageView.image = [UIImage imageWithCGImage:image.cgimage];
+    } else {
+        self.qrCodeImageView.image = nil;
+    }
 }
+
+//- (void)tap
+//{
+//    [self hide];
+//}
 
 - (void)payWay:(UIGestureRecognizer *)reconize
 {

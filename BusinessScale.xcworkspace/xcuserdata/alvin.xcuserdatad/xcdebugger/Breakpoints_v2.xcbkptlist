@@ -10,11 +10,75 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BusinessScale/Processing(&#x6d41;&#x6c34;)/ViewAndModel/ProcessCell.m"
-            timestampString = "473594035.684149"
+            timestampString = "473924471.796505"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77">
+            startingLineNumber = "84"
+            endingLineNumber = "84">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BusinessScale/Setting/Controller/GoodsSettingViewController.m"
+            timestampString = "473656138.715635"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "-nameChanged:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BusinessScale/Setting/Controller/GoodsSettingViewController.m"
+            timestampString = "473659552.774465"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "-nameChanged:"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[GoodsSettingViewController nameChanged:]"
+                  moduleName = "BusinessScale"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alvin/Desktop/%E8%8A%AF%E6%B5%B7%E9%A1%B9%E7%9B%AE/Commer/ALBusinessScale/BusinessScale/Setting/Controller/GoodsSettingViewController.m"
+                  timestampString = "474014983.760741"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "710">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[GoodsSettingViewController nameChanged:]"
+                  moduleName = "BusinessScale"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/alvin/Desktop/%E8%8A%AF%E6%B5%B7%E9%A1%B9%E7%9B%AE/Commer/ALBusinessScale/BusinessScale/Setting/Controller/GoodsSettingViewController.m"
+                  timestampString = "474014983.76145"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "831">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -39,6 +39,17 @@
 #define ALNavigationTitleFont [UIFont boldSystemFontOfSize:18]
 #define ALDocuMentPath [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
 
-#define TestServerce @"https://192.168.0.72/s0/"
+/** 文件路径*/
+#define palletList @"palletList"
+/**
+ * UserDefault
+ */
+#define unitGlobal @"unitGlobal"
+
+#define DevServerce @"https://192.168.0.72/s0/"
+#define TestServerce @"https://www.tookok.cn:8443/s0/"
+#define ProServerce  @""
+/** 当前使用的服务器*/
+#define userServerce DevServerce
 
 #endif /* Common_h */

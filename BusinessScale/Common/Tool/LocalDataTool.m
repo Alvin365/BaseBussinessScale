@@ -26,6 +26,17 @@
     return dic;
 }
 
++ (void)removeDocumAtPath:(NSString *)path
+{
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSString *path1 = [ALDocuMentPath stringByAppendingPathComponent:path];
+    BOOL bRet = [fileMgr fileExistsAtPath:path1];
+    if (bRet) {
+        NSError *err;
+        [fileMgr removeItemAtPath:path1 error:&err];
+    }
+}
+
 + (void)saveAsLocalArrayWithPath:(NSString *)path data:(NSArray *)arr
 {
     if (!arr) {
@@ -65,14 +76,6 @@
 //
 //    NSString *document = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSArray *fileList;
-//    fileList =[fileManager contentsOfDirectoryAtPath:document error:NULL];
-//    
-//    for (NSString *file in fileList) {
-//        NSString *path =[document stringByAppendingPathComponent:file];
-//        if (![file isEqualToString:@"account.data"]) {
-//            [fileManager removeItemAtPath:path error:nil];
-//        }
-//    }
     
     NSString *cache = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     fileList = [fileManager contentsOfDirectoryAtPath:cache error:NULL];
@@ -81,18 +84,6 @@
         [fileManager removeItemAtPath:path error:nil];
     }
     
-//    NSString *Libaray =  [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
-//    fileList = [fileManager contentsOfDirectoryAtPath:Libaray error:NULL];
-//    for (NSString *file in fileList) {
-//        NSString *path =[Libaray stringByAppendingPathComponent:file];
-//        [fileManager removeItemAtPath:path error:nil];
-//    }
-    
-    /**
-     * UserDefaults Delete
-     */
-//    NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-//    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     ALLog(@"%@",NSHomeDirectory());
 }
 

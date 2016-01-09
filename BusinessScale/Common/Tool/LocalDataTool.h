@@ -27,5 +27,9 @@
 + (float)allFolderSize;
 
 + (NSDictionary *)getGoodsList;
+/**
+ * 删除某路径的文件
+ */
++ (void)removeDocumAtPath:(NSString *)path;
 
 @end

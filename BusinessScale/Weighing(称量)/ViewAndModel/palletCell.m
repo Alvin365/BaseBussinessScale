@@ -73,6 +73,8 @@
     }else{
         _seleteImageV.image = [UIImage imageNamed:@"icon_nor"];
     }
+    CGFloat scale = [UnitTool defaultUnit]/model.unit;
+    CGFloat quantity = model.quantity/scale;
     
     NSString *icon = [[model.icon componentsSeparatedByString:@"/"]lastObject];
     _goodsImageV.image = [UIImage imageNamed:icon];
@@ -81,7 +83,10 @@
     if ([[_priceL.text componentsSeparatedByString:@"."] lastObject].length>2) {
         _priceL.text = [NSString stringWithFormat:@"%.2f元",(model.unit_price*model.quantity)/100.0f];
     }
-    _weight.text = [NSString stringWithFormat:@"%li%@",(long)model.quantity,model.unit];
+    _weight.text = [NSString stringWithFormat:@"%.2f%@",quantity,[UnitTool stringFromWeight:[UnitTool defaultUnit]]];
+    if ([UnitTool defaultUnit]==WeightUnit_Gram) {
+        _weight.text = [NSString stringWithFormat:@"%li%@",(long)quantity,[UnitTool stringFromWeight:[UnitTool defaultUnit]]];
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
