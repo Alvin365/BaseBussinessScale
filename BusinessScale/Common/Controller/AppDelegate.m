@@ -40,11 +40,11 @@
     /**
      * 新特性、新版本时显示引导页
      */
-//    if ([ALCommonTool isNewFeature]) {
+    if ([ALCommonTool isNewFeature]) {
         ALWellComeView *wellcom = [[ALWellComeView alloc]init];
         [wellcom show];
-//    }
-    
+    }
+
     ALLog(@"%@",NSHomeDirectory());
     
     

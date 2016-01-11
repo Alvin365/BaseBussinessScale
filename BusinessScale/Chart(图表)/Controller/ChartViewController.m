@@ -7,8 +7,11 @@
 //
 
 #import "ChartViewController.h"
-
+#import "ChartView.h"
 @interface ChartViewController ()
+
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) ChartView *chartView;
 
 @end
 
@@ -16,22 +19,27 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    self.navigationController.navigationBar.hidden = YES;
+    [self buildView];
+}
+
+- (void)buildView
+{
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, -20, screenWidth, screenHeight-49+20)];
+    _scrollView.bounces = NO;
+    [self.view addSubview:_scrollView];
+    
+    _chartView = [ChartView loadXibView];
+    _chartView.frame = CGRectMake(0, 0, screenWidth, 548);
+    [_scrollView addSubview:_chartView];
+    if (_scrollView.height<_chartView.height) {
+        _scrollView.contentSize = CGSizeMake(0, _chartView.height+10);
+    }
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -33,6 +33,9 @@
 		E1AD16121C3F8C160085FEC1 /* CategoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1AD16101C3F8C160085FEC1 /* CategoryCell.xib */; };
 		E1AD16181C3F8F9E0085FEC1 /* CategorySection.m in Sources */ = {isa = PBXBuildFile; fileRef = E1AD16171C3F8F9E0085FEC1 /* CategorySection.m */; };
 		E1AD161A1C3F8FAD0085FEC1 /* CategorySection.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1AD16191C3F8FAD0085FEC1 /* CategorySection.xib */; };
+		E1AD161D1C4101730085FEC1 /* ProcessBussiness.m in Sources */ = {isa = PBXBuildFile; fileRef = E1AD161C1C4101720085FEC1 /* ProcessBussiness.m */; };
+		E1AD16201C4269470085FEC1 /* ChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1AD161F1C4269470085FEC1 /* ChartView.m */; };
+		E1AD16221C4269570085FEC1 /* ChartView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1AD16211C4269570085FEC1 /* ChartView.xib */; };
 		E1CEEBFC1C3DF4A800595EDA /* LoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = E1CEEBFA1C3DF4A800595EDA /* LoginController.m */; };
 		E1CEEBFD1C3DF4A800595EDA /* LoginController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1CEEBFB1C3DF4A800595EDA /* LoginController.xib */; };
 		E1CEEC011C3DF50000595EDA /* RegisterController.m in Sources */ = {isa = PBXBuildFile; fileRef = E1CEEBFF1C3DF4FF00595EDA /* RegisterController.m */; };
@@ -1215,6 +1218,11 @@
 		E1AD16161C3F8F9E0085FEC1 /* CategorySection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategorySection.h; sourceTree = "<group>"; };
 		E1AD16171C3F8F9E0085FEC1 /* CategorySection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategorySection.m; sourceTree = "<group>"; };
 		E1AD16191C3F8FAD0085FEC1 /* CategorySection.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CategorySection.xib; sourceTree = "<group>"; };
+		E1AD161B1C4101720085FEC1 /* ProcessBussiness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessBussiness.h; sourceTree = "<group>"; };
+		E1AD161C1C4101720085FEC1 /* ProcessBussiness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProcessBussiness.m; sourceTree = "<group>"; };
+		E1AD161E1C4269470085FEC1 /* ChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChartView.h; sourceTree = "<group>"; };
+		E1AD161F1C4269470085FEC1 /* ChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChartView.m; sourceTree = "<group>"; };
+		E1AD16211C4269570085FEC1 /* ChartView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChartView.xib; sourceTree = "<group>"; };
 		E1CEEBF91C3DF4A800595EDA /* LoginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginController.h; sourceTree = "<group>"; };
 		E1CEEBFA1C3DF4A800595EDA /* LoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginController.m; sourceTree = "<group>"; };
 		E1CEEBFB1C3DF4A800595EDA /* LoginController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginController.xib; sourceTree = "<group>"; };
@@ -3877,6 +3885,8 @@
 		E1EEBC721C204D0400551A5E /* Bussiness */ = {
 			isa = PBXGroup;
 			children = (
+				E1AD161B1C4101720085FEC1 /* ProcessBussiness.h */,
+				E1AD161C1C4101720085FEC1 /* ProcessBussiness.m */,
 			);
 			path = Bussiness;
 			sourceTree = "<group>";
@@ -3951,6 +3961,9 @@
 		E1EEBC821C204D0F00551A5E /* ViewAndModel */ = {
 			isa = PBXGroup;
 			children = (
+				E1AD161E1C4269470085FEC1 /* ChartView.h */,
+				E1AD161F1C4269470085FEC1 /* ChartView.m */,
+				E1AD16211C4269570085FEC1 /* ChartView.xib */,
 			);
 			path = ViewAndModel;
 			sourceTree = "<group>";
@@ -4758,6 +4771,7 @@
 				E1E8710E1C3268CF00EBA227 /* cn_img371.png in Resources */,
 				E1CEEC2F1C3DFEB600595EDA /* LienceController.xib in Resources */,
 				E1E870691C3268CF00EBA227 /* cn_img187.png in Resources */,
+				E1AD16221C4269570085FEC1 /* ChartView.xib in Resources */,
 				E1E8701F1C3268CE00EBA227 /* cn_img103.png in Resources */,
 				E1E8724B1C3268CF00EBA227 /* cn_img708.png in Resources */,
 				E1E873511C3268D000EBA227 /* en_sort019.png in Resources */,
@@ -5398,6 +5412,7 @@
 				E1FAEAB01C23D44F001706CE /* BaseTableViewCell.m in Sources */,
 				E1E86BD31C311DEB00EBA227 /* AccountTool.m in Sources */,
 				E1FAEB981C2CC733001706CE /* LocalDataTool.m in Sources */,
+				E1AD16201C4269470085FEC1 /* ChartView.m in Sources */,
 				E1E86BD61C31387600EBA227 /* LoginHttpTool.m in Sources */,
 				E1EEBCC31C20EB1D00551A5E /* PalletViewController.m in Sources */,
 				E1FAEB2D1C28F565001706CE /* MBProgressHUD+AL.m in Sources */,
@@ -5438,6 +5453,7 @@
 				E1EEBC651C204CED00551A5E /* RootTabViewController.m in Sources */,
 				E1CEEC0A1C3DF56400595EDA /* UIInputTextField.m in Sources */,
 				E1FAEAC31C23DE5C001706CE /* GoodsHeader.m in Sources */,
+				E1AD161D1C4101730085FEC1 /* ProcessBussiness.m in Sources */,
 				E1FAEBB01C2CE9AA001706CE /* MJMethod.m in Sources */,
 				E1EEBC791C204D0400551A5E /* ProcessingViewController.m in Sources */,
 				E1FAEB0C1C279204001706CE /* PayAccountCell.m in Sources */,

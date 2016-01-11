@@ -56,6 +56,11 @@
 {
     _dateTag = dateTag;
     _date = [NSDate convertDateFromString:_dateL.text];
+    if (dateTag == ALProcessViewButtonTagWeek) {
+        _totalFlagL.text = @"本周总收入";
+    }else if (dateTag == ALProcessViewButtonTagMonth){
+        _totalFlagL.text = @"本月总收入";
+    }
     ALLog(@"%@",_date);
 }
 
