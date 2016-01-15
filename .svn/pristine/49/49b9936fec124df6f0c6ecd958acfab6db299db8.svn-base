@@ -1,0 +1,77 @@
+{
+  "name": "Commercial-Bluetooth",
+  "version": "1.0.0",
+  "summary": "OKOK秤项目的蓝牙模块",
+  "homepage": "http://192.168.0.90:8888/zhanglh/CsBtUtil",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "zhanglh": "zhanglh@ichipsea.com"
+  },
+  "platforms": {
+    "ios": "7.0"
+  },
+  "source": {
+    "git": "git@192.168.0.90:zhanglh/Commercial-Bluetooth.git",
+    "tag": "1.0.0",
+    "submodules": true
+  },
+  "frameworks": "CoreBluetooth",
+  "source_files": "Source/{CsBtUtil,BleDefines,BleDeviceDelegate}.{h,m}",
+  "public_header_files": "Source/{CsBtUtil,BleDefines,BleDeviceDelegate}.h",
+  "requires_arc": true,
+  "subspecs": [
+    {
+      "name": "Common",
+      "source_files": "Source/Common/*.{h,m}",
+      "public_header_files": "Source/Common/*.h"
+    },
+    {
+      "name": "DataModel",
+      "source_files": "Source/DataModel/*.{h,m}",
+      "public_header_files": "Source/DataModel/*.h"
+    },
+    {
+      "name": "Frame",
+      "subspecs": [
+        {
+          "name": "FCommon",
+          "source_files": "Source/Frame/Common/*.{h,m}",
+          "public_header_files": "Source/Frame/Common/*.h",
+          "subspecs": [
+            {
+              "name": "FrameData",
+              "source_files": "Source/Frame/Common/FrameData/*.{h,m}",
+              "public_header_files": "Source/Frame/Common/FrameData/*.h"
+            }
+          ]
+        },
+        {
+          "name": "CommercialFrame",
+          "dependencies": {
+            "Commercial-Bluetooth/Frame/FCommon": [
+
+            ],
+            "Commercial-Bluetooth/Common": [
+
+            ],
+            "Commercial-Bluetooth/DataModel": [
+
+            ]
+          },
+          "source_files": "Source/Frame/CommercialFrame/*.{h,m}",
+          "public_header_files": "Source/Frame/CommercialFrame/*.h",
+          "subspecs": [
+            {
+              "name": "CsFrameData",
+              "source_files": "Source/Frame/CommercialFrame/FrameData/*.{h,m}",
+              "public_header_files": "Source/Frame/CommercialFrame/FrameData/*.h"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

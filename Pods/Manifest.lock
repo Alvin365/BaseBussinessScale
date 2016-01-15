@@ -14,6 +14,27 @@ PODS:
   - AFNetworking/Serialization (3.0.1)
   - AFNetworking/UIKit (3.0.1):
     - AFNetworking/NSURLSession
+  - Commercial-Bluetooth (1.0.0):
+    - Commercial-Bluetooth/Common (= 1.0.0)
+    - Commercial-Bluetooth/DataModel (= 1.0.0)
+    - Commercial-Bluetooth/Frame (= 1.0.0)
+  - Commercial-Bluetooth/Common (1.0.0)
+  - Commercial-Bluetooth/DataModel (1.0.0)
+  - Commercial-Bluetooth/Frame (1.0.0):
+    - Commercial-Bluetooth/Frame/CommercialFrame (= 1.0.0)
+    - Commercial-Bluetooth/Frame/FCommon (= 1.0.0)
+  - Commercial-Bluetooth/Frame/CommercialFrame (1.0.0):
+    - Commercial-Bluetooth/Common
+    - Commercial-Bluetooth/DataModel
+    - Commercial-Bluetooth/Frame/CommercialFrame/CsFrameData (= 1.0.0)
+    - Commercial-Bluetooth/Frame/FCommon
+  - Commercial-Bluetooth/Frame/CommercialFrame/CsFrameData (1.0.0):
+    - Commercial-Bluetooth/Common
+    - Commercial-Bluetooth/DataModel
+    - Commercial-Bluetooth/Frame/FCommon
+  - Commercial-Bluetooth/Frame/FCommon (1.0.0):
+    - Commercial-Bluetooth/Frame/FCommon/FrameData (= 1.0.0)
+  - Commercial-Bluetooth/Frame/FCommon/FrameData (1.0.0)
   - FMDB (2.5):
     - FMDB/standard (= 2.5)
   - FMDB/common (2.5)
@@ -31,14 +52,25 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
+  - Commercial-Bluetooth (from `git@192.168.0.90:zhanglh/Commercial-Bluetooth.git`)
   - FMDB
   - LKDBHelper (HEAD)
   - MBProgressHUD (~> 0.9.1)
   - SDWebImage (~> 3.7)
   - ZXingObjC (~> 3.0)
 
+EXTERNAL SOURCES:
+  Commercial-Bluetooth:
+    :git: git@192.168.0.90:zhanglh/Commercial-Bluetooth.git
+
+CHECKOUT OPTIONS:
+  Commercial-Bluetooth:
+    :commit: ba134d9b3b9e489930dd3838ba0e1c863d879384
+    :git: git@192.168.0.90:zhanglh/Commercial-Bluetooth.git
+
 SPEC CHECKSUMS:
   AFNetworking: 20d8749e03e45f1e5c046ad0b647e0b07bcdd91f
+  Commercial-Bluetooth: 49b9936fec124df6f0c6ecd958acfab6db299db8
   FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
   LKDBHelper: 9f2227e47b3c9b7f177ed2f6312367f937204c14
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
