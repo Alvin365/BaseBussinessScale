@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="5K0-WX-wsW" customClass="ALDateView">
+            <rect key="frame" x="0.0" y="0.0" width="371" height="149"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2015/11/1~2015/11/7" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YmZ-SD-jZU">
+                    <rect key="frame" x="108" y="64" width="155" height="21"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N1Z-eP-8kU">
+                    <rect key="frame" x="68" y="60" width="30" height="30"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="aVz-WT-Dd0"/>
+                        <constraint firstAttribute="height" constant="30" id="lFR-Tr-2HG"/>
+                    </constraints>
+                    <state key="normal" title="&lt;">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZdK-ee-azH">
+                    <rect key="frame" x="273" y="48" width="30" height="54"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="SLF-vE-IGI"/>
+                        <constraint firstAttribute="height" constant="54" id="XkG-Wy-UGV"/>
+                    </constraints>
+                    <state key="normal" title="&gt;">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" red="0.49710081719999999" green="1" blue="0.91693315730000002" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="ZdK-ee-azH" firstAttribute="leading" secondItem="YmZ-SD-jZU" secondAttribute="trailing" constant="10" id="6Of-5i-oLq"/>
+                <constraint firstItem="ZdK-ee-azH" firstAttribute="centerY" secondItem="5K0-WX-wsW" secondAttribute="centerY" id="Bxd-0g-CwK"/>
+                <constraint firstItem="YmZ-SD-jZU" firstAttribute="centerX" secondItem="5K0-WX-wsW" secondAttribute="centerX" id="Let-YE-3cO"/>
+                <constraint firstItem="N1Z-eP-8kU" firstAttribute="centerY" secondItem="5K0-WX-wsW" secondAttribute="centerY" id="LhZ-T8-Ezx"/>
+                <constraint firstItem="YmZ-SD-jZU" firstAttribute="leading" secondItem="N1Z-eP-8kU" secondAttribute="trailing" constant="10" id="QQT-oI-tTq"/>
+                <constraint firstItem="YmZ-SD-jZU" firstAttribute="centerY" secondItem="5K0-WX-wsW" secondAttribute="centerY" id="bYu-Es-dMZ"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="dateL" destination="YmZ-SD-jZU" id="YmD-tf-3LG"/>
+            </connections>
+            <point key="canvasLocation" x="179.5" y="222.5"/>
+        </view>
+    </objects>
+</document>

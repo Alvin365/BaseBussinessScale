@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="doq-5O-fT8" customClass="IncomeView">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="110"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="年度总收入" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z5P-N0-CyX">
+                    <rect key="frame" x="60" y="30" width="80" height="20"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="612345" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O9r-d0-RJg">
+                    <rect key="frame" x="57" y="55" width="87" height="30"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="￥" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ac3-aL-AvZ">
+                    <rect key="frame" x="33" y="53" width="24" height="21"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="O9r-d0-RJg" firstAttribute="top" secondItem="z5P-N0-CyX" secondAttribute="bottom" constant="5" id="2CM-9I-Mqm"/>
+                <constraint firstAttribute="bottom" secondItem="ac3-aL-AvZ" secondAttribute="bottom" constant="36" id="M2j-ZB-NXc"/>
+                <constraint firstItem="O9r-d0-RJg" firstAttribute="centerX" secondItem="doq-5O-fT8" secondAttribute="centerX" id="bQ4-go-FrZ"/>
+                <constraint firstItem="O9r-d0-RJg" firstAttribute="leading" secondItem="ac3-aL-AvZ" secondAttribute="trailing" id="dOg-Vf-2gq"/>
+                <constraint firstItem="z5P-N0-CyX" firstAttribute="centerX" secondItem="doq-5O-fT8" secondAttribute="centerX" id="hQW-9g-nXm"/>
+                <constraint firstItem="z5P-N0-CyX" firstAttribute="top" secondItem="doq-5O-fT8" secondAttribute="top" constant="30" id="jb9-w7-dqv"/>
+                <constraint firstItem="ac3-aL-AvZ" firstAttribute="top" secondItem="doq-5O-fT8" secondAttribute="top" constant="53" id="orr-y3-8fy"/>
+                <constraint firstItem="ac3-aL-AvZ" firstAttribute="leading" secondItem="doq-5O-fT8" secondAttribute="leading" constant="33" id="skX-5G-UxT"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="priceFlag" destination="ac3-aL-AvZ" id="FG2-A1-gPU"/>
+                <outlet property="priceL" destination="O9r-d0-RJg" id="Q9S-16-CZG"/>
+                <outlet property="title" destination="z5P-N0-CyX" id="cl7-ga-5h0"/>
+            </connections>
+            <point key="canvasLocation" x="238" y="-143"/>
+        </view>
+    </objects>
+</document>
