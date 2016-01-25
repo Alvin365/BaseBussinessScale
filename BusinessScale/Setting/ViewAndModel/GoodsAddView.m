@@ -15,6 +15,8 @@
 {
     BOOL _animate;
     UIImage *newHeaderImage;
+    WeightUnit _currentUnit;
+    GoodsTemp *_model;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *backGroudView;
@@ -57,7 +59,7 @@
 
 - (void)awakeFromNib
 {
-    self.currentUnit = WeightUnit_killoGram;
+    _currentUnit = WeightUnit_killoGram;
     [self initView];
     [self initConstraint];
     [self.backGroudView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
@@ -112,8 +114,8 @@
     /**
      * 头像点击事件
      */
-//    self.goodsImage.userInteractionEnabled = YES;
-//    [self.goodsImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photo)]];
+    self.goodsImage.userInteractionEnabled = YES;
+    [self.goodsImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photo)]];
 }
 
 - (void)initConstraint
@@ -135,15 +137,16 @@
 - (IBAction)btnClick:(UIButton *)sender
 {
     if (sender.tag>=1001) {
-        [self hideAnimate:YES];
-        if (![self juddgeEmpty]) {
+        if (sender.tag == 1002) {
+            if ([self juddgeEmpty]) {
+                [MBProgressHUD showMessage:@"请填写完整信息和菜品头像"];
+                return;
+            }
             if (self.callBack) {
-                self.callBack(sender.tag);
+                self.callBack(self.model);
             }
         }else{
-            if (sender.tag == 1002) {
-               [MBProgressHUD showMessage:@"请填写完整信息和菜品头像"];
-            }
+            [self hideAnimate:YES];
         }
     }else{
         self.unitSecondBtn.hidden = self.unitThirdBtn.hidden = self.unitFourthBtn.hidden = !self.unitSecondBtn.hidden;
@@ -159,6 +162,16 @@
 - (WeightUnit)currentUnit
 {
     return (WeightUnit)self.unitFirstBtn.tag;
+}
+
+- (void)setCurrentUnit:(WeightUnit)currentUnit
+{
+    _currentUnit = currentUnit;
+    UIButton *btn = (UIButton *)([self viewWithTag:currentUnit]);
+    [self btnClick:btn];
+    self.unitSecondBtn.hidden = self.unitThirdBtn.hidden = self.unitFourthBtn.hidden = YES;
+    
+    [self.unitFirstBtn setNeedsLayout];
 }
 
 #pragma mark -Method
@@ -230,8 +243,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     self.nameTextField.inputField.text = [[(NSDictionary *)_dataSource[indexPath.row] allKeys] lastObject];
     NSString *image = [[(NSDictionary *)_dataSource[indexPath.row] allValues] lastObject];
-    image = [[image componentsSeparatedByString:@"/"] lastObject];
-    self.goodsImage.image = [UIImage imageNamed:image];
+    [self.goodsImage setImageWithIcon:image];
     _icon = image;
     self.goosList.hidden = YES;
     [self endEditing:YES];
@@ -246,7 +258,7 @@
 
 - (void)initilize
 {
-    self.goodsImage.image = nil;
+    self.goodsImage.image = [UIImage imageNamed:@"default"];
     self.nameTextField.inputField.text = nil;
     self.numberTextField.inputField.text = nil;
     self.priceTextField.inputField.text = nil;
@@ -325,6 +337,7 @@
         NSData *imageData = nil;
         imageData = UIImageJPEGRepresentation(newHeaderImage, 0);
         dispatch_async(dispatch_get_main_queue(), ^{
+            _icon = @"default";
             [self upLoadImageWithData:newHeaderImage];
         });
     });
@@ -333,10 +346,43 @@
 
 - (void)upLoadImageWithData:(UIImage *)image
 {
+    [self.progressHud show:YES];
     GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool upLoadWithImage:image]];
     [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                self.goodsImage.image = image;
+                _icon = (NSString *)data;
+            }
+        }];
         ALLog(@"%@",responseObject);
     }];
+}
+
+- (void)setModel:(GoodsTemp *)model
+{
+    _model = model;
+    [self.goodsImage setImageWithIcon:_model.icon];
+    _icon = model.icon;
+    self.nameTextField.inputField.text = _model.title;
+    self.numberTextField.inputField.text = [NSString stringWithFormat:@"%i",[_model.number intValue]];
+    self.priceTextField.inputField.text = [NSString stringWithFormat:@"%g",_model.unit_price/100.0f];
+    if (model.unit) {
+        self.currentUnit = _model.unit;
+    }
+}
+
+- (GoodsInfoModel *)model
+{
+    if (!_model) {
+        _model = [[GoodsInfoModel alloc]init];
+    }
+    _model.icon = self.icon;
+    _model.title = self.nameTextField.inputField.text;
+    _model.number = @([self.numberTextField.inputField.text integerValue]);
+    _model.unit_price = [self.priceTextField.inputField.text floatValue]*100;
+    _model.unit = self.currentUnit;
+    return _model;
 }
 
 @end

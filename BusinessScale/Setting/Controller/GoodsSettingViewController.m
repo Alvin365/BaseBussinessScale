@@ -14,18 +14,18 @@
 #import <Commercial-Bluetooth/CsBtUtil.h>
 #import "GoodsListHttpTool.h"
 #import "GoodsListController.h"
-@interface GoodsSettingViewController ()<UITableViewDataSource,UITableViewDelegate,BleDeviceDelegate>
+#import "Reachability.h"
+@interface GoodsSettingViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 {
     CGFloat addGoodsViewBottom;
     CsBtUtil *_btUtil;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (nonatomic, strong) GoodsAddView *addGoodsView;
+//@property (nonatomic, strong) GoodsAddView *addGoodsView;
 @property (nonatomic, strong) GoodsAddView *updateGoodsView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
-@property (nonatomic, strong) GoodsInfoModel *model;
 
 @end
 
@@ -39,23 +39,26 @@
     return _dataArray;
 }
 
-- (GoodsAddView *)addGoodsView
-{
-    if (!_addGoodsView) {
-        WS(weakSelf);
-        _addGoodsView = [GoodsAddView loadXibView];
-        _addGoodsView.frame = [UIScreen mainScreen].bounds;
-        _addGoodsView.nameTextField.textChanged = ^(NSString *name){
-            [weakSelf nameChanged:name];
-        };
-        _addGoodsView.callBack = ^(NSInteger tag){
-            if (tag == 1002) {
-                [weakSelf insertNewGoods];
-            }
-        };
-    }
-    return _addGoodsView;
-}
+//- (GoodsAddView *)addGoodsView
+//{
+//    if (!_addGoodsView) {
+//        WS(weakSelf);
+//        _addGoodsView = [GoodsAddView loadXibView];
+//        _addGoodsView.frame = [UIScreen mainScreen].bounds;
+//        _addGoodsView.nameTextField.textChanged = ^(NSString *name){
+//            [weakSelf nameChanged:name];
+//        };
+//        _addGoodsView.callBack = ^(NSInteger tag){
+//            if (tag == 1002) {
+//                if (![weakSelf judgeCanUpLoad]) {
+//                    return;
+//                }
+//                [weakSelf insertNewGoods];
+//            }
+//        };
+//    }
+//    return _addGoodsView;
+//}
 
 - (GoodsAddView *)updateGoodsView
 {
@@ -66,14 +69,11 @@
         _updateGoodsView.nameTextField.textChanged = ^(NSString *name){
             [weakSelf nameChanged:name];
         };
-        _updateGoodsView.callBack = ^(NSInteger tag){
-            if ([CsBtUtil getInstance].state<CsScaleStateConnected) {
-                [MBProgressHUD showMessage:@"请先连接蓝牙设备"];
-                return;
+        _updateGoodsView.callBack = ^(GoodsInfoModel *model){
+            if (![weakSelf judgeCanUpLoad]) {
+                return ;
             }
-            if (tag == 1002) {
-                [weakSelf updateGoods];
-            }
+            [weakSelf updateGoodsWithModel:model];
         };
     }
     return _updateGoodsView;
@@ -82,12 +82,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animateda
-{
-    [super viewWillDisappear:animateda];
-    [self putGoodsIntoSeverce];
 }
 
 - (void)viewDidLoad {
@@ -99,6 +93,8 @@
 
 - (void)initFromXib
 {
+    _btUtil = [CsBtUtil getInstance];
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -115,14 +111,14 @@
 {
     WS(weakSelf);
     [self addNavRightBarBtn:@"icon_add" selectorBlock:^{
-        [weakSelf.addGoodsView showAnimate:YES];
-//        [weakSelf navBarRightItemEvent];
+//        [weakSelf.addGoodsView showAnimate:YES];
+        [weakSelf navBarRightItemEvent];
     }];
 }
 
 - (void)datas
 {
-    [[GoodsInfoModel getUsingLKDBHelper]search:[GoodsInfoModel class] where:nil orderBy:nil offset:0 count:1000 callback:^(NSMutableArray *array) {
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@{@"uid":[AccountTool account].ID,@"mac":[ScaleTool scale].mac} orderBy:nil offset:0 count:1000 callback:^(NSMutableArray *array) {
         [self.dataArray addObjectsFromArray:array];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
@@ -133,11 +129,12 @@
 - (void)navBarRightItemEvent
 {
     WS(weakSelf);
+    if (![self judgeCanUpLoad]) {
+        return;
+    }
     GoodsListController *gct = [[GoodsListController alloc]init];
-    gct.stopUpLoad = YES;
-    gct.callBack = ^(GoodsInfoModel *model){
-        [weakSelf.dataArray addObject:model];
-        [weakSelf.tableView reloadData];
+    gct.callBack = ^(GoodsTemp *model){
+        [weakSelf insertNewGoodsWith:model];
     };
     [self.navigationController pushViewController:gct animated:YES];
 }
@@ -148,41 +145,41 @@
     CGRect kbEndFrm = [noti.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     CGFloat kbHeight =  kbEndFrm.size.height;
-    if (self.addGoodsView.superview) {
-        [UIView animateWithDuration:0.25 animations:^{
-            self.addGoodsView.y = - (kbHeight-addGoodsViewBottom);
-        }];
-    }else if (self.updateGoodsView.superview){
+//    if (self.addGoodsView.superview) {
+//        [UIView animateWithDuration:0.25 animations:^{
+//            self.addGoodsView.y = - (kbHeight-addGoodsViewBottom);
+//        }];
+//    }else if (self.updateGoodsView.superview){
         [UIView animateWithDuration:0.25 animations:^{
             self.updateGoodsView.y = - (kbHeight-addGoodsViewBottom);
         }];
-    }
+//    }
 }
 
 - (void)keyboardWillHide:(NSNotification *)noti
 {
-    if (self.addGoodsView.superview) {
-        self.addGoodsView.goosList.hidden = YES;
-        [UIView animateWithDuration:0.25 animations:^{
-            self.addGoodsView.y = 0;
-        }];
-    }else if (self.updateGoodsView.superview){
+//    if (self.addGoodsView.superview) {
+//        self.addGoodsView.goosList.hidden = YES;
+//        [UIView animateWithDuration:0.25 animations:^{
+//            self.addGoodsView.y = 0;
+//        }];
+//    }else if (self.updateGoodsView.superview){
         self.updateGoodsView.goosList.hidden = YES;
         [UIView animateWithDuration:0.25 animations:^{
             self.updateGoodsView.y = 0;
         }];
-    }
+//    }
 }
 
 #pragma mark - netRequest
 - (void)putGoodsIntoSeverce
 {
     NSMutableArray *dataArray = [NSMutableArray array];
-    for (GoodsInfoModel *model in self.dataArray) {
+    for (GoodsTemp *model in self.dataArray) {
         NSDictionary *dic = [model keyValues];
         [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
         [dataArray addObject:dic];
-        [[GoodsInfoModel getUsingLKDBHelper]insertToDB:model callback:nil];
+        [[GoodsTemp getUsingLKDBHelper]insertToDB:model callback:nil];
     }
 //    if ([ALCommonTool haveNewGoods:dataArray.count]) {
         GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool coverCoodsListSeverse:dataArray]];
@@ -225,16 +222,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    _model = self.dataArray[indexPath.row];
+    if (![self judgeCanUpLoad]) {
+        return;
+    }
     [self.updateGoodsView showAnimate:YES];
-    
-    self.updateGoodsView.goodsImage.image = [UIImage imageFromSeverName:_model.icon];
-    self.updateGoodsView.nameTextField.inputField.text = _model.title;
-    self.updateGoodsView.numberTextField.inputField.text = [NSString stringWithFormat:@"%i",[_model.number intValue]];
-    self.updateGoodsView.priceTextField.inputField.text = [NSString stringWithFormat:@"%g",_model.unit_price/100.0f];
+    self.updateGoodsView.model = self.dataArray[indexPath.row];
 }
 
-#pragma mark - delegate
+#pragma mark - delegate 删除
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
@@ -243,6 +238,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        [[GoodsTemp getUsingLKDBHelper]deleteToDB:self.dataArray[indexPath.row] callback:nil];
         [self.dataArray removeObjectAtIndex:indexPath.row];
         [self.tableView reloadData];
     }
@@ -251,10 +247,9 @@
 #pragma mark -sectionHeader
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    WS(weakSelf);
     GoodsHeader *header = [GoodsHeader loadXibView];
     header.callBack = ^{
-        [weakSelf syChro];
+    
     };
     return header;
 }
@@ -268,27 +263,6 @@
 {
     [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
-
-#pragma mark - sychoro同步
-- (void)syChro
-{
-    [[GoodsInfoModel getUsingLKDBHelper]search:[GoodsInfoModel class] where:nil orderBy:nil offset:0 count:1000 callback:^(NSMutableArray *array) {
-        for (__block GoodsInfoModel *model in array) {
-            if (!model.isSychro) {
-                SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
-                [_btUtil writeFrameToPeripheral:frame completedBlock:^{
-                    model.isSychro = YES;
-                }];
-                [[GoodsInfoModel getUsingLKDBHelper]updateToDB:model where:nil];
-            }
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.dataArray removeAllObjects];
-            [self datas];
-        });
-    }];
-}
-
 #pragma mark -nameChangedEvent
 -  (void)nameChanged:(NSString *)name
 {
@@ -302,32 +276,103 @@
             [arr addObject:temp];
         }
     }
-    self.addGoodsView.dataSource = arr;
+    self.updateGoodsView.dataSource = arr;
 }
 
-#pragma mark - insert goods
-- (void)insertNewGoods
+#pragma mark - insert goods 新增物品
+- (void)insertNewGoodsWith:(GoodsTemp *)model
 {
-    GoodsInfoModel *model = [[GoodsInfoModel alloc]init];
-    model.icon = self.addGoodsView.icon;
-    model.number = @([self.addGoodsView.numberTextField.inputField.text integerValue]);
-    model.title = self.addGoodsView.nameTextField.inputField.text;
-    model.unit_price = (NSInteger)([self.addGoodsView.priceTextField.inputField.text floatValue]*100);
-    model.unit = self.addGoodsView.currentUnit;
-    [[GoodsInfoModel getUsingLKDBHelper]insertToDB:model callback:nil];
-    [self.dataArray addObject:model];
-    [self.tableView reloadData];
-    
-    [self.addGoodsView initilize];
+    if (![self judgeCanUpLoad]) {
+        return;
+    }
+//    [self.progressHud show:YES];
+//    WS(weakSelf);
+//    SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
+//    _btUtil.writeToFrameBlock = ^(BOOL isWrite){
+//        if (!isWrite) {
+//            showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
+//            return;
+//        }
+//        model.isSychro = YES;
+        [self.dataArray addObject:model];
+        [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
+        [self.tableView reloadData];
+//    };
+//    [_btUtil writeFrameToPeripheral:frame];
+//    [self.progressHud hide:YES];
 }
+
 #pragma mark -修改物品
-- (void)updateGoods
+- (void)updateGoodsWithModel:(GoodsTemp *)model
 {
-    _model.title = self.updateGoodsView.nameTextField.inputField.text;
-    _model.number = @([self.updateGoodsView.numberTextField.inputField.text integerValue]);
-    _model.unit_price = [self.updateGoodsView.priceTextField.inputField.text floatValue]*100;
-    _model.unit = self.updateGoodsView.currentUnit;
-    [self.tableView reloadData];
+    if (![self judgeCanUpLoad]) {
+        return;
+    }
+    
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@[@{@"number":model.number},@{@"title":model.title}] orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (array.count) {
+                [MBProgressHUD showError:@"该编号或名称已存在"];
+                return ;
+            }else{
+                [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
+                model.isSychro = NO;
+                [self.tableView reloadData];
+                [self.updateGoodsView hideAnimate:YES];
+            }
+        });
+    }];
+//    SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
+//WS(weakSelf);
+//    __block typeof (GoodsInfoModel *)blockModel = model;
+//    _btUtil.writeToFrameBlock = ^(BOOL isWrite){
+//        if (!isWrite) {
+//            showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
+//            return;
+//        }
+//        model.isSychro = YES;
+//        [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
+//        [self.tableView reloadData];
+//    [self.updateGoodsView hideAnimate:YES];
+//    };
+//    [_btUtil writeFrameToPeripheral:frame];
+}
+
+- (BOOL)judgeCanUpLoad
+{
+    BOOL b = YES;
+//    if ([CsBtUtil getInstance].state < CsScaleStateConnected) {
+//        [MBProgressHUD showError:@"蓝牙未连接，请先连接设备"];
+//        b = NO;
+//    }
+//    
+//    if ([Reachability shareReachAbilty].currentReachabilityStatus == NotReachable) {
+//        [MBProgressHUD showError:@"当前网络不好，请重选网络再试"];
+//        b = NO;
+//    }
+    return b;
+}
+#pragma mark -同步
+- (void)syChrosize
+{
+    WS(weakSelf);
+    for (GoodsTemp *model in self.dataArray) {
+        if (!model.isSychro) {
+            SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
+            __block typeof (GoodsInfoModel *)blockModel = model;
+            _btUtil.writeToFrameBlock = ^(BOOL isWrite){
+                if (!isWrite) {
+                    showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
+                    return;
+                }
+                model.isSychro = YES;
+                [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
+                [self.tableView reloadData];
+                [self.updateGoodsView hideAnimate:YES];
+            };
+            [_btUtil writeFrameToPeripheral:frame];
+        }
+    }
 }
 
 @end

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@interface GoodsAddView : UIView
+@interface GoodsAddView : BaseView
 
 @property (weak, nonatomic) IBOutlet UIImageView *goodsImage;
 @property (weak, nonatomic) IBOutlet ALTextField *nameTextField;
@@ -23,11 +23,13 @@
 @property (nonatomic, readonly) NSString *icon;
 
 
-@property (nonatomic, copy) void(^callBack)(NSInteger );
+@property (nonatomic, strong) GoodsTemp *model;
+@property (nonatomic, copy) void(^callBack)(GoodsTemp  *model);
 
 + (instancetype)loadXibView;
 
 - (void)showAnimate:(BOOL)animate;
+- (void)hideAnimate:(BOOL)animate;
 
 - (void)initilize;
 

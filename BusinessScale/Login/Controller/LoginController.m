@@ -108,6 +108,8 @@
                 model.phone = ((NSDictionary *)data)[@"phone"];
                 model.nickName = ((NSDictionary *)data)[@"nickname"];
                 [AccountTool saveAccount:model];
+                [[NSUserDefaults standardUserDefaults]setObject:_kUIPassword.text forKey:loginPassWord];
+                [[NSUserDefaults standardUserDefaults]synchronize];
                 ALNavigationController *nav = (ALNavigationController *)self.navigationController;
                 if (nav.callBack) {
                     nav.callBack();
@@ -127,14 +129,16 @@
     GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool getGoodsListFromSeverse]];
     [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
         [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-            if (data) {
+            if ([data isKindOfClass:[NSArray class]]) {
                 for (NSDictionary *dic in (NSArray *)data) {
                     GoodsInfoModel *model = [[GoodsInfoModel alloc]init];
+                    model.uid = [AccountTool account].ID;
+                    model.mac = [ScaleTool scale].mac;
                     [model setValuesForKeysWithDictionary:dic];
                     model.unit = [UnitTool unitFromStringSeverce:dic[@"unit"]];
                     [[GoodsInfoModel getUsingLKDBHelper]insertToDB:model callback:nil];
+                    [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
                 }
-                [ALCommonTool saveGoodsCount:[((NSArray *)data) count]];
             }
         }];
     }];

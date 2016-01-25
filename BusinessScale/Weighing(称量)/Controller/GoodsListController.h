@@ -12,6 +12,6 @@
 
 @property (nonatomic, assign) NSNumber *number;
 @property (nonatomic, assign) BOOL stopUpLoad;
-@property (nonatomic, copy) void(^callBack)(GoodsInfoModel *model);
+@property (nonatomic, copy) void(^callBack)(GoodsTemp *model);
 
 @end

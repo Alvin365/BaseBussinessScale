@@ -8,7 +8,13 @@
 
 #import "BaseModel.h"
 
+/**
+ * 商品设置表
+ */
 @interface GoodsInfoModel : BaseModel
+
+@property (nonatomic, copy) NSString *uid; // 用户ID
+@property (nonatomic, copy) NSString *mac; // mac地址
 
 @property (nonatomic, copy) NSString *icon;
 @property (nonatomic, copy) NSString *title;
@@ -19,3 +25,12 @@
 @property (nonatomic, assign) BOOL isSychro; // 是否已经和蓝牙同步
 
 @end
+
+/**
+ * 商品设置临时表(修改后，需要同步的列表)
+ */
+@interface GoodsTemp : GoodsInfoModel
+
+@end
+
+

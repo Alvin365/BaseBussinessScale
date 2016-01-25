@@ -13,16 +13,17 @@
 #import "ContactsIndexsView.h"
 #import "GoodsAddView.h"
 #import "GoodsListHttpTool.h"
+#import <Commercial-Bluetooth/CsBtUtil.h>
 @interface GoodsListController ()<UITableViewDataSource,UITableViewDelegate>
 {
     CGFloat addGoodsViewBottom;
+    CsBtUtil *_btUtil;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) ContactsIndexsView *titlesIndexs;
 @property (nonatomic, strong) GoodsAddView *addGoodsView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
-@property (nonatomic, strong) GoodsInfoModel *model;
 
 @end
 
@@ -34,22 +35,12 @@
         WS(weakSelf);
         _addGoodsView = [GoodsAddView loadXibView];
         _addGoodsView.frame = [UIScreen mainScreen].bounds;
-        _addGoodsView.callBack = ^(NSInteger tag){
-            if (tag == 1002) {
-                [weakSelf insertNewGoods];
-            }
+        _addGoodsView.callBack = ^(GoodsInfoModel *model){
+            [weakSelf insertNewGoodsWithModel:model];
         };
     }
     return _addGoodsView;
 }
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    if (self.stopUpLoad) return;
-    [self putGoodsIntoSeverce];
-}
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -59,15 +50,14 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    _btUtil = [CsBtUtil getInstance];
 }
 
 - (void)buildNavBarItems
 {
     WS(weakSelf);
     self.title = @"商品列表";
-//    [self addNavRightBarBtn:@"icon_add" selectorBlock:^{
-//        [weakSelf.addGoodsView showAnimate:YES];
-//    }];
     _titlesIndexs = [[ContactsIndexsView alloc]initWithFrame:CGRectMake(screenWidth-30*ALScreenScalWidth,0, 30*ALScreenScalWidth, (screenHeight-64))];
     _titlesIndexs.callBack = ^(NSString *name){
         if (weakSelf.tableView.contentSize.height > weakSelf.tableView.frame.size.height)
@@ -139,29 +129,6 @@
     }];
 }
 
-#pragma mark - netRequest
-- (void)putGoodsIntoSeverce
-{
-    [[GoodsInfoModel getUsingLKDBHelper]search:[GoodsInfoModel class] where:nil orderBy:nil offset:0 count:1000 callback:^(NSMutableArray *array) {
-        NSMutableArray *dataArray = [NSMutableArray array];
-        for (GoodsInfoModel *model in array) {
-            NSDictionary *dic = [model keyValues];
-            [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
-            [dataArray addObject:dic];
-        }
-        GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool coverCoodsListSeverse:dataArray]];
-        [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-                    if (data) {
-                        
-                    }
-                }];
-            });
-        }];
-    }];
-}
-
 #pragma mark - UITableViewDataSource&&Delegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -196,12 +163,20 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    _model = [[self.dataArray objectAtIndex:(indexPath.section)] objectAtIndex:indexPath.row];
-    [self.addGoodsView showAnimate:YES];
+    __block GoodsTemp *model = [[self.dataArray objectAtIndex:(indexPath.section)] objectAtIndex:indexPath.row];
+    void (^block)() = ^{
+        [self.addGoodsView showAnimate:YES];
+        self.addGoodsView.model = model;
+    };
     
-    self.addGoodsView.goodsImage.image = [UIImage imageFromSeverName:_model.icon];
-    self.addGoodsView.nameTextField.inputField.text = _model.title;
-    self.addGoodsView.numberTextField.inputField.text = [NSString stringWithFormat:@"%i",[_number intValue]];
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@{@"title":model.title} orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
+        if (array.count) {
+            model = array[0];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            block();
+        });
+    }];
 }
 
 #pragma mark -sectionHeader
@@ -236,20 +211,23 @@
 }
 
 #pragma mark - GoodInfoModel的本地服务器表里插入新数据
-- (void)insertNewGoods
+- (void)insertNewGoodsWithModel:(GoodsTemp *)model
 {
-    _model.number = _number;
-    _model.unit = self.addGoodsView.currentUnit;
-    _model.unit_price = (NSInteger)([self.addGoodsView.priceTextField.inputField.text floatValue]*100);
-    
-    [[GoodsInfoModel getUsingLKDBHelper]insertToDB:_model callback:^(BOOL result) {
-        
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@[@{@"number":model.number},@{@"title":model.title}] orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (array.count) {
+                [MBProgressHUD showError:@"该编号或名称已存在"];
+                return ;
+            }else{
+                if (self.callBack) {
+                    self.callBack(model);
+                }
+                [self.addGoodsView hideAnimate:YES];
+                [self.addGoodsView initilize];
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+        });
     }];
-    if (self.callBack) {
-        self.callBack(_model);
-    }
-    [self.addGoodsView initilize];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)dealloc

@@ -12,12 +12,12 @@
 
 + (NSString *)getTableName
 {
-    return [NSString stringWithFormat:@"GoodsList%@",[AccountTool account].ID];
+    return [NSString stringWithFormat:@"GoodsList"];
 }
 
 + (NSArray *)getPrimaryKeyUnionArray
 {
-    return @[@"title"];
+    return @[@"title",@"number"];
 }
 
 +(NSDictionary *)getTableMapping
@@ -28,6 +28,17 @@
 + (void)initialize
 {
     [self setTableColumnName:@"isSychro" bindingPropertyName:@"isSychro"];
+    [self setTableColumnName:@"uid" bindingPropertyName:@"uid"];
+    [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
+}
+
+@end
+
+@implementation GoodsTemp
+
++ (NSString *)getTableName
+{
+    return [NSString stringWithFormat:@"GoodsTemp"];
 }
 
 @end

@@ -18,7 +18,7 @@
                         <constraint firstAttribute="height" constant="21" id="TJg-nu-RC0"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="同步" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Aen-00-u11">
@@ -44,7 +44,7 @@
                                 <constraint firstAttribute="height" constant="21" id="8rw-We-VSZ"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="编号" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0F8-wQ-1jI">
@@ -55,7 +55,7 @@
                                 <constraint firstAttribute="height" constant="21" id="wnd-Zt-ZvR"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="单价" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TEC-XJ-VSe">
@@ -66,7 +66,7 @@
                                 <constraint firstAttribute="height" constant="21" id="jTi-GF-xWD"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="名称" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XS9-Td-yby">
@@ -77,7 +77,7 @@
                                 <constraint firstAttribute="height" constant="21" id="T3v-zx-KKq"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
@@ -100,6 +100,7 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="Aen-00-u11" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="22" id="7aT-IQ-WNd"/>
+                <constraint firstItem="Dnz-Fq-OZ2" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="76" id="Kjp-uC-74A"/>
                 <constraint firstItem="Dnz-Fq-OZ2" firstAttribute="top" secondItem="ekB-a5-UfR" secondAttribute="bottom" constant="25" id="Nxo-bf-Ply"/>
                 <constraint firstAttribute="trailing" secondItem="Dnz-Fq-OZ2" secondAttribute="trailing" id="Uq2-a5-eRc"/>
                 <constraint firstItem="ekB-a5-UfR" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" constant="-10" id="WHW-DJ-fDS"/>
@@ -112,6 +113,11 @@
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="Nxo-bf-Ply"/>
+                </mask>
+            </variation>
             <connections>
                 <outlet property="bottomView" destination="Dnz-Fq-OZ2" id="RTs-Xc-f1n"/>
                 <outlet property="iconL" destination="6Cq-5C-YTL" id="24E-rl-3wL"/>
