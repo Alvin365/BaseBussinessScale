@@ -23,8 +23,8 @@
 @property (nonatomic, readonly) NSString *icon;
 
 
-@property (nonatomic, strong) GoodsTempList *model;
-@property (nonatomic, copy) void(^callBack)(GoodsTempList  *model);
+@property (nonatomic, strong) GoodsTemp *model;
+@property (nonatomic, copy) void(^callBack)(GoodsTemp  *model);
 
 + (instancetype)loadXibView;
 

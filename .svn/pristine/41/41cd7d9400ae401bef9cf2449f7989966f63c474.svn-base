@@ -16,7 +16,7 @@
     BOOL _animate;
     UIImage *newHeaderImage;
     WeightUnit _currentUnit;
-    GoodsTempList *_model;
+    GoodsTemp *_model;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *backGroudView;
@@ -138,10 +138,6 @@
 {
     if (sender.tag>=1001) {
         if (sender.tag == 1002) {
-//            if (self.numberTextField.inputField.text.length>4) {
-//                [MBProgressHUD showMessage:@"编号不能超过4位"];
-//                return;
-//            }
             if ([self juddgeEmpty]) {
                 [MBProgressHUD showMessage:@"请填写完整信息和菜品头像"];
                 return;
@@ -363,29 +359,27 @@
     }];
 }
 
-- (void)setModel:(GoodsTempList *)model
+- (void)setModel:(GoodsTemp *)model
 {
     _model = model;
     [self.goodsImage setImageWithIcon:_model.icon];
     _icon = model.icon;
     self.nameTextField.inputField.text = _model.title;
-    self.numberTextField.inputField.text = [NSString stringWithFormat:@"%d",(int)_model.number];
+    self.numberTextField.inputField.text = [NSString stringWithFormat:@"%i",[_model.number intValue]];
     self.priceTextField.inputField.text = [NSString stringWithFormat:@"%g",_model.unit_price/100.0f];
     if (model.unit) {
         self.currentUnit = _model.unit;
     }
 }
 
-- (GoodsTempList *)model
+- (GoodsInfoModel *)model
 {
     if (!_model) {
-        _model = [[GoodsTempList alloc]init];
+        _model = [[GoodsInfoModel alloc]init];
     }
     _model.icon = self.icon;
     _model.title = self.nameTextField.inputField.text;
-    NSString *number = [NSString stringWithFormat:@"%04d",(int)[self.numberTextField.inputField.text integerValue]];
-    _model.number = [number integerValue];
-    
+    _model.number = @([self.numberTextField.inputField.text integerValue]);
     _model.unit_price = [self.priceTextField.inputField.text floatValue]*100;
     _model.unit = self.currentUnit;
     return _model;

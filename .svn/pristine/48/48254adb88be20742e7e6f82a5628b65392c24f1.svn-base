@@ -35,7 +35,7 @@
         WS(weakSelf);
         _addGoodsView = [GoodsAddView loadXibView];
         _addGoodsView.frame = [UIScreen mainScreen].bounds;
-        _addGoodsView.callBack = ^(GoodsTempList *model){
+        _addGoodsView.callBack = ^(GoodsInfoModel *model){
             [weakSelf insertNewGoodsWithModel:model];
         };
     }
@@ -163,21 +163,17 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    __block GoodsTempList *model = [[self.dataArray objectAtIndex:(indexPath.section)] objectAtIndex:indexPath.row];
+    __block GoodsTemp *model = [[self.dataArray objectAtIndex:(indexPath.section)] objectAtIndex:indexPath.row];
     void (^block)() = ^{
         [self.addGoodsView showAnimate:YES];
         self.addGoodsView.model = model;
     };
     
-    [[GoodsTempList getUsingLKDBHelper]search:[GoodsTempList class] where:@{@"title":model.title} orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@{@"title":model.title} orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
         if (array.count) {
             model = array[0];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (array.count) {
-                [MBProgressHUD showMessage:@"该商品已存在"];
-                return ;
-            }
             block();
         });
     }];
@@ -215,32 +211,23 @@
 }
 
 #pragma mark - GoodInfoModel的本地服务器表里插入新数据
-- (void)insertNewGoodsWithModel:(GoodsTempList *)model
+- (void)insertNewGoodsWithModel:(GoodsTemp *)model
 {
-    __block BOOL isExist = NO;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        for (GoodsTempList *temp in self.array) {
-            if (model.number == temp.number || [temp.title isEqualToString:model.title]) {
-                isExist = YES;
-                break;
-            }
-        }
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@[@{@"number":model.number},@{@"title":model.title}] orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (isExist) {
-                [MBProgressHUD showError:@"该编号已存在,请修改编号"];
+            if (array.count) {
+                [MBProgressHUD showError:@"该编号或名称已存在"];
+                return ;
             }else{
-                [[GoodsTempList getUsingLKDBHelper]insertToDB:model callback:^(BOOL result) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (self.callBack) {
-                            self.callBack(model);
-                        }
-                        [self.addGoodsView hideAnimate:YES];
-                        [self.navigationController popViewControllerAnimated:YES];
-                    });
-                }];
+                if (self.callBack) {
+                    self.callBack(model);
+                }
+                [self.addGoodsView hideAnimate:YES];
+                [self.addGoodsView initilize];
+                [self.navigationController popViewControllerAnimated:YES];
             }
         });
-    });
+    }];
 }
 
 - (void)dealloc

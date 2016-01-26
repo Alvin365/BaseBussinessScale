@@ -10,7 +10,8 @@
 
 @interface GoodsListController : BaseViewController
 
-@property (nonatomic, copy) NSArray *array;
-@property (nonatomic, copy) void(^callBack)(GoodsTempList *model);
+@property (nonatomic, assign) NSNumber *number;
+@property (nonatomic, assign) BOOL stopUpLoad;
+@property (nonatomic, copy) void(^callBack)(GoodsTemp *model);
 
 @end

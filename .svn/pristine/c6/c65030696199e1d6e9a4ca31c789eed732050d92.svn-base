@@ -39,16 +39,37 @@
     return _dataArray;
 }
 
+//- (GoodsAddView *)addGoodsView
+//{
+//    if (!_addGoodsView) {
+//        WS(weakSelf);
+//        _addGoodsView = [GoodsAddView loadXibView];
+//        _addGoodsView.frame = [UIScreen mainScreen].bounds;
+//        _addGoodsView.nameTextField.textChanged = ^(NSString *name){
+//            [weakSelf nameChanged:name];
+//        };
+//        _addGoodsView.callBack = ^(NSInteger tag){
+//            if (tag == 1002) {
+//                if (![weakSelf judgeCanUpLoad]) {
+//                    return;
+//                }
+//                [weakSelf insertNewGoods];
+//            }
+//        };
+//    }
+//    return _addGoodsView;
+//}
+
 - (GoodsAddView *)updateGoodsView
 {
     if (!_updateGoodsView) {
         WS(weakSelf);
         _updateGoodsView = [GoodsAddView loadXibView];
         _updateGoodsView.frame = [UIScreen mainScreen].bounds;
-//        _updateGoodsView.nameTextField.textChanged = ^(NSString *name){
-//            [weakSelf nameChanged:name];
-//        };
-        _updateGoodsView.callBack = ^(GoodsTempList *model){
+        _updateGoodsView.nameTextField.textChanged = ^(NSString *name){
+            [weakSelf nameChanged:name];
+        };
+        _updateGoodsView.callBack = ^(GoodsInfoModel *model){
             if (![weakSelf judgeCanUpLoad]) {
                 return ;
             }
@@ -56,6 +77,11 @@
         };
     }
     return _updateGoodsView;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
 }
 
 - (void)viewDidLoad {
@@ -92,11 +118,7 @@
 
 - (void)datas
 {
-    NSMutableDictionary *sqlDic = [NSMutableDictionary dictionary];
-    if ([AccountTool account].ID) [sqlDic setObject:[AccountTool account].ID forKey:@"uid"];
-    if ([ScaleTool scale].mac) [sqlDic setObject:[ScaleTool scale].mac forKey:@"mac"];
-    [self.dataArray removeAllObjects];
-    [[GoodsTempList getUsingLKDBHelper]search:[GoodsTempList class] where:nil orderBy:@"number" offset:0 count:0 callback:^(NSMutableArray *array) {
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@{@"uid":[AccountTool account].ID,@"mac":[ScaleTool scale].mac} orderBy:nil offset:0 count:1000 callback:^(NSMutableArray *array) {
         [self.dataArray addObjectsFromArray:array];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
@@ -111,8 +133,7 @@
         return;
     }
     GoodsListController *gct = [[GoodsListController alloc]init];
-    gct.array = [self.dataArray copy];
-    gct.callBack = ^(GoodsTempList *model){
+    gct.callBack = ^(GoodsTemp *model){
         [weakSelf insertNewGoodsWith:model];
     };
     [self.navigationController pushViewController:gct animated:YES];
@@ -154,11 +175,11 @@
 - (void)putGoodsIntoSeverce
 {
     NSMutableArray *dataArray = [NSMutableArray array];
-    for (GoodsTempList *model in self.dataArray) {
+    for (GoodsTemp *model in self.dataArray) {
         NSDictionary *dic = [model keyValues];
         [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
         [dataArray addObject:dic];
-        [[GoodsTempList getUsingLKDBHelper]insertToDB:model callback:nil];
+        [[GoodsTemp getUsingLKDBHelper]insertToDB:model callback:nil];
     }
 //    if ([ALCommonTool haveNewGoods:dataArray.count]) {
         GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool coverCoodsListSeverse:dataArray]];
@@ -172,30 +193,6 @@
             });
         }];
 //    }
-}
-
-- (void)postListWithArray:(NSArray *)syChroArray
-{
-    NSMutableArray *arr = [NSMutableArray array];
-    for (GoodsTempList *model in syChroArray) {
-        NSDictionary *dic = [model keyValues];
-        [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
-        [arr addObject:dic];
-    }
-    [self.progressHud show:YES];
-    GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool postCoodsListSeverse:arr]];
-    [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-                if (data) {
-                    for (GoodsTempList *model in syChroArray) {
-                        model.isSychro = YES;
-                    }
-                    [self.tableView reloadData];
-                }
-            }];
-        });
-    }];
 }
 
 #pragma mark -UITableViewDataSource
@@ -241,7 +238,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [[GoodsTempList getUsingLKDBHelper]deleteToDB:self.dataArray[indexPath.row] callback:nil];
+        [[GoodsTemp getUsingLKDBHelper]deleteToDB:self.dataArray[indexPath.row] callback:nil];
         [self.dataArray removeObjectAtIndex:indexPath.row];
         [self.tableView reloadData];
     }
@@ -250,10 +247,9 @@
 #pragma mark -sectionHeader
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    WS(weakSelf);
     GoodsHeader *header = [GoodsHeader loadXibView];
     header.callBack = ^{
-        [weakSelf syChrosize];
+    
     };
     return header;
 }
@@ -284,43 +280,48 @@
 }
 
 #pragma mark - insert goods 新增物品
-- (void)insertNewGoodsWith:(GoodsTempList *)model
+- (void)insertNewGoodsWith:(GoodsTemp *)model
 {
     if (![self judgeCanUpLoad]) {
         return;
     }
-    [self datas];
+//    [self.progressHud show:YES];
+//    WS(weakSelf);
+//    SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
+//    _btUtil.writeToFrameBlock = ^(BOOL isWrite){
+//        if (!isWrite) {
+//            showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
+//            return;
+//        }
+//        model.isSychro = YES;
+        [self.dataArray addObject:model];
+        [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
+        [self.tableView reloadData];
+//    };
+//    [_btUtil writeFrameToPeripheral:frame];
+//    [self.progressHud hide:YES];
 }
 
 #pragma mark -修改物品
-- (void)updateGoodsWithModel:(GoodsTempList *)model
+- (void)updateGoodsWithModel:(GoodsTemp *)model
 {
     if (![self judgeCanUpLoad]) {
         return;
     }
-    [self.dataArray removeObject:model];
-    __block BOOL isExist = NO;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        for (GoodsTempList *temp in self.dataArray) {
-            if (model.number == temp.number || [temp.title isEqualToString:model.title]) {
-                isExist = YES;
-                break;
-            }
-        }
+    
+    [[GoodsTemp getUsingLKDBHelper]search:[GoodsTemp class] where:@[@{@"number":model.number},@{@"title":model.title}] orderBy:nil offset:0 count:1 callback:^(NSMutableArray *array) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (isExist) {
+            if (array.count) {
                 [MBProgressHUD showError:@"该编号或名称已存在"];
-                [self datas];
+                return ;
             }else{
-                [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
+                [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
                 model.isSychro = NO;
-                [self datas];
+                [self.tableView reloadData];
                 [self.updateGoodsView hideAnimate:YES];
             }
         });
-    });
-    
-    
+    }];
 //    SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
 //WS(weakSelf);
 //    __block typeof (GoodsInfoModel *)blockModel = model;
@@ -330,7 +331,7 @@
 //            return;
 //        }
 //        model.isSychro = YES;
-//        [[GoodsTempList getUsingLKDBHelper]insertToDB:model];
+//        [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
 //        [self.tableView reloadData];
 //    [self.updateGoodsView hideAnimate:YES];
 //    };
@@ -355,26 +356,23 @@
 - (void)syChrosize
 {
     WS(weakSelf);
-    NSMutableArray *syChroArray = [NSMutableArray array];
-    for (GoodsTempList *model in self.dataArray) {
+    for (GoodsTemp *model in self.dataArray) {
         if (!model.isSychro) {
-//            SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
-//            __block typeof (GoodsInfoModel *)blockModel = model;
-//            _btUtil.writeToFrameBlock = ^(BOOL isWrite){
-//                if (!isWrite) {
-//                    showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
-//                    return;
-//                }
-//                model.isSychro = YES;
-//                [[GoodsTempList getUsingLKDBHelper]insertToDB:model];
-//                [self.tableView reloadData];
-//                [self.updateGoodsView hideAnimate:YES];
-//            };
-//            [_btUtil writeFrameToPeripheral:frame];
-            [syChroArray addObject:model];
+            SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
+            __block typeof (GoodsInfoModel *)blockModel = model;
+            _btUtil.writeToFrameBlock = ^(BOOL isWrite){
+                if (!isWrite) {
+                    showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
+                    return;
+                }
+                model.isSychro = YES;
+                [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
+                [self.tableView reloadData];
+                [self.updateGoodsView hideAnimate:YES];
+            };
+            [_btUtil writeFrameToPeripheral:frame];
         }
     }
-    [self postListWithArray:syChroArray];
 }
 
 @end

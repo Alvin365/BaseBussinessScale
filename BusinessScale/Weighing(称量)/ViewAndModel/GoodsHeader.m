@@ -46,7 +46,7 @@
     topL.backgroundColor = separateLabelColor;
     [self.bottomView addSubview:topL];
     
-    UILabel *bottomL = [[UILabel alloc]initWithFrame:CGRectMake(0, 54-ALSeparaLineHeight, screenWidth, ALSeparaLineHeight)];
+    UILabel *bottomL = [[UILabel alloc]initWithFrame:CGRectMake(0, 130-ALSeparaLineHeight, screenWidth, ALSeparaLineHeight)];
     bottomL.backgroundColor = separateLabelColor;
     [self addSubview:bottomL];
     

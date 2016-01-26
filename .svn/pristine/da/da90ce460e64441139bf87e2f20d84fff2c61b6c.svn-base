@@ -137,14 +137,7 @@
                     [model setValuesForKeysWithDictionary:dic];
                     model.unit = [UnitTool unitFromStringSeverce:dic[@"unit"]];
                     [[GoodsInfoModel getUsingLKDBHelper]insertToDB:model callback:nil];
-                    
-                    GoodsTempList *tempModel = [[GoodsTempList alloc]init];
-                    tempModel.uid = [AccountTool account].ID;
-                    tempModel.mac = [ScaleTool scale].mac;
-                    [tempModel setValuesForKeysWithDictionary:dic];
-                    tempModel.unit = [UnitTool unitFromStringSeverce:dic[@"unit"]];
-                    
-                    [[GoodsTempList getUsingLKDBHelper]insertToDB:tempModel];
+                    [[GoodsTemp getUsingLKDBHelper]insertToDB:model];
                 }
             }
         }];
