@@ -59,6 +59,6 @@
 #define TestServerce @"https://www.tookok.cn:8443/s0/"
 #define ProServerce  @""
 /** 当前使用的服务器*/
-#define userServerce DevServerce
+#define userServerce TestServerce
 
 #endif /* Common_h */
