@@ -73,7 +73,7 @@
         _dataArray = [NSMutableArray array];
     }
     [_dataArray removeAllObjects];
-    [_dataArray addObject:@[[[SettingViewControllerModel alloc]initWithLabel:@"我的账号" className:@"MyAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"我的设备" className:@"MyDeviceController"],[[SettingViewControllerModel alloc]initWithLabel:@"单位设置" className:@"cannotFindxxx"],[[SettingViewControllerModel alloc]initWithLabel:@"商品设定" className:@"GoodsSettingViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"支付账号设定" className:@"PayAccountViewController"]]];
+    [_dataArray addObject:@[[[SettingViewControllerModel alloc]initWithLabel:@"我的账号" className:@"MyAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"我的设备" className:@"MyDeviceController"],[[SettingViewControllerModel alloc]initWithLabel:@"单位设置" className:@"cannotFindxxx"],[[SettingViewControllerModel alloc]initWithLabel:@"商品设定" className:@"GoodsSettingViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"支付账号设定" className:@"PayAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"PIN码设定" className:@"SetPinningController"]]];
     [_dataArray addObject:@[[[SettingViewControllerModel alloc]initWithLabel:@"意见反馈" className:@"SuggesstViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"隐私和协议" className:@"LienceController"]]];
 }
 
@@ -136,17 +136,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    if (![AccountTool account].token.length) {
-        YSAlertView *alert = [[YSAlertView alloc]initWithTitle:@"" message:@"请先登录" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定" click:^(NSInteger index) {
-            if (index) {
-                ALLogonViewController *ctl = [[ALLogonViewController alloc]initWithNibName:@"LogonController" bundle:nil];
-                ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:ctl];
-                [self presentViewController:nav animated:YES completion:nil];
-            }
-        }];
-        [alert show];
-        return;
-    }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSArray *arr = self.dataArray[indexPath.section];
         if (!indexPath.section && indexPath.row==2) return;

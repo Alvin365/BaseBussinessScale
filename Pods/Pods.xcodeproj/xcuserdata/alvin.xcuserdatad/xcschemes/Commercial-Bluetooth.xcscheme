@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '8E1D3FB9AE8A0827E79788C8'
+               BlueprintIdentifier = 'E058E3DC19ADE898CFFA5796'
                BlueprintName = 'Commercial-Bluetooth'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libCommercial-Bluetooth.a'>

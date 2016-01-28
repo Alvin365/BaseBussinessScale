@@ -18,7 +18,7 @@
 /**
  * 合并服务器保存的物品表 Post
  */
-+ (ALRequestParam *)postCoodsListSeverse:(NSArray *)body;
++ (ALRequestParam *)postCoodsListSeverse:(NSDictionary *)body;
 
 /**
  * 下载服务器保存的物品表

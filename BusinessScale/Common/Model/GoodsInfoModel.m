@@ -32,17 +32,6 @@
     [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
 }
 
-+(void)columnAttributeWithProperty:(LKDBProperty *)property
-{
-    if([property.propertyName isEqualToString:@"uid"])
-    {
-        property.defaultValue = [AccountTool account].ID;
-    }
-    else if([property.propertyName isEqualToString:@"mac"])
-    {
-        property.defaultValue = [ScaleTool scale].mac;
-    }
-}
 
 @end
 
@@ -68,18 +57,6 @@
     [self setTableColumnName:@"isSychro" bindingPropertyName:@"isSychro"];
     [self setTableColumnName:@"uid" bindingPropertyName:@"uid"];
     [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
-}
-
-+(void)columnAttributeWithProperty:(LKDBProperty *)property
-{
-    if([property.sqlColumnName isEqualToString:@"uid"])
-    {
-        property.defaultValue = [AccountTool account].ID;
-    }
-    else if([property.sqlColumnName isEqualToString:@"mac"])
-    {
-        property.defaultValue = [ScaleTool scale].mac;
-    }
 }
 
 @end

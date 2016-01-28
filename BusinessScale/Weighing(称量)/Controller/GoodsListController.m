@@ -113,19 +113,16 @@
     CGRect kbEndFrm = [noti.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     CGFloat kbHeight =  kbEndFrm.size.height;
-    CGFloat adjustH = screenHeight==480?50:0;
-    self.addGoodsView.contentViewBottom.constant = kbHeight-adjustH;
-    self.addGoodsView.contentViewTop.constant = 2*addGoodsViewBottom-kbHeight+adjustH;
     [UIView animateWithDuration:0.25 animations:^{
-        [self.addGoodsView layoutIfNeeded];
+        self.addGoodsView.y = - (kbHeight-addGoodsViewBottom);
     }];
 }
 
 - (void)keyboardWillHide:(NSNotification *)noti
 {
-    self.addGoodsView.contentViewBottom.constant = self.addGoodsView.contentViewTop.constant = addGoodsViewBottom;
+    self.addGoodsView.goosList.hidden = YES;
     [UIView animateWithDuration:0.25 animations:^{
-        [self.addGoodsView layoutIfNeeded];
+        self.addGoodsView.y = 0;
     }];
 }
 
@@ -229,15 +226,13 @@
             if (isExist) {
                 [MBProgressHUD showError:@"该编号已存在,请修改编号"];
             }else{
-                [[GoodsTempList getUsingLKDBHelper]insertToDB:model callback:^(BOOL result) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (self.callBack) {
-                            self.callBack(model);
-                        }
-                        [self.addGoodsView hideAnimate:YES];
-                        [self.navigationController popViewControllerAnimated:YES];
-                    });
-                }];
+                
+                [[GoodsTempList getUsingLKDBHelper]insertToDB:model];
+                if (self.callBack) {
+                    self.callBack(model);
+                }
+                [self.addGoodsView hideAnimate:YES];
+                [self.navigationController popViewControllerAnimated:YES];
             }
         });
     });

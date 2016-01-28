@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SetPinningController">
+            <connections>
+                <outlet property="pinText" destination="mpZ-nW-mVj" id="txP-T8-Kgg"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mpZ-nW-mVj">
+                    <rect key="frame" x="100" y="30" width="255" height="40"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="5VD-mw-EVi"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="设置Pin码" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Yp-DH-m1T">
+                    <rect key="frame" x="8" y="40" width="75" height="21"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KXx-Kt-n6B">
+                    <rect key="frame" x="38" y="142" width="300" height="50"/>
+                    <animations/>
+                    <color key="backgroundColor" red="1" green="0.31547068" blue="0.24645448980000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="300" id="a2D-yv-4iD"/>
+                        <constraint firstAttribute="height" constant="50" id="kE1-7k-1ID"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <state key="normal" title="确定">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="btnClick:" destination="-1" eventType="touchUpInside" id="nWy-np-om6"/>
+                    </connections>
+                </button>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="KXx-Kt-n6B" firstAttribute="top" secondItem="mpZ-nW-mVj" secondAttribute="bottom" constant="72" id="0px-QK-jhF"/>
+                <constraint firstItem="4Yp-DH-m1T" firstAttribute="centerY" secondItem="mpZ-nW-mVj" secondAttribute="centerY" id="FSk-wF-sFc"/>
+                <constraint firstItem="4Yp-DH-m1T" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="PEP-mk-9aq"/>
+                <constraint firstAttribute="trailing" secondItem="mpZ-nW-mVj" secondAttribute="trailing" constant="20" id="d4C-fD-18a"/>
+                <constraint firstItem="KXx-Kt-n6B" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="qSI-mB-aYH"/>
+                <constraint firstItem="mpZ-nW-mVj" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="100" id="r6m-jv-vcy"/>
+                <constraint firstItem="mpZ-nW-mVj" firstAttribute="leading" secondItem="4Yp-DH-m1T" secondAttribute="trailing" constant="70" id="u6D-IN-EuJ"/>
+                <constraint firstItem="mpZ-nW-mVj" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="30" id="z4n-QS-veg"/>
+            </constraints>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="u6D-IN-EuJ"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="259.5" y="262.5"/>
+        </view>
+    </objects>
+</document>

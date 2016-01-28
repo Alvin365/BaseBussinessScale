@@ -11,7 +11,7 @@
 
 @interface SUPRespFrame : Frame
 
-@property (assign, nonatomic) int productId;
+@property (assign, nonatomic) Byte xorValue;
 @property (assign, nonatomic) BOOL success;
 
 @end

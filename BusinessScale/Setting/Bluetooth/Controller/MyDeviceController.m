@@ -66,6 +66,7 @@
 -(IBAction)unboundDeviceClick:(id)sender {
     [LocalDataTool removeDocumAtPath:@"scale.data"];
     [[CsBtUtil getInstance] disconnectWithBt];
+    [CsBtCommon clearBoundMac];
     [[CsBtUtil getInstance]stopScanBluetoothDevice];
     [MBProgressHUD showSuccess:@"解绑成功" compleBlock:^{
         [self.navigationController popToRootViewControllerAnimated:YES];

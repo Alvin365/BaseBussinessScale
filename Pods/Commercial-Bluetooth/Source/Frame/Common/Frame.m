@@ -46,10 +46,10 @@
             return nil;
         
         }
-        else if(frameByte[2] != data.length - 4){
-            NSLog(@"FRAME ERROR : 数据长度不匹配");
-            return nil;
-        }
+//        else if(frameByte[2] != data.length - 4){
+//            NSLog(@"FRAME ERROR : 数据长度不匹配");
+//            return nil;
+//        }
         
         // 对帧数据的一些基础属性进行赋值
         _startByte = (Byte)0xCA; //帧头

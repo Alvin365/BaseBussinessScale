@@ -388,6 +388,8 @@
     
     _model.unit_price = [self.priceTextField.inputField.text floatValue]*100;
     _model.unit = self.currentUnit;
+    _model.mac = [ScaleTool scale].mac;
+    _model.uid = [AccountTool account].ID;
     return _model;
 }
 

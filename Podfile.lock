@@ -40,7 +40,7 @@ PODS:
   - FMDB/common (2.5)
   - FMDB/standard (2.5):
     - FMDB/common
-  - LKDBHelper (HEAD based on 2.1.7):
+  - LKDBHelper (HEAD based on 2.1.8):
     - FMDB
   - MBProgressHUD (0.9.1)
   - SDWebImage (3.7.3):
@@ -65,14 +65,14 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Commercial-Bluetooth:
-    :commit: ba134d9b3b9e489930dd3838ba0e1c863d879384
+    :commit: a6bedda48826ccfa4d918d03c8e6f7326ff858b6
     :git: git@192.168.0.90:zhanglh/Commercial-Bluetooth.git
 
 SPEC CHECKSUMS:
   AFNetworking: 20d8749e03e45f1e5c046ad0b647e0b07bcdd91f
   Commercial-Bluetooth: 49b9936fec124df6f0c6ecd958acfab6db299db8
   FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
-  LKDBHelper: 9f2227e47b3c9b7f177ed2f6312367f937204c14
+  LKDBHelper: 1b55f67e44f34af8828b31aa36b36141fdde03a8
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   ZXingObjC: bf15b3814f7a105b6d99f47da2333c93a063650a

@@ -22,7 +22,7 @@
     return p;
 }
 
-+ (ALRequestParam *)postCoodsListSeverse:(NSArray *)body;
++ (ALRequestParam *)postCoodsListSeverse:(NSDictionary *)body;
 {
     ALRequestParam *p = [[ALRequestParam alloc]init];
     [p addHeader:[AccountTool account].token forKey:@"cs-token"];

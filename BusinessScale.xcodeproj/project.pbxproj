@@ -12,6 +12,8 @@
 		E12F186E1C34C81700F5BA67 /* NSData+ALAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F186B1C34C81700F5BA67 /* NSData+ALAdditions.m */; };
 		E12F186F1C34C81700F5BA67 /* NSObject+ALAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F186D1C34C81700F5BA67 /* NSObject+ALAdditions.m */; };
 		E12F18721C34C91900F5BA67 /* ALWorkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E12F18711C34C91900F5BA67 /* ALWorkRequest.m */; };
+		E12FB2791C59B6CB00A6D423 /* SetPinningController.m in Sources */ = {isa = PBXBuildFile; fileRef = E12FB2771C59B6CB00A6D423 /* SetPinningController.m */; };
+		E12FB27A1C59B6CB00A6D423 /* SetPinningController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E12FB2781C59B6CB00A6D423 /* SetPinningController.xib */; };
 		E144E3931C22AFDF00701154 /* RecordHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = E144E3921C22AFDE00701154 /* RecordHeader.m */; };
 		E144E3951C22B00300701154 /* RecordHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E144E3941C22B00300701154 /* RecordHeader.xib */; };
 		E146F81A1C44E9B200E14EEA /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E146F8191C44E9B200E14EEA /* Launch Screen.storyboard */; };
@@ -1266,6 +1268,9 @@
 		E12F186D1C34C81700F5BA67 /* NSObject+ALAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ALAdditions.m"; sourceTree = "<group>"; };
 		E12F18701C34C91900F5BA67 /* ALWorkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALWorkRequest.h; sourceTree = "<group>"; };
 		E12F18711C34C91900F5BA67 /* ALWorkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALWorkRequest.m; sourceTree = "<group>"; };
+		E12FB2761C59B6CB00A6D423 /* SetPinningController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetPinningController.h; sourceTree = "<group>"; };
+		E12FB2771C59B6CB00A6D423 /* SetPinningController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetPinningController.m; sourceTree = "<group>"; };
+		E12FB2781C59B6CB00A6D423 /* SetPinningController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SetPinningController.xib; sourceTree = "<group>"; };
 		E144E3911C22AFDE00701154 /* RecordHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordHeader.h; sourceTree = "<group>"; };
 		E144E3921C22AFDE00701154 /* RecordHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordHeader.m; sourceTree = "<group>"; };
 		E144E3941C22B00300701154 /* RecordHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordHeader.xib; sourceTree = "<group>"; };
@@ -4350,6 +4355,9 @@
 				E146F84E1C48DECC00E14EEA /* ALResetPwdController.xib */,
 				E1A00E171C4F8133005BA6A2 /* SuggesstViewController.h */,
 				E1A00E181C4F8133005BA6A2 /* SuggesstViewController.m */,
+				E12FB2761C59B6CB00A6D423 /* SetPinningController.h */,
+				E12FB2771C59B6CB00A6D423 /* SetPinningController.m */,
+				E12FB2781C59B6CB00A6D423 /* SetPinningController.xib */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -4689,6 +4697,7 @@
 				E1EEBD1D1C210EF700551A5E /* palletCell.xib in Resources */,
 				E1E871941C3268CF00EBA227 /* cn_img510.png in Resources */,
 				E1E8727C1C3268CF00EBA227 /* cn_img766.png in Resources */,
+				E12FB27A1C59B6CB00A6D423 /* SetPinningController.xib in Resources */,
 				E1E872791C3268CF00EBA227 /* cn_img761.png in Resources */,
 				E1E8713B1C3268CF00EBA227 /* cn_img419.png in Resources */,
 				E1E8730D1C3268D000EBA227 /* cn_img939.png in Resources */,
@@ -5954,6 +5963,7 @@
 				E1739C1F1C49E26C0056BFEA /* PNGenericChart.m in Sources */,
 				E1CEEBFC1C3DF4A800595EDA /* LoginController.m in Sources */,
 				E1EEBC601C204CED00551A5E /* UIColor+addtions.m in Sources */,
+				E12FB2791C59B6CB00A6D423 /* SetPinningController.m in Sources */,
 				E12F186F1C34C81700F5BA67 /* NSObject+ALAdditions.m in Sources */,
 				E1FAEAE01C252CB3001706CE /* MyDeviceViewController.m in Sources */,
 				E1EEBC971C204D1800551A5E /* SettingViewController.m in Sources */,
@@ -6028,8 +6038,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Yin (7Q6JR7C9N2)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Yin (7Q6JR7C9N2)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -6047,6 +6057,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "552d8ad1-c3a5-484d-a120-d0c799336c1e";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -6067,8 +6078,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Yin (5S5N686L97)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Yin (5S5N686L97)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -6079,6 +6090,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PROVISIONING_PROFILE = "552d8ad1-c3a5-484d-a120-d0c799336c1e";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -6090,14 +6102,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Yin (7Q6JR7C9N2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Yin (7Q6JR7C9N2)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BusinessScale/BusinessScale-Prefix.pch";
 				INFOPLIST_FILE = "BusinessScale/BusinessScale-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cn.commercialScale.chipsea;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "552d8ad1-c3a5-484d-a120-d0c799336c1e";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -6108,14 +6121,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BusinessScale/BusinessScale-Prefix.pch";
 				INFOPLIST_FILE = "BusinessScale/BusinessScale-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cn.commercialScale.chipsea;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "552d8ad1-c3a5-484d-a120-d0c799336c1e";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

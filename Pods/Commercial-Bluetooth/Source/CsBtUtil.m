@@ -9,23 +9,27 @@
 #import "CsBtUtil.h"
 #import "BroadcastFrame.h"
 #import "StraightFrame.h"
-#import "StatisticDataFrame.h"
-#import "SyncTimeRespFrame.h"
+#import "TransactionDataFrame.h"
+//#import "SyncTimeRespFrame.h"
 #import "SUPRespFrame.h"
-
-
-#ifdef DEBUG // 调试状态, 打开LOG功能
-#define DeBugLog(...) NSLog(__VA_ARGS__)
-#else // 发布状态, 关闭LOG功能
-#define DeBugLog(...)
-#endif
-
+#import "RandomNumFrame.h"
+#import "SignFrame.h"
+#import "SignRespFrame.h"
+#import "ReceiptsTDRespFrame.h"
+#import "ReceivedTDRespFrame.h"
+#import "TransactionDataSyncRespFrame.h"
 
 static CsBtUtil *csUtil = nil;
 
 @interface CsBtUtil() {
     NSTimer *connectMonitor;
+    NSInteger writeErrorCount;
 }
+
+@property (nonatomic, copy) void(^sychroCompletedBlock)(BOOL succeess,Byte,NSInteger errorCount) ;
+
+@property (retain, nonatomic) NSMutableArray *hisotryDatas;
+@property (retain, nonatomic) NSMutableArray *transactionDatas;
 
 @end
 
@@ -33,22 +37,11 @@ static CsBtUtil *csUtil = nil;
 
 #pragma mark -单例模式获取
 +(CsBtUtil *)getInstance {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        csUtil = [[CsBtUtil alloc]init];
-    });
+    if (csUtil == nil) {
+        csUtil = [[self alloc] init];
+    }
     return csUtil;
 }
-
-- (instancetype)init
-{
-    if (self = [super init]) {
-        self.stopAdvertisementState = NO;
-        [self initCBCentralManager];
-    }
-    return self;
-}
-
 
 -(void)initCBCentralManager {
     btIsOpen = NO;
@@ -57,12 +50,28 @@ static CsBtUtil *csUtil = nil;
     _manager = [[CBCentralManager alloc]initWithDelegate:self queue:nil options:options];
 }
 
+
+#pragma mark - ovveride
+-(id)init{
+    @synchronized(self) {
+        self = [super init];
+        if(self){
+            self.stopAdvertisementState = NO;
+            [self initCBCentralManager];
+            _hisotryDatas = [[NSMutableArray alloc] init];
+            _transactionDatas = [[NSMutableArray alloc] init];
+            writeErrorCount = 0;
+        }
+        return self;
+    }
+}
+
 #pragma mark - CBCentralManagerDelegate
 #pragma mark 打开蓝牙回调本函数，告诉我们蓝牙状态
 -(void)centralManagerDidUpdateState:(CBCentralManager *)central{
     switch (central.state) {
         case CBCentralManagerStatePoweredOn:
-            DeBugLog(@"蓝牙已经打开");
+            NSLog(@"蓝牙已经打开");
             if(self.state == CsScaleStateClosed) {
                 self.stopAdvertisementState = NO;
                 [self startScanBluetoothDevice];
@@ -80,7 +89,7 @@ static CsBtUtil *csUtil = nil;
         case CBCentralManagerStatePoweredOff:
             self.stopAdvertisementState = YES;
             [self stopScanBluetoothDevice];
-//            DeBugLog(@"蓝牙已经关闭");
+            NSLog(@"蓝牙已经关闭");
             self.state = CsScaleStateClosed;
             if (_delegate != nil) {
                 if ([_delegate respondsToSelector:@selector(didUpdateCsScaleState:)]) {
@@ -90,7 +99,7 @@ static CsBtUtil *csUtil = nil;
             btIsOpen = NO;
             break;
         case CBCentralManagerStateResetting:
-            DeBugLog(@"正在重置状态");
+            NSLog(@"正在重置状态");
             break;
         default:
             break;
@@ -103,13 +112,14 @@ static CsBtUtil *csUtil = nil;
 #pragma mark 发现设备回调函数,广播
 -(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI{
     
-    DeBugLog(@"didDiscoverPeripheral");
+    NSLog(@"didDiscoverPeripheral");
     //停止搜索
     if(_stopAdvertisementState){
         [_manager stopScan];
         return;
     }
-    self.haveFoundDevices = YES;
+    
+    
     NSData *data = [advertisementData objectForKey:@"kCBAdvDataManufacturerData"];//获得广播设备信息
     if(data){
         //当前搜索到的广播
@@ -131,9 +141,13 @@ static CsBtUtil *csUtil = nil;
         NSString *macTmp6 = [[macData description]substringWithRange:NSMakeRange(12, 2)];
         NSString *macString = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",macTmp1,macTmp2,macTmp3,macTmp4,macTmp5,macTmp6 ];
         
+        if ([CsBtCommon getBoundMac] != nil && ![[CsBtCommon getBoundMac] isEqualToString:macString]) {
+            return;
+        }
+        
         self.activePeripheral = peripheral; //在这里同时设置 全局变量！
 
-//        DeBugLog(@"----%@  ----%@ ----%@",realData,data,macData);
+//        NSLog(@"----%@  ----%@ ----%@",realData,data,macData);
         BroadcastFrame *frame = [[BroadcastFrame alloc] initWithData:realData];
         if (frame != nil) {
             frame.data.mac = macString;
@@ -144,34 +158,26 @@ static CsBtUtil *csUtil = nil;
     }
 }
 
-- (void)connectToPeripheral:(CBPeripheral *)peripheral
-{
-    [_manager connectPeripheral:peripheral options:nil];
-}
-
 /**
     扫描外设中的服务
  */
 #pragma mark 扫描到外设之后回调
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
-    DeBugLog(@"didConnectPeripheral");
+    NSLog(@"didConnectPeripheral");
     if(self.activePeripheral != peripheral){
-//        DeBugLog(@"%@ --> Peripheral change ... ",TAG);
+//        NSLog(@"%@ --> Peripheral change ... ",TAG);
         self.activePeripheral = peripheral;
     }
-    [_manager stopScan];
     if (connectMonitor != nil) {
         [connectMonitor invalidate];
         connectMonitor = nil;
     }
     [peripheral setDelegate:self];  //查找服务
-//    [peripheral discoverServices:nil];
-    // 请求周边寻找服务
-    [peripheral discoverServices:@[[CBUUID UUIDWithString:ISSC_SERVICE_UUID]]];
+    [peripheral discoverServices:nil];
 }
 
 -(void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    DeBugLog(@"didFailToConnectPeripheral");
+    NSLog(@"didFailToConnectPeripheral");
     self.state = CsScaleStateOpened;
     if (connectMonitor != nil) {
         [connectMonitor invalidate];
@@ -179,28 +185,26 @@ static CsBtUtil *csUtil = nil;
     }
 }
 
+
 /**
     找到对应服务之后,回调函数
  */
 #pragma mark 扫描到外设的服务之后回调
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error{
-    DeBugLog(@"didDiscoverServices");
+    NSLog(@"didDiscoverServices");
     //错误处理
     if(error){
-        DeBugLog(@"Discovered services for %@ with error: %@",peripheral.name, [error localizedDescription]);
+        NSLog(@"Discovered services for %@ with error: %@",peripheral.name, [error localizedDescription]);
         return;
     }
     
     //循环查找特性
-//    for (int i=0; i < peripheral.services.count; i++) {
-//        CBService *s = [peripheral.services objectAtIndex:i];
-//        if ([self compareCBUUID:s.UUID UUID2:[CBUUID UUIDWithString:ISSC_SERVICE_UUID]]) {
-//            DeBugLog(@"Fetching characteristics for service with UUID : %s\r",[self CBUUIDToString:s.UUID]);
-//            [peripheral discoverCharacteristics:nil forService:s];
-//        }
-//    }
-    for (CBService *service in peripheral.services) {
-        [peripheral discoverCharacteristics:@[[CBUUID UUIDWithString:ISSC_CHAR_RX_UUID],[CBUUID UUIDWithString:ISSC_CHAR_TX_UUID]] forService:service];
+    for (int i=0; i < peripheral.services.count; i++) {
+        CBService *s = [peripheral.services objectAtIndex:i];
+        if ([self compareCBUUID:s.UUID UUID2:[CBUUID UUIDWithString:ISSC_SERVICE_UUID]]) {
+            NSLog(@"Fetching characteristics for service with UUID : %s\r",[self CBUUIDToString:s.UUID]);
+            [peripheral discoverCharacteristics:nil forService:s];
+        }
     }
 }
 
@@ -209,21 +213,21 @@ static CsBtUtil *csUtil = nil;
  */
 #pragma mark 扫描到外设的特性回调
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
-    DeBugLog(@"didDiscoverCharacteristicsForService");
+    NSLog(@"didDiscoverCharacteristicsForService");
     if (error){
-//        DeBugLog(@"%@ Discovered characteristics for %@ with error: %@",TAG,service.UUID, [error localizedDescription]);
+//        NSLog(@"%@ Discovered characteristics for %@ with error: %@",TAG,service.UUID, [error localizedDescription]);
         return;
     }
     
-    DeBugLog(@"Characteristics of service with UUID : %s found\r\n",[self CBUUIDToString:service.UUID]);
+    NSLog(@"Characteristics of service with UUID : %s found\r\n",[self CBUUIDToString:service.UUID]);
     
     for(int i=0; i < service.characteristics.count; i++) {
         CBCharacteristic *c = [service.characteristics objectAtIndex:i];
         #pragma unused (c)
-        DeBugLog(@"Found characteristic %s\r",[ self CBUUIDToString:c.UUID]);
+        NSLog(@"Found characteristic %s\r",[ self CBUUIDToString:c.UUID]);
     }
     if([self compareCBUUID:service.UUID UUID2:[CBUUID UUIDWithString:ISSC_SERVICE_UUID]]) {
-        DeBugLog(@"Finished discovering characteristics\r");
+        NSLog(@"Finished discovering characteristics\r");
         [self enableRead:self.activePeripheral];
         if([self.delegate respondsToSelector:@selector(connectedPeripheral:)]){
             [self.delegate connectedPeripheral:self.activePeripheral];
@@ -232,7 +236,7 @@ static CsBtUtil *csUtil = nil;
         if ([_delegate respondsToSelector:@selector(didUpdateCsScaleState:)]) {
             [_delegate didUpdateCsScaleState:CsScaleStateConnected];
         }
-        DeBugLog(@"向蓝牙开始下传数据.........");
+//        NSLog(@"向蓝牙开始下传数据.........");
         
     }
 }
@@ -243,17 +247,17 @@ static CsBtUtil *csUtil = nil;
 #pragma mark 连接状态下,接收到数据回调,透传
 -(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
     if (_delegate == nil) {
-        DeBugLog(@"You still not initialized the delegate");
+        NSLog(@"You still not initialized the delegate");
         return;
     }
     if(error){
-        DeBugLog(@"didUpdateValueForCharacteristic");
+        NSLog(@"didUpdateValueForCharacteristic occurs errors");
         return;
     }
-    DeBugLog(@"didUpdateValueForCharacteristic");
+    NSLog(@"didUpdateValueForCharacteristic");
     NSString *UUIDStr = [NSString stringWithFormat:@"%@",characteristic.UUID];
     if ([ISSC_CHAR_RX_UUID isEqualToString:UUIDStr]) {
-        DeBugLog(@"芯海-透传的数据：%@",characteristic.value);
+        NSLog(@"芯海-透传的数据：%@",characteristic.value);
         //发出透传连接广播
         if([_delegate respondsToSelector:@selector(afterConnectData:)]){
             [_delegate afterConnectData:characteristic.value];
@@ -261,36 +265,85 @@ static CsBtUtil *csUtil = nil;
         Frame *frame = [[Frame alloc] initWithData:characteristic.value];
         if(frame != nil) {
             switch (frame.commandByte) {
-                case 0x20: { // 同步所有单价
+                case 0x13: { // 同步单价
                     SUPRespFrame *respFrame = [[SUPRespFrame alloc] initWithData:characteristic.value];
                     if ([_delegate respondsToSelector:@selector(syncProductComplete:success:)]) {
-                        [_delegate syncProductComplete:respFrame.productId success:respFrame.success];
+                        [_delegate syncProductComplete:respFrame.xorValue success:respFrame.success];
+                    }
+                    if (respFrame.success) {
+                        writeErrorCount = 0;
+                    }else{
+                        writeErrorCount ++;
+                    }
+                    if (_sychroCompletedBlock) {
+                        _sychroCompletedBlock(respFrame.success,respFrame.xorValue,writeErrorCount);
                     }
                     break;
                 }
-                case 0x21: { // 同步时间
-                    SyncTimeRespFrame *syncTimeRespFrame = [[SyncTimeRespFrame alloc] initWithData:characteristic.value];
-                    if ([_delegate respondsToSelector:@selector(syncTimeComplete:)]) {
-                        [_delegate syncTimeComplete:syncTimeRespFrame.success];
+                case 0x31:
+                case 0x2B:
+                case 0x22: {// 交易记录数据上传
+                    TransactionDataFrame *transactionDataFrame = [[TransactionDataFrame alloc] initWithData:characteristic.value];
+                    if (frame.commandByte == 0x22) { // 在线付款情况
+                        ReceiptsTDRespFrame *receiptsFrame = [[ReceiptsTDRespFrame alloc] initWithProductId:transactionDataFrame.data.productId status:0x01];
+                        [self writeFrameToPeripheral:receiptsFrame];
+                        [_transactionDatas addObject:transactionDataFrame.data];
+                        if(transactionDataFrame.data.productId == 0xFFFF) {
+                            if ([_delegate respondsToSelector:@selector(discoverTransactionDatas:)]) {
+                                [_delegate discoverTransactionDatas:_transactionDatas];
+                                [_transactionDatas removeAllObjects];
+                            }
+                        }
+                        
+                    } else if(frame.commandByte == 0x2B) {
+                        ReceivedTDRespFrame *receivedTDFrame = [[ReceivedTDRespFrame alloc] initWithProductId:transactionDataFrame.data.productId status:YES];
+                        [self writeFrameToPeripheral:receivedTDFrame];
+                        if ([_delegate respondsToSelector:@selector(finishWeighing:)]) {
+                            [_delegate finishWeighing:transactionDataFrame.data];
+                        }
+                    } else if(frame.commandByte == 0x31) {
+                        TransactionDataSyncRespFrame *syncFrame = [[TransactionDataSyncRespFrame alloc] initWithProductId:transactionDataFrame.data.productId status:YES];
+                        [self writeFrameToPeripheral:syncFrame];
+                        if (transactionDataFrame.data.productId == 0x0000) {
+                            if([_delegate respondsToSelector:@selector(noOfflineData)]) {
+                                [_delegate noOfflineData];
+                            }
+                        } else {
+                            [_hisotryDatas addObject:transactionDataFrame.data];
+                            if(transactionDataFrame.data.productId == 0xFFFF) {
+                                [_delegate discoverOfflineDatas:_hisotryDatas];
+                                [_hisotryDatas removeAllObjects];
+                            }
+                        }
                     }
                     break;
                 }
-                case 0x22: {// 统计数据上传
-                    StatisticDataFrame *statisticFrame = [[StatisticDataFrame alloc] initWithData:characteristic.value];
-                    if ([_delegate respondsToSelector:@selector(discoverStatisticData:)]) {
-                        [_delegate discoverStatisticData:statisticFrame.data];
+                case 0x26:{
+                    if ([_delegate respondsToSelector:@selector(cashPayment)]) {
+                        [_delegate cashPayment];
                     }
                     break;
                 }
-                case 0x23:{
-                    StraightFrame *straightFrame = [[StraightFrame alloc] initWithData:characteristic.value];
-                    if ([_delegate respondsToSelector:@selector(discoverStraightData:)]) {
-                        [_delegate discoverStraightData:straightFrame.data];
+                case 0x27: {
+                    if ([_delegate respondsToSelector:@selector(cancelPayment)]) {
+                        [_delegate cancelPayment];
+                    }
+                }
+                case 0x42:{
+                    RandomNumFrame *randomFrame = [[RandomNumFrame alloc] initWithData:characteristic.value];
+                    SignFrame *signFrame = [[SignFrame alloc] initWithRandomNum:randomFrame.randomNumStr pin:[CsBtCommon getPin]];
+                    [self writeFrameToPeripheral:signFrame];
+                    break;
+                }
+                case 0x44: {
+                    SignRespFrame *signRespFrame = [[SignRespFrame alloc] initWithData:characteristic.value];
+                    if (_delegate != nil && [_delegate respondsToSelector:@selector(didHandShakeComplete:)]) {
+                        [_delegate didHandShakeComplete:signRespFrame.success];
                     }
                     break;
                 }
                 default:
-                    DeBugLog(@"收到的帧所带的命令字节不正确...");
+                    NSLog(@"收到的帧所带的命令字节不正确...");
                     break;
             }
         }
@@ -299,7 +352,7 @@ static CsBtUtil *csUtil = nil;
 
 #pragma mark 断开连接设备 回调
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
-    DeBugLog(@"CsBtUtil -- >Disconnect");
+    NSLog(@"CsBtUtil -- >Disconnect");
     self.state = CsScaleStateOpened;
     if ([_delegate respondsToSelector:@selector(didUpdateCsScaleState:)]) {
         [_delegate didUpdateCsScaleState:CsScaleStateOpened];
@@ -307,8 +360,6 @@ static CsBtUtil *csUtil = nil;
     if([self.delegate respondsToSelector:@selector(didDisconnectPeripheral:error:)]){
         [self.delegate didDisconnectPeripheral:peripheral error:error];
     }
-    
-    self.haveFoundDevices = NO;
 }
 
 #pragma mark - custom function
@@ -344,13 +395,13 @@ static CsBtUtil *csUtil = nil;
 #pragma mark 连接设备
 -(BOOL)connect:(CBPeripheral *)peripheral{
     if (self.state != CsScaleStateConnecting) {
-        DeBugLog(@"准备连接 ...");
+        NSLog(@"准备连接 ...");
         self.state = CsScaleStateConnecting;
         if (_delegate != nil && [_delegate respondsToSelector:@selector(didUpdateCsScaleState:)]) {
             [_delegate didUpdateCsScaleState:CsScaleStateConnecting];
         }
         [_manager connectPeripheral:peripheral
-                            options:nil];
+                            options:nil];//[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]
         connectMonitor = [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(connectTimeout:) userInfo:peripheral repeats:NO];
     }
     return (YES);
@@ -371,6 +422,15 @@ static CsBtUtil *csUtil = nil;
 }
 
 /**
+ * Alvin add
+ */
+- (void)writeFrameToPeripheral:(Frame *)frame completedBlock:(void (^)(BOOL, Byte, NSInteger))completedBlock
+{
+    _sychroCompletedBlock = [completedBlock copy];
+    [self writeFrameToPeripheral:frame];
+}
+
+/**
  使能读，这样会在通道中读取到函数
  */
 #pragma mark 使能读
@@ -386,7 +446,7 @@ static CsBtUtil *csUtil = nil;
  */
 #pragma mark 写信息到设备中
 -(void)writeValue:(int)serviceUUID characteristicUUID:(int)characteristicUUID p:(CBPeripheral *)p data:(NSData *)data{
-    //DeBugLog(@"WRITE:====:%04X, %04X", serviceUUID, characteristicUUID);
+    //NSLog(@"WRITE:====:%04X, %04X", serviceUUID, characteristicUUID);
     
     UInt16 s = [self swap:serviceUUID];
     UInt16 c = [self swap:characteristicUUID];
@@ -405,7 +465,7 @@ static CsBtUtil *csUtil = nil;
         return;
     }
     
-    //DeBugLog(@"PROPERTIES:%02X", characteristic.properties);
+    //NSLog(@"PROPERTIES:%02X", characteristic.properties);
     
     CBCharacteristicWriteType writeType = CBCharacteristicWriteWithoutResponse;
     
@@ -417,7 +477,7 @@ static CsBtUtil *csUtil = nil;
 }
 
 -(void)writeValueWithUUID:(NSString *)serviceUUID characteristicUUID:(NSString *)characteristicUUID p:(CBPeripheral *)p data:(NSData *)data{
-    //DeBugLog(@"WRITE:====:%04X, %04X", serviceUUID, characteristicUUID);
+    //NSLog(@"WRITE:====:%04X, %04X", serviceUUID, characteristicUUID);
     
 //    UInt16 s = [self swap:serviceUUID];
 //    UInt16 c = [self swap:characteristicUUID];
@@ -430,21 +490,15 @@ static CsBtUtil *csUtil = nil;
     CBService *service = [self findServiceFromUUID:su p:p];
     if (!service) {
         //Print("Could not find service with UUID %s on peripheral with UUID %s\r\n",[self CBUUIDToString:su],[self UUIDToString:p.UUID]);
-        if (_writeToFrameBlock) {
-            _writeToFrameBlock(NO);
-        }
         return;
     }
     CBCharacteristic *characteristic = [self findCharacteristicFromUUID:cu service:service];
     if (!characteristic) {
         //Print("Could not find characteristic with UUID %s on service with UUID %s on peripheral with UUID %s\r\n",[self CBUUIDToString:cu],[self CBUUIDToString:su],[self UUIDToString:p.UUID]);
-        if (_writeToFrameBlock) {
-            _writeToFrameBlock(NO);
-        }
         return;
     }
     
-    //DeBugLog(@"PROPERTIES:%02X", characteristic.properties);
+    //NSLog(@"PROPERTIES:%02X", characteristic.properties);
     
     CBCharacteristicWriteType writeType = CBCharacteristicWriteWithResponse;
     
@@ -453,10 +507,9 @@ static CsBtUtil *csUtil = nil;
     }
     
     [p writeValue:data forCharacteristic:characteristic type:writeType];
-    if (_writeToFrameBlock) {
-        _writeToFrameBlock(YES);
-    }
 }
+
+
 
 -(const char *) CBUUIDToString:(CBUUID *) UUID {
     return [[UUID.data description] cStringUsingEncoding:NSStringEncodingConversionAllowLossy];
@@ -474,7 +527,7 @@ static CsBtUtil *csUtil = nil;
 
 
 -(void)notificationWithUUID:(NSString *)serviceUUID characteristicUUID:(NSString *)characteristicUUID p:(CBPeripheral *)p on:(BOOL)on{
-    //DeBugLog(@"NOTIFICATION:====:%04X, %04X", serviceUUID, characteristicUUID);
+    //NSLog(@"NOTIFICATION:====:%04X, %04X", serviceUUID, characteristicUUID);
 //    
 //    UInt16 s = [self swap:serviceUUID];
 //    UInt16 c = [self swap:characteristicUUID];
@@ -486,7 +539,7 @@ static CsBtUtil *csUtil = nil;
     CBUUID *cu = [CBUUID UUIDWithString:characteristicUUID];
     CBService *service = [self findServiceFromUUID:su p:p];
     if (!service) {
-        DeBugLog(@"Could not find service with UUID %s on peripheral with UUID %@\r\n",[self CBUUIDToString:su],p.identifier);
+        NSLog(@"Could not find service with UUID %s on peripheral with UUID %@\r\n",[self CBUUIDToString:su],p.identifier);
         return;
     }
     CBCharacteristic *characteristic = [self findCharacteristicFromUUID:cu service:service];
@@ -501,14 +554,14 @@ static CsBtUtil *csUtil = nil;
     // Sets the characteristics for this service
     [customService setCharacteristics:@[customCharacteristic]];
     if (!characteristic) {
-        DeBugLog(@"Could not find characteristic with UUID %s on service with UUID %s on peripheral with name %@ \r\n",[self CBUUIDToString:cu],[self CBUUIDToString:su],p.identifier);
+        NSLog(@"Could not find characteristic with UUID %s on service with UUID %s on peripheral with name %@ \r\n",[self CBUUIDToString:cu],[self CBUUIDToString:su],p.identifier);
         return;
     }
     [p setNotifyValue:on forCharacteristic:characteristic];
 }
 
 -(void)notification:(int)serviceUUID characteristicUUID:(int)characteristicUUID p:(CBPeripheral *)p on:(BOOL)on{
-    //DeBugLog(@"NOTIFICATION:====:%04X, %04X", serviceUUID, characteristicUUID);
+    //NSLog(@"NOTIFICATION:====:%04X, %04X", serviceUUID, characteristicUUID);
     
     UInt16 s = [self swap:serviceUUID];
     UInt16 c = [self swap:characteristicUUID];
@@ -518,12 +571,12 @@ static CsBtUtil *csUtil = nil;
     CBUUID *cu = [CBUUID UUIDWithData:cd];
     CBService *service = [self findServiceFromUUID:su p:p];
     if (!service) {
-        DeBugLog(@"Could not find service with UUID %s on peripheral with UUID %@\r\n",[self CBUUIDToString:su],p.name);
+        NSLog(@"Could not find service with UUID %s on peripheral with UUID %@\r\n",[self CBUUIDToString:su],p.name);
         return;
     }
     CBCharacteristic *characteristic = [self findCharacteristicFromUUID:cu service:service];
     if (!characteristic) {
-        DeBugLog(@"Could not find characteristic with UUID %s on service with UUID %s on peripheral with name %@ \r\n",[self CBUUIDToString:cu],[self CBUUIDToString:su],p.name);
+        NSLog(@"Could not find characteristic with UUID %s on service with UUID %s on peripheral with name %@ \r\n",[self CBUUIDToString:cu],[self CBUUIDToString:su],p.name);
         return;
     }
     [p setNotifyValue:on forCharacteristic:characteristic];
@@ -576,18 +629,6 @@ static CsBtUtil *csUtil = nil;
         [_manager cancelPeripheralConnection:self.activePeripheral];
         self.activePeripheral = nil;
     }
-}
-
-- (void)addDevicesObserverTime:(CGFloat)second Block:(void (^)())block
-{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(second * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (!self.haveFoundDevices) {
-            [csUtil stopScanBluetoothDevice];
-            if (block) {
-                block();
-            }
-        }
-    });
 }
 
 

@@ -168,15 +168,17 @@
 //    [self.noDatasView showAnimate:YES];
     
     NSDictionary *params = @{@"randid":[NSString radom11BitString],@"ts":@([NSDate date].timeStempString),@"title":@"支付测试",@"total_fee":@(1),@"paid_fee":@(1),@"payment_type":@"online",@"items": @[@{@"title": @"\u82f9\u679c", @"unit_price": @1, @"unit": @"g", @"quantity": @1}]};
-    [self upLoadRecordsWithParams:params completedBlock:^(NSObject *data) {
-        NSDictionary *dic = (NSDictionary *)data;
-        NSString *alipayCode = dic[@"alipay"][@"code_url"];
-        NSString *weixinPayCode = dic[@"weixin"][@"code_url"];
-        [self.qrCodeView showCodeWithCodeURLs:@[alipayCode,weixinPayCode]];
-        [self getPoStatusWithOrderID:dic[@"po_uuid"]];
-    }];
-    [_paramsDic removeAllObjects];
-    [_paramsDic addEntriesFromDictionary:params];
+//    [self.progressHud show:YES];
+//    self.progressHud.labelText = @"生成二维码中...";
+//    [self upLoadRecordsWithParams:params completedBlock:^(NSObject *data) {
+//        NSDictionary *dic = (NSDictionary *)data;
+//        NSString *alipayCode = dic[@"alipay"][@"code_url"];
+//        NSString *weixinPayCode = dic[@"weixin"][@"code_url"];
+//        [self.qrCodeView showCodeWithCodeURLs:@[alipayCode,weixinPayCode]];
+//        [self getPoStatusWithOrderID:dic[@"po_uuid"]];
+//    }];
+//    [_paramsDic removeAllObjects];
+//    [_paramsDic addEntriesFromDictionary:params];
 }
 
 - (void)initFromXib
@@ -324,7 +326,7 @@
             [self.paySelectView showSuccessQrImage:code_url];
             [self getPoStatusWithOrderID:((NSDictionary *)data)[@"po_uuid"]];
         }else{
-            [self paySuccessEvent];
+            [self paySuccessEventCompletedBlock:nil];
         }
     }];
 }
@@ -354,15 +356,15 @@
             [_dataArray addObject:item];
         }
         [self.noDatasView removeFromSuperview];
-        [self setHeaderDefalutData];
         [self.table reloadData];
     }
+    [self setHeaderDefalutData];
+    [self caculateTotal];
 }
 
 #pragma mark - -URLRequest
 - (void)upLoadRecordsWithParams:(NSDictionary *)params completedBlock:(void(^)(NSObject *data))comletedBlock
 {
-    [self.progressHud show:YES];
     WeightHttpTool *request = [[WeightHttpTool alloc]initWithParam:[WeightHttpTool uploadSaleRecord:params]];
     [request setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response,id responseObject) {
         [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
@@ -383,7 +385,13 @@
             if (data) {
                 NSString *status = ((NSDictionary *)data)[@"payment_status"];
                 if ([status isEqualToString:@"completed"]) {
-                    [self paySuccessEvent];
+                    [self paySuccessEventCompletedBlock:^{
+                        /**
+                         * 第三方支付时 写入
+                         */
+                        ReceiptsTDRespFrame *frame = [[ReceiptsTDRespFrame alloc] initWithProductId:0x0000 status:0x03];
+                        [_btUtil writeFrameToPeripheral:frame];
+                    }];
                 }else{
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                         if (!self.paySelectView.superview && !self.qrCodeView.superview) return;
@@ -397,7 +405,7 @@
 /**
  * 成功支付 完成事件
  */
-- (void)paySuccessEvent
+- (void)paySuccessEventCompletedBlock:(void(^)())block
 {
     [MBProgressHUD showSuccess:@"支付成功"];
     /**
@@ -413,6 +421,7 @@
     }
     salT.items = arr;
     [[SaleTable getUsingLKDBHelper] insertToDB:salT callback:nil];
+    
     if (self.paySelectView.superview){
         [self.paySelectView hide];
         [self.dataArray removeAllObjects];
@@ -422,6 +431,9 @@
     }
     if (self.qrCodeView.superview){
         [self.qrCodeView hide];
+    }
+    if (block) {
+        block();
     }
 }
 #pragma mark - -UITableViewDelegate&&DataSource
@@ -496,16 +508,59 @@
 {
     if (_btUtil.state == CsScaleStateOpened || _btUtil.state == CsScaleStateBroadcast) {
         if (_btUtil.state < CsScaleStateConnected) {
-            if ([[ScaleTool scale].mac isEqualToString:data.mac]) {
+            if ([CsBtCommon getBoundMac] != nil && [[CsBtCommon getBoundMac] isEqualToString:data.mac]) {
+                [_btUtil connect:_btUtil.activePeripheral];
                 [_btUtil stopScanBluetoothDevice];
-                [_btUtil connectToPeripheral:peripheral];
+                // 绑定时同事要保存绑定设备在广播阶段传递过来的一些配置信息
+                [CsBtCommon setBoundMac:data.mac];
+                [CsBtCommon setUnitDecimalPoint:data.uDecimalPoint];
+                [CsBtCommon setWeightDecimalPoint:data.wDecimalPoint];
             }
         }
     }
 }
 
-/** 发现透传数据*/
-- (void)discoverStraightData:(StraightData *)data
+- (void)didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
+{
+    self.navigationController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
+}
+
+- (void)didHandShakeComplete:(BOOL)success
+
+{
+    self.navigationController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
+}
+#pragma mark - CSBtUtilDelegate 被动收款
+/**
+ *  发现交易记录数据
+ *  用于被动收款的场景、即秤端算好价格App来付款
+ *
+ *  @param data 交易记录数据
+ */
+- (void)discoverTransactionDatas:(NSMutableArray *)datas {
+    for (TransactionData *data in datas) {
+        if (data.productId != 0xFFFF) {
+            
+        } else {
+            
+        }
+    }
+}
+
+// 改由现金进行结算
+- (void)cashPayment
+{
+    [self.qrCodeView hide];
+}
+
+// 取消交易
+- (void)cancelPayment
+{
+    
+}
+#pragma mark - CSBtUtilDelegate 主动收款
+// 获得称重数据，并存在App的托盘上 主动收款
+- (void)finishWeighing:(TransactionData *)data
 {
     ALLog(@"%@",data);
     [self.noDatasView hideAnimate:NO];
@@ -549,46 +604,7 @@
 }
 
 #pragma mark -
-/** 连接设备成功的回调*/
-- (void)connectedPeripheral:(CBPeripheral *)peripheral
-{
-    
-}
 
-/**  断开设备的回调*/
--(void)didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
-{
-    [_btUtil startScanBluetoothDevice];
-}
-
-/** 完成同步单价*/
-- (void)syncProductComplete:(int)productId success:(BOOL)success
-{
-    
-}
-
-- (void)didUpdateCsScaleState:(CsScaleState)state
-{
-    switch (state) {
-        case CsScaleStateOpened:
-//            [_btUtil->_manager scanForPeripheralsWithServices:nil options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @YES }];
-            break;
-        case CsScaleStateClosed:
-            break;
-        case CsScaleStateCalculating:
-            break;
-        case CsScaleStateWaitCalculat:
-            break;
-        case CsScaleStateConnected:
-            [_btUtil stopScanBluetoothDevice];
-            break;
-        case CsScaleStateConnecting:
-            break;
-        case CsScaleStateBroadcast:
-            break;
-    }
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
-}
 #pragma mark - headUIWithModel头部的UI数据模型处理
 - (void)headerWithModel:(SaleItem *)model
 {

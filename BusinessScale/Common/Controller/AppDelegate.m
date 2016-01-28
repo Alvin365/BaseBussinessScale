@@ -16,7 +16,8 @@
 #import "OpenBleController.h"
 #import "BoundDeviceController.h"
 #import "Reachability.h"
-
+#import <Commercial-Bluetooth/CsBtUtil.h>
+#import "SetPinningController.h"
 @interface AppDelegate ()
 
 @end
@@ -39,8 +40,19 @@
             /**
              * 第一次安装 绑定界面后到登录
              */
-            OpenBleController *op = [[OpenBleController alloc]init];
-            ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:op];
+            BaseViewController *bas = nil;
+            if ([CsBtUtil getInstance].state == CsScaleStateClosed) {
+                bas = [[OpenBleController alloc]init];
+            }else{
+                if([CsBtCommon getPin].length){
+                    bas = [[BoundDeviceController alloc]init];
+                }else{
+                    bas = [[SetPinningController alloc]init];
+                    ((SetPinningController *)bas).isPush = YES;
+                }
+            }
+            
+            ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:bas];
             self.window.rootViewController = nav;
             nav.callBack = ^{
                 LogonController *ctl = [[LogonController alloc]init];
@@ -63,9 +75,10 @@
     if ([ALCommonTool isNewFeature]) {
         ALWellComeView *wellcom = [[ALWellComeView alloc]init];
         [wellcom show];
+        
     }
     ALLog(@"%@",NSHomeDirectory());
-    
+//    [[NSObject getUsingLKDBHelper]dropAllTable];
     /**
      * 网络观察
      */

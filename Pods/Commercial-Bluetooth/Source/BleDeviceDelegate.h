@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "BroadcastData.h"
-#import "StraightData.h"
-#import "StatisticData.h"
+#import "TransactionData.h"
+#import "TransactionData.h"
 
 ///==========================设备状态============================
 typedef NS_ENUM(NSInteger, CsScaleState) {
@@ -35,13 +35,6 @@ typedef NS_ENUM(NSInteger, CsScaleState) {
 -(void)discoverBroadcastData:(BroadcastData *)data fromPeripheral:(CBPeripheral *)peripheral;
 
 /**
- *  发现透传数据
- *
- *  @param data 透传数据
- */
--(void)discoverStraightData:(StraightData *)data;
-
-/**
  *  连接设备成功的回调
  *
  *  @param peripheral 连接成功的设备
@@ -56,6 +49,13 @@ typedef NS_ENUM(NSInteger, CsScaleState) {
  *  @param error      错误信息
  */
 -(void)didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error;
+
+/**
+ *  完成握手机制
+ *
+ *  @param success 是否握手成功
+ */
+-(void)didHandShakeComplete:(BOOL) success;
 
 @optional
 
@@ -79,25 +79,49 @@ typedef NS_ENUM(NSInteger, CsScaleState) {
 -(void)afterConnectData:(NSData *)data;
 
 /**
- *  发现统计数据
+ *  发现交易记录数据
+ *  用于被动收款的场景、即秤端算好价格App来付款
  *
- *  @param data 统计数据
+ *  @param data 交易记录数据
  */
--(void)discoverStatisticData:(StatisticData *)data;
+-(void)discoverTransactionDatas:(NSMutableArray *)datas;
 
 /**
- *  同步时间完成的huidiao
- *
- *  @param success 是否成功,成功为YES
+ *  使用现金付款
  */
--(void)syncTimeComplete:(BOOL)success;
+-(void)cashPayment;
+
+/**
+ *  取消交易
+ */
+-(void)cancelPayment;
+
+/**
+ *  完成称重,并获得称重记录
+ *  用于主动收款的产假、即秤端秤好数据后上传给App，具体价格由App定义
+ *
+ *  @param data 称量好的数据
+ */
+-(void)finishWeighing:(TransactionData *)data;
+
+/**
+ *  发现离线交易记录
+ *
+ *  @param data 离线交易记录
+ */
+-(void)discoverOfflineDatas:(NSMutableArray *)datas;
+
+/**
+ *  秤端没有离线交易数据
+ */
+-(void)noOfflineData;
 
 /**
  *  同步单价信息
  *
- *  @param productId 产品代号
+ *  @param xorValue  秤端收到数据的异或值得(目前暂时不用)
  *  @param success   是否成功,成功为YES
  */
--(void)syncProductComplete:(int)productId success:(BOOL)success;
+-(void)syncProductComplete:(Byte)xorValue success:(BOOL)success;
 
 @end

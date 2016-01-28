@@ -37,7 +37,7 @@
 {
     [self initUIFromXib];
     [self initConstraint];
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
+//    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
 }
 
 - (void)initUIFromXib
@@ -53,9 +53,9 @@
     _plsScanWeixin.textColor = [UIColor whiteColor];
     
     
-    _widthBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_widthBtn addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:_widthBtn];
+//    _widthBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [_widthBtn addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [self addSubview:_widthBtn];
 }
 
 - (void)initConstraint
@@ -132,13 +132,13 @@
 }
 
 #pragma mark - -actions
-- (IBAction)btnClick:(id)sender {
-    [self hide];
-}
+//- (IBAction)btnClick:(id)sender {
+//    [self hide];
+//}
 
-- (void)tap
-{
-    [self btnClick:nil];
-}
+//- (void)tap
+//{
+//    [self btnClick:nil];
+//}
 
 @end

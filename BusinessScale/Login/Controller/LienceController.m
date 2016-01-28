@@ -17,6 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"隐私协议";
+    self.view.backgroundColor = backGroudColor;
     [self initAll];
 }
 

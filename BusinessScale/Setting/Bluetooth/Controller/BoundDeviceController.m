@@ -17,8 +17,14 @@
     CsBtUtil *_btUtil;
     ScaleModel *_model;
     BOOL _isSure;
+    BroadcastData *broadcastData;
     
     __weak IBOutlet NSLayoutConstraint *KUISearViewHeight;
+    
+    __weak IBOutlet NSLayoutConstraint *_KUISearchBottom;
+    __weak IBOutlet NSLayoutConstraint *_KUIWeightTop;
+    __weak IBOutlet NSLayoutConstraint *KUINoBoundTop;
+    __weak IBOutlet NSLayoutConstraint *tipTop;
 }
 
 @end
@@ -41,6 +47,7 @@
     [super viewDidLoad];
     [self removeLineOfNavigationBar];
     [self initAll];
+    [self initConstraints];
     _model = [[ScaleModel alloc]init];
     _btUtil = [CsBtUtil getInstance];
     _btUtil.delegate = self;
@@ -60,20 +67,29 @@
 #pragma mark 初始化
 -(void) initAll {
     // 国际化
-    _kUINoBound.layer.cornerRadius = 5;
+    _kUINoBound.layer.cornerRadius = 25;
     _kUINoBound.layer.masksToBounds = YES;
-    _kUINoBound.layer.borderColor = ALNavBarColor.CGColor;
+    _kUINoBound.layer.borderColor = ALLightTextColor.CGColor;
     _kUINoBound.layer.borderWidth = 0.7;
+    [_kUINoBound setTitleColor:ALLightTextColor forState:UIControlStateNormal];
     [_kUINoBound setTitle:DPLocalizedString(@"not_bind_now", @"先不绑定了") forState:UIControlStateNormal];
+    
     [_kUIResearch setTitle:DPLocalizedString(@"research", @"重新搜索") forState:UIControlStateNormal];
-    _kUIResearch.layer.cornerRadius = 5;
+    _kUISearchedView.backgroundColor = ALNavBarColor;
+    _kUIResearch.backgroundColor = [UIColor clearColor];
+    [_kUIResearch setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    _kUIResearch.layer.cornerRadius = 20;
     _kUIResearch.layer.masksToBounds = YES;
-    _kUISureBound.layer.cornerRadius = 5;
+    _kUIResearch.layer.borderColor = [UIColor whiteColor].CGColor;
+    _kUIResearch.layer.borderWidth = 0.7;
+    _kUISureBound.backgroundColor = [UIColor whiteColor];
+    [_kUISureBound setTitleColor:ALNavBarColor forState:UIControlStateNormal];
+    
+    
+    _kUISureBound.layer.cornerRadius = 20;
     _kUISureBound.layer.masksToBounds = YES;
     [_kUISureBound setTitle:DPLocalizedString(@"sure_bind", @"确定绑定") forState:UIControlStateNormal];
     _kUITip.text = DPLocalizedString(@"bind_tip", @"已经发现体重秤，请确认秤显示的数值和下放数值一样，即可确认绑定");
-    // 色差
-    [_kUINoBound setTitleColor:ALNavBarColor forState:UIControlStateNormal];
     NSString *frmtStr = @"open_ble_2";
     if ([[ALCommonTool getPreferredLanguage] isEqualToString:@"en"]) {
         frmtStr = [frmtStr stringByAppendingString:@"_en"];
@@ -87,9 +103,20 @@
     
     _kUINoBound.hidden = NO;
     _kUISearchedView.hidden = NO;
+    _kUISearchedView.backgroundColor = [UIColor whiteColor];
     _kUIWeight.hidden = _kUITip.hidden = _kUIResearch.hidden = _kUISureBound.hidden = YES;
-    KUISearViewHeight.constant = 270*ALScreenScalHeight;
+    
 }
+
+- (void)initConstraints
+{
+    KUISearViewHeight.constant = 290*ALScreenScalHeight;
+    tipTop.constant = 40*ALScreenScalHeight;
+    _KUISearchBottom.constant = 40*ALScreenScalHeight;
+    _KUIWeightTop.constant = 30*ALScreenScalHeight;
+    KUINoBoundTop.constant = 40*ALScreenScalHeight;
+}
+
 #pragma mark 先不绑定了按钮的点击事件
 - (IBAction)noBoundClick:(id)sender
 {
@@ -104,6 +131,7 @@
 //    [self.progressHud show:YES];
     _kUIWeight.hidden = _kUITip.hidden = _kUIResearch.hidden = _kUISureBound.hidden = YES;
     _kUINoBound.hidden = NO;
+    _kUISearchedView.backgroundColor = [UIColor whiteColor];
     [_btUtil disconnectWithBt];
     [_btUtil startScanBluetoothDevice];
 }
@@ -113,7 +141,14 @@
 - (IBAction)sureBoundClick:(id)sender
 {
     _isSure = YES;
+    
     [_btUtil connect:_btUtil.activePeripheral];
+    [_btUtil stopScanBluetoothDevice];
+    // 绑定时同事要保存绑定设备在广播阶段传递过来的一些配置信息
+    [CsBtCommon setBoundMac:broadcastData.mac];
+    [CsBtCommon setUnitDecimalPoint:broadcastData.uDecimalPoint];
+    [CsBtCommon setWeightDecimalPoint:broadcastData.wDecimalPoint];
+    [ScaleTool saveScale:_model];
     [self.progressHud show:YES];
     self.progressHud.labelText = @"绑定设备中...";
 }
@@ -139,32 +174,41 @@
 }
 
 #pragma mark BleDeviceDelegate
+
 /**
  *  发现广播数据
  *
  *  @param data 广播数据
  */
-- (void)discoverBroadcastData:(BroadcastData *)data fromPeripheral:(CBPeripheral *)peripheral
-{
+-(void)discoverBroadcastData:(BroadcastData *)data fromPeripheral:(CBPeripheral *)peripheral {
     if (_btUtil.state == CsScaleStateOpened || _btUtil.state == CsScaleStateBroadcast) {
+         broadcastData = data;
 //        [self.progressHud hide:YES];
-        [_btUtil stopScanBluetoothDevice];
+//        [_btUtil stopScanBluetoothDevice];
         _kUISearchedView.hidden = NO;
         _kUINoBound.hidden = YES;
         _kUIWeight.hidden = _kUITip.hidden = _kUIResearch.hidden = _kUISureBound.hidden = NO;
+        _kUISearchedView.backgroundColor = ALNavBarColor;
         _kUITip.text = DPLocalizedString(@"bind_tip", @"已经发现蓝牙秤，请确认秤显示的数值和下放数值一样，即可确认绑定");
         _kUIWeight.text = [NSString stringWithFormat:@"%i",(int)(data.weight*1000)];
         [_model setValuesForKeysWithDictionary:data.keyValues];
     }
+   
 }
-
-- (void)connectedPeripheral:(CBPeripheral *)peripheral
+//- (void)connectedPeripheral:(CBPeripheral *)peripheral
+//{
+//    
+//}
+- (void)didHandShakeComplete:(BOOL)success
 {
     [self.progressHud hide:YES];
-    [MBProgressHUD showSuccess:@"绑定成功" compleBlock:^{
-        [ScaleTool saveScale:_model];
-        [self finishOperation];
-    }];
+    if (success) {
+        [MBProgressHUD showSuccess:@"绑定成功" compleBlock:^{
+            [self finishOperation];
+        }];
+    }else{
+        [MBProgressHUD showError:@"绑定失败"];
+    }
 }
 
 - (void)didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
@@ -172,34 +216,5 @@
     [self.progressHud hide:YES];
     [MBProgressHUD showError:@"绑定失败"];
 }
-
-/**
- *  蓝牙状态发生变化的回调
- *
- *  @param state 蓝牙状态
- */
-- (void)didUpdateCsScaleState:(CsScaleState)state
-{
-    switch (state) {
-        case CsScaleStateOpened:
-//            [_btUtil->_manager scanForPeripheralsWithServices:nil options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @YES }];
-            break;
-        case CsScaleStateClosed:
-//            showAlert(@"请先打开蓝牙");
-            break;
-        case CsScaleStateCalculating:
-            break;
-        case CsScaleStateWaitCalculat:
-            break;
-        case CsScaleStateConnected:
-            [_btUtil stopScanBluetoothDevice];
-            break;
-        case CsScaleStateConnecting:
-            break;
-        case CsScaleStateBroadcast:
-            break;
-    }
-}
-
 
 @end

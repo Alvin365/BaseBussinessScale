@@ -11,9 +11,10 @@
 #import "BleDefines.h"
 #import "Frame.h"
 #import "SyncUnitPriceFrame.h"
-#import "SyncTimeFrame.h"
-#import "StatisticDataReqFrame.h"
+//#import "SyncTimeFrame.h"
+#import "TransactionDataReqFrame.h"
 #import "BleDeviceDelegate.h"
+#import "ReceiptsTDRespFrame.h"
 
 @interface CsBtUtil : NSObject <CBCentralManagerDelegate,CBPeripheralDelegate>{
     CBCentralManager *_manager;
@@ -30,11 +31,6 @@
 @property(assign, nonatomic) BOOL stopAdvertisementState;//停止广播标志
 @property(strong, nonatomic) CBPeripheral *activePeripheral; //当前透传连接设备
 @property(strong, nonatomic) CBCharacteristic *readCharacteristic;//当前读特
-@property (nonatomic, assign) BOOL haveFoundDevices; // 附近有无设备
-
-@property (nonatomic, copy) void (^writeToFrameBlock)(BOOL isWrite);
-
-- (void)addDevicesObserverTime:(CGFloat)second Block:(void (^)())block;
 
 #pragma mark -自定义函数
 #pragma mark 开始查找蓝牙设备
@@ -44,16 +40,13 @@
 
 -(BOOL)connect:(CBPeripheral *)peripheral;
 
-- (void)connectToPeripheral:(CBPeripheral *)peripheral;
-
 /**
  *  写数据帧到蓝牙设备
  *
  *  @param frame 帧数据
  */
 -(void)writeFrameToPeripheral:(Frame *)frame;
-
--(void)writeFrameToPeripheral:(Frame *)frame completedBlock:(void(^)())block;
+- (void)writeFrameToPeripheral:(Frame *)frame completedBlock:(void(^)(BOOL succeess,Byte xorValue,NSInteger errorCount))completedBlock;
 
 -(BOOL)isOpen;
 

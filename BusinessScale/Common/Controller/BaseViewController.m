@@ -105,6 +105,7 @@
 - (void)doDatasFromNet:(NSObject *)resuilt useFulData:(void (^)(NSObject *))data
 {
     [self.progressHud hide:YES];
+    self.progressHud.labelText = nil;
     if ([resuilt isKindOfClass:[NSDictionary class]]) {
         NSDictionary *dic = (NSDictionary *)resuilt;
         if (![dic[@"code"] integerValue]) {

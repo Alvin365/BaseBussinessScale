@@ -20,16 +20,32 @@
 {
     CGFloat addGoodsViewBottom;
     CsBtUtil *_btUtil;
+    NSInteger _currentIndex;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-//@property (nonatomic, strong) GoodsAddView *addGoodsView;
 @property (nonatomic, strong) GoodsAddView *updateGoodsView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
+@property (nonatomic, strong) NSMutableArray *sychroArray; // 需要同步的列表
+@property (nonatomic, strong) NSMutableArray *currentArray; // 正在上传的物品列表
 
 @end
 
 @implementation GoodsSettingViewController
+
+- (NSMutableArray *)sychroArray
+{
+    if (!_sychroArray) {
+        _sychroArray = [NSMutableArray array];
+    }
+    [_sychroArray removeAllObjects];
+    for (GoodsTempList *model in self.dataArray) {
+        if (!model.isSychro) {
+            [_sychroArray addObject:model];
+        }
+    }
+    return _sychroArray;
+}
 
 - (NSMutableArray *)dataArray
 {
@@ -45,9 +61,6 @@
         WS(weakSelf);
         _updateGoodsView = [GoodsAddView loadXibView];
         _updateGoodsView.frame = [UIScreen mainScreen].bounds;
-//        _updateGoodsView.nameTextField.textChanged = ^(NSString *name){
-//            [weakSelf nameChanged:name];
-//        };
         _updateGoodsView.callBack = ^(GoodsTempList *model){
             if (![weakSelf judgeCanUpLoad]) {
                 return ;
@@ -92,11 +105,18 @@
 
 - (void)datas
 {
+    [self initDatas];
+    _currentIndex = 0;
+    _currentArray = [[NSMutableArray alloc]init];
+}
+
+- (void)initDatas
+{
     NSMutableDictionary *sqlDic = [NSMutableDictionary dictionary];
     if ([AccountTool account].ID) [sqlDic setObject:[AccountTool account].ID forKey:@"uid"];
     if ([ScaleTool scale].mac) [sqlDic setObject:[ScaleTool scale].mac forKey:@"mac"];
     [self.dataArray removeAllObjects];
-    [[GoodsTempList getUsingLKDBHelper]search:[GoodsTempList class] where:nil orderBy:@"number" offset:0 count:0 callback:^(NSMutableArray *array) {
+    [[GoodsTempList getUsingLKDBHelper]search:[GoodsTempList class] where:sqlDic orderBy:@"number" offset:0 count:0 callback:^(NSMutableArray *array) {
         [self.dataArray addObjectsFromArray:array];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
@@ -107,9 +127,6 @@
 - (void)navBarRightItemEvent
 {
     WS(weakSelf);
-    if (![self judgeCanUpLoad]) {
-        return;
-    }
     GoodsListController *gct = [[GoodsListController alloc]init];
     gct.array = [self.dataArray copy];
     gct.callBack = ^(GoodsTempList *model){
@@ -124,30 +141,17 @@
     CGRect kbEndFrm = [noti.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     CGFloat kbHeight =  kbEndFrm.size.height;
-//    if (self.addGoodsView.superview) {
-//        [UIView animateWithDuration:0.25 animations:^{
-//            self.addGoodsView.y = - (kbHeight-addGoodsViewBottom);
-//        }];
-//    }else if (self.updateGoodsView.superview){
-        [UIView animateWithDuration:0.25 animations:^{
-            self.updateGoodsView.y = - (kbHeight-addGoodsViewBottom);
-        }];
-//    }
+    [UIView animateWithDuration:0.25 animations:^{
+        self.updateGoodsView.y = - (kbHeight-addGoodsViewBottom);
+    }];
 }
 
 - (void)keyboardWillHide:(NSNotification *)noti
 {
-//    if (self.addGoodsView.superview) {
-//        self.addGoodsView.goosList.hidden = YES;
-//        [UIView animateWithDuration:0.25 animations:^{
-//            self.addGoodsView.y = 0;
-//        }];
-//    }else if (self.updateGoodsView.superview){
-        self.updateGoodsView.goosList.hidden = YES;
-        [UIView animateWithDuration:0.25 animations:^{
-            self.updateGoodsView.y = 0;
-        }];
-//    }
+    self.updateGoodsView.goosList.hidden = YES;
+    [UIView animateWithDuration:0.25 animations:^{
+        self.updateGoodsView.y = 0;
+    }];
 }
 
 #pragma mark - netRequest
@@ -174,22 +178,20 @@
 //    }
 }
 
-- (void)postListWithArray:(NSArray *)syChroArray
+- (void)postListWithDic:(NSDictionary *)uploadDic
 {
-    NSMutableArray *arr = [NSMutableArray array];
-    for (GoodsTempList *model in syChroArray) {
-        NSDictionary *dic = [model keyValues];
-        [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
-        [arr addObject:dic];
-    }
     [self.progressHud show:YES];
-    GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool postCoodsListSeverse:arr]];
+    GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool postCoodsListSeverse:uploadDic]];
     [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
                 if (data) {
-                    for (GoodsTempList *model in syChroArray) {
+                    for (GoodsTempList *model in _currentArray) {
                         model.isSychro = YES;
+                        [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
+                        GoodsInfoModel *GoodsInfo = [[GoodsInfoModel alloc]init];
+                        [GoodsInfo setValuesForKeysWithDictionary:[model keyValues]];
+                        [[GoodsInfoModel getUsingLKDBHelper]insertToDB:GoodsInfo];
                     }
                     [self.tableView reloadData];
                 }
@@ -286,18 +288,12 @@
 #pragma mark - insert goods 新增物品
 - (void)insertNewGoodsWith:(GoodsTempList *)model
 {
-    if (![self judgeCanUpLoad]) {
-        return;
-    }
-    [self datas];
+    [self initDatas];
 }
 
 #pragma mark -修改物品
 - (void)updateGoodsWithModel:(GoodsTempList *)model
 {
-    if (![self judgeCanUpLoad]) {
-        return;
-    }
     [self.dataArray removeObject:model];
     __block BOOL isExist = NO;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -310,71 +306,125 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             if (isExist) {
                 [MBProgressHUD showError:@"该编号或名称已存在"];
-                [self datas];
+                [self initDatas];
             }else{
                 [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
                 model.isSychro = NO;
-                [self datas];
+                [self initDatas];
                 [self.updateGoodsView hideAnimate:YES];
             }
         });
     });
-    
-    
-//    SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
-//WS(weakSelf);
-//    __block typeof (GoodsInfoModel *)blockModel = model;
-//    _btUtil.writeToFrameBlock = ^(BOOL isWrite){
-//        if (!isWrite) {
-//            showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
-//            return;
-//        }
-//        model.isSychro = YES;
-//        [[GoodsTempList getUsingLKDBHelper]insertToDB:model];
-//        [self.tableView reloadData];
-//    [self.updateGoodsView hideAnimate:YES];
-//    };
-//    [_btUtil writeFrameToPeripheral:frame];
 }
 
 - (BOOL)judgeCanUpLoad
 {
     BOOL b = YES;
-//    if ([CsBtUtil getInstance].state < CsScaleStateConnected) {
-//        [MBProgressHUD showError:@"蓝牙未连接，请先连接设备"];
-//        b = NO;
-//    }
-//    
-//    if ([Reachability shareReachAbilty].currentReachabilityStatus == NotReachable) {
-//        [MBProgressHUD showError:@"当前网络不好，请重选网络再试"];
-//        b = NO;
-//    }
+    if ([CsBtUtil getInstance].state < CsScaleStateConnected) {
+        [MBProgressHUD showError:@"蓝牙未连接，请先连接设备"];
+        b = NO;
+    }
+    
+    if ([Reachability shareReachAbilty].currentReachabilityStatus == NotReachable) {
+        [MBProgressHUD showError:@"当前网络不好，请重选网络再试"];
+        b = NO;
+    }
     return b;
 }
 #pragma mark -同步
 - (void)syChrosize
 {
-    WS(weakSelf);
-    NSMutableArray *syChroArray = [NSMutableArray array];
-    for (GoodsTempList *model in self.dataArray) {
-        if (!model.isSychro) {
-//            SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:[model.number intValue] unitPrice:model.unit_price*1000.0f/model.unit withUnit:CsBtUnitKg];
-//            __block typeof (GoodsInfoModel *)blockModel = model;
-//            _btUtil.writeToFrameBlock = ^(BOOL isWrite){
-//                if (!isWrite) {
-//                    showAlert(@"同步到蓝牙失败，请重新连接蓝牙设备，必要时重启蓝牙设备");
-//                    return;
-//                }
-//                model.isSychro = YES;
-//                [[GoodsTempList getUsingLKDBHelper]insertToDB:model];
-//                [self.tableView reloadData];
-//                [self.updateGoodsView hideAnimate:YES];
-//            };
-//            [_btUtil writeFrameToPeripheral:frame];
-            [syChroArray addObject:model];
-        }
+    if (![self judgeCanUpLoad]) return;
+    [self.progressHud show:YES];
+    [_currentArray removeAllObjects];
+    for (NSInteger j = _currentIndex;j<_currentIndex+3&&j<self.sychroArray.count;j++) {
+        GoodsTempList *model = self.sychroArray[j];
+        [_currentArray addObject:model];
     }
-    [self postListWithArray:syChroArray];
+    if (!_currentArray.count) return;
+    
+    GoodsTempList *product_one = _currentArray.count?_currentArray[0]:nil;
+    GoodsTempList *product_two = _currentArray.count>1?_currentArray[1]:nil;
+    GoodsTempList *product_three = _currentArray.count>2?_currentArray[2]:nil;
+    
+    SyncUnitPriceFrame *beginFrame = [SyncUnitPriceFrame beginSyncFrame];
+    
+    SyncUnitPriceFrame *frame = [[SyncUnitPriceFrame alloc] initWithProductId:(int)product_one.number
+                                                                    unitPrice:(product_one.unit_price*1000.0f/product_one.unit)
+                                                                   productId1:product_two?(int)product_two.number:0
+                                                                   unitPrice1:product_two?(product_two.unit_price*1000.0f/product_two.unit):0
+                                                                   productId2:product_three?(int)product_three.number:0
+                                                                   unitPrice2:product_three?(product_three.unit_price*1000.0f/product_three.unit):0];
+    // 开始同步成功事件
+    void (^beginSucceessBlock) () = ^{
+        // 三组数据同步成功事件
+        void (^middleSucceessBlock)() = ^{
+            // 结束同步成功事件
+            void (^endSucceessBlock)() = ^{
+                _currentIndex += _currentArray.count;
+                // 上传云端
+                NSMutableDictionary *uploadDic = [NSMutableDictionary dictionary];
+                for (GoodsTempList *model in _currentArray) {
+                    NSDictionary *dic = [model keyValues];
+                    [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
+                    [uploadDic setObject:dic forKey:[NSString stringWithFormat:@"%i",(int)model.number]];
+                }
+                [self postListWithDic:uploadDic];
+                
+                if (_currentIndex>=self.sychroArray.count) {
+                    _currentIndex = 0;
+                    return;
+                }
+                [self syChrosize];
+            };
+            // 结束同步失败事件
+            void (^endFailureBlock)() = ^{
+                SyncUnitPriceFrame *endFrame = [SyncUnitPriceFrame endSyncFrame];
+                [_btUtil writeFrameToPeripheral:endFrame completedBlock:^(BOOL succeess, Byte xorValue,NSInteger errorCount) {
+                    if (succeess) {
+                        endSucceessBlock();
+                    }else{
+                        if (errorCount>=5) {
+                            [MBProgressHUD showError:@"同步失败，请检查蓝牙是否连接正常，必要时可重启设备"];
+                            return;
+                        }
+                        endFailureBlock();
+                    }
+                }];
+            };
+            endFailureBlock();
+        };
+        // 三组同步失败事件
+        void (^middleFailureBlock)() = ^{
+            [_btUtil writeFrameToPeripheral:frame completedBlock:^(BOOL succeess, Byte xorValue,NSInteger errorCount) {
+                if (succeess) {
+                    middleSucceessBlock();
+                }else{
+                    if (errorCount>=5) {
+                        [MBProgressHUD showError:@"同步失败，请检查蓝牙是否连接正常，必要时可重启设备"];
+                        return;
+                    }
+                    middleFailureBlock(); // 写失败后重写
+                }
+            }];
+        };
+        middleFailureBlock();
+    };
+    // 开始同步失败事件
+    void (^beginFailureBlock)() = ^{
+        [_btUtil writeFrameToPeripheral:beginFrame completedBlock:^(BOOL succeess, Byte xorValue, NSInteger errorCount) {
+            if (succeess) {
+                beginSucceessBlock();
+            }else{
+                if (errorCount>=5) {
+                    [MBProgressHUD showError:@"同步失败，请检查蓝牙是否连接正常，必要时可重启设备"];
+                    return;
+                }
+                beginFailureBlock();
+            }
+        }];
+    };
+    beginFailureBlock();
 }
 
 @end

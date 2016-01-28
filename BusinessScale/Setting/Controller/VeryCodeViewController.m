@@ -58,6 +58,7 @@
     
     _codeTextField.inputField.textColor = ALLightTextColor;
     _codeTextField.backgroundColor = [UIColor clearColor];
+    _codeTextField.inputField.keyboardType = UIKeyboardTypeNumberPad;
     
     _sepT.backgroundColor = _sepB.backgroundColor = separateLabelColor;
     _sepHeight.constant = ALSeparaLineHeight;

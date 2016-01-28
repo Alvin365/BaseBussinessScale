@@ -13,6 +13,9 @@
 #import "RootTabViewController.h"
 @interface LogonController ()
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *logoTop;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *registBtnTop;
+
 @end
 
 @implementation LogonController
@@ -51,6 +54,9 @@
     [_kUIAgreementLicense setTitle: @"用户协议及隐私政策" forState:UIControlStateNormal];
     
     [self removeLineOfNavigationBar];
+    
+    _logoTop.constant = 105*ALScreenScalHeight;
+    _registBtnTop.constant = 140*ALScreenScalHeight;
 }
 
 

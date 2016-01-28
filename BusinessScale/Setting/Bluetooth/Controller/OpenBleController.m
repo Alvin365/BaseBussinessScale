@@ -8,7 +8,8 @@
 
 #import "OpenBleController.h"
 #import "BoundDeviceController.h"
-
+#import "SetPinningController.h"
+#import <Commercial-Bluetooth/CsBtUtil.h>
 @interface OpenBleController ()
 
 @end
@@ -60,9 +61,16 @@
 //    }
 //}
 
--(IBAction)gotoNextView:(id)sender {
-    UIViewController *controller = [[BoundDeviceController alloc] init];
-    [self.navigationController pushViewController:controller animated:YES];
+- (IBAction)gotoNextView:(id)sender {
+    if ([CsBtCommon getPin].length) {
+        UIViewController *controller = [[BoundDeviceController alloc] init];
+        [self.navigationController pushViewController:controller animated:YES];
+    }else{
+        SetPinningController *pin = [[SetPinningController alloc]init];
+        pin.title = @"PIN码设置";
+        pin.isPush = YES;
+        [self.navigationController pushViewController:pin animated:YES];
+    }
 }
 
 @end

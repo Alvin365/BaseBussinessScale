@@ -21,8 +21,10 @@
         self.dataArea = [[BroadcastFrameData alloc] initWithData:dataArea];
         _data = [[BroadcastData alloc] init];
         BroadcastFrameData *frameData = (BroadcastFrameData *)self.dataArea;
-        _data.deviceType = frameData.deviceType;
         _data.deviceProductId = frameData.deviceProductId;
+        _data.wDecimalPoint = frameData.wDecimalPoint;
+        _data.uDecimalPoint = frameData.uDecimalPoint;
+        _data.appReceipt = frameData.appReceipt;
         _data.weight = frameData.weight;
     }
     return self;

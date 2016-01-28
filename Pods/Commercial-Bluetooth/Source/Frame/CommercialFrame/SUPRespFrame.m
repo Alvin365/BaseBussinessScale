@@ -14,8 +14,8 @@
     self = [super initWithData:data];
     if (self) {
         Byte *frameByte = (Byte *)self.frameFull.bytes;
-        _productId = (int)(((frameByte[4] & 0xFF) << 8) | (frameByte[5] & 0xFF));
-        _success = frameByte[6] == 0x00 ? YES : NO;
+        _xorValue = frameByte[4];
+        _success = frameByte[5] == 0x01 ? YES : NO;
     }
     return self;
 }
