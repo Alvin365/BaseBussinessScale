@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="NoDataView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="暂无数据" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sey-1t-tQ6">
+                    <rect key="frame" x="154" y="147" width="68" height="21"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pic" translatesAutoresizingMaskIntoConstraints="NO" id="ZwL-9q-uO4">
+                    <rect key="frame" x="130" y="80" width="115" height="47"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="47" id="kC0-lD-kTN"/>
+                        <constraint firstAttribute="width" constant="115" id="xg4-TX-fhQ"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="ZwL-9q-uO4" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Dsn-vL-Onf"/>
+                <constraint firstItem="Sey-1t-tQ6" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="FbP-Zm-5Q6"/>
+                <constraint firstItem="Sey-1t-tQ6" firstAttribute="top" secondItem="ZwL-9q-uO4" secondAttribute="bottom" constant="20" id="RH5-Sj-XnC"/>
+                <constraint firstAttribute="trailing" secondItem="ZwL-9q-uO4" secondAttribute="trailing" constant="68" id="imP-Kf-0G2"/>
+                <constraint firstItem="ZwL-9q-uO4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="80" id="tVZ-Ap-1VW"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="imP-Kf-0G2"/>
+                </mask>
+            </variation>
+            <connections>
+                <outlet property="noDataL" destination="Sey-1t-tQ6" id="uZl-bj-ngw"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="pic" width="115" height="47"/>
+    </resources>
+</document>

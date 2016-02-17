@@ -16,7 +16,6 @@
 		E12FB27A1C59B6CB00A6D423 /* SetPinningController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E12FB2781C59B6CB00A6D423 /* SetPinningController.xib */; };
 		E144E3931C22AFDF00701154 /* RecordHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = E144E3921C22AFDE00701154 /* RecordHeader.m */; };
 		E144E3951C22B00300701154 /* RecordHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E144E3941C22B00300701154 /* RecordHeader.xib */; };
-		E146F81A1C44E9B200E14EEA /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E146F8191C44E9B200E14EEA /* Launch Screen.storyboard */; };
 		E146F81F1C44F0AE00E14EEA /* ble_connected.png in Resources */ = {isa = PBXBuildFile; fileRef = E146F81B1C44F0AE00E14EEA /* ble_connected.png */; };
 		E146F8201C44F0AE00E14EEA /* ble_connecting_1.png in Resources */ = {isa = PBXBuildFile; fileRef = E146F81C1C44F0AE00E14EEA /* ble_connecting_1.png */; };
 		E146F8211C44F0AE00E14EEA /* ble_connecting_2.png in Resources */ = {isa = PBXBuildFile; fileRef = E146F81D1C44F0AE00E14EEA /* ble_connecting_2.png */; };
@@ -36,6 +35,8 @@
 		E146F84B1C48D33900E14EEA /* right.png in Resources */ = {isa = PBXBuildFile; fileRef = E146F84A1C48D33900E14EEA /* right.png */; };
 		E146F84F1C48DECC00E14EEA /* ALResetPwdController.m in Sources */ = {isa = PBXBuildFile; fileRef = E146F84D1C48DECC00E14EEA /* ALResetPwdController.m */; };
 		E146F8501C48DECC00E14EEA /* ALResetPwdController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E146F84E1C48DECC00E14EEA /* ALResetPwdController.xib */; };
+		E1479A6D1C717487008E8F25 /* weixin6.png in Resources */ = {isa = PBXBuildFile; fileRef = E1479A6C1C717487008E8F25 /* weixin6.png */; };
+		E1479A6F1C717835008E8F25 /* 支付宝11.png in Resources */ = {isa = PBXBuildFile; fileRef = E1479A6E1C717835008E8F25 /* 支付宝11.png */; };
 		E14978801C55BB3600AF7E94 /* UIImageView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E149787F1C55BB3600AF7E94 /* UIImageView+Extension.m */; };
 		E14978861C5756C000AF7E94 /* QuardCodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = E14978851C5756C000AF7E94 /* QuardCodeView.m */; };
 		E14978881C5756D600AF7E94 /* QuardCodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E14978871C5756D600AF7E94 /* QuardCodeView.xib */; };
@@ -71,6 +72,8 @@
 		E183E8D91C32B9A2004403F4 /* ChineseToPinyin.m in Sources */ = {isa = PBXBuildFile; fileRef = E183E8D81C32B9A2004403F4 /* ChineseToPinyin.m */; };
 		E183E8DC1C33605E004403F4 /* ContactsIndexsView.m in Sources */ = {isa = PBXBuildFile; fileRef = E183E8DB1C33605E004403F4 /* ContactsIndexsView.m */; };
 		E183E9011C33D1E8004403F4 /* AFHTTPSessionManager+AlvinAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = E183E9001C33D1E8004403F4 /* AFHTTPSessionManager+AlvinAdd.m */; };
+		E18714061C5F532100ED80F5 /* NoDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = E18714051C5F532100ED80F5 /* NoDataView.m */; };
+		E18714081C5F532F00ED80F5 /* NoDataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E18714071C5F532F00ED80F5 /* NoDataView.xib */; };
 		E18748401C1EED730020F2FF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E187483F1C1EED730020F2FF /* Foundation.framework */; };
 		E18748421C1EED730020F2FF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E18748411C1EED730020F2FF /* CoreGraphics.framework */; };
 		E18748441C1EED730020F2FF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E18748431C1EED730020F2FF /* UIKit.framework */; };
@@ -1275,7 +1278,6 @@
 		E144E3921C22AFDE00701154 /* RecordHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordHeader.m; sourceTree = "<group>"; };
 		E144E3941C22B00300701154 /* RecordHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordHeader.xib; sourceTree = "<group>"; };
 		E146F8181C44E5A500E14EEA /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/Localizable.strings; sourceTree = "<group>"; };
-		E146F8191C44E9B200E14EEA /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		E146F81B1C44F0AE00E14EEA /* ble_connected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ble_connected.png; sourceTree = "<group>"; };
 		E146F81C1C44F0AE00E14EEA /* ble_connecting_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ble_connecting_1.png; sourceTree = "<group>"; };
 		E146F81D1C44F0AE00E14EEA /* ble_connecting_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ble_connecting_2.png; sourceTree = "<group>"; };
@@ -1300,6 +1302,8 @@
 		E146F84C1C48DECC00E14EEA /* ALResetPwdController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALResetPwdController.h; sourceTree = "<group>"; };
 		E146F84D1C48DECC00E14EEA /* ALResetPwdController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALResetPwdController.m; sourceTree = "<group>"; };
 		E146F84E1C48DECC00E14EEA /* ALResetPwdController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ALResetPwdController.xib; sourceTree = "<group>"; };
+		E1479A6C1C717487008E8F25 /* weixin6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = weixin6.png; sourceTree = "<group>"; };
+		E1479A6E1C717835008E8F25 /* 支付宝11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "支付宝11.png"; sourceTree = "<group>"; };
 		E149787E1C55BB3600AF7E94 /* UIImageView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Extension.h"; sourceTree = "<group>"; };
 		E149787F1C55BB3600AF7E94 /* UIImageView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Extension.m"; sourceTree = "<group>"; };
 		E14978841C5756C000AF7E94 /* QuardCodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuardCodeView.h; sourceTree = "<group>"; };
@@ -1367,6 +1371,9 @@
 		E183E8DB1C33605E004403F4 /* ContactsIndexsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsIndexsView.m; sourceTree = "<group>"; };
 		E183E8FF1C33D1E8004403F4 /* AFHTTPSessionManager+AlvinAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AFHTTPSessionManager+AlvinAdd.h"; sourceTree = "<group>"; };
 		E183E9001C33D1E8004403F4 /* AFHTTPSessionManager+AlvinAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AFHTTPSessionManager+AlvinAdd.m"; sourceTree = "<group>"; };
+		E18714041C5F532100ED80F5 /* NoDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoDataView.h; sourceTree = "<group>"; };
+		E18714051C5F532100ED80F5 /* NoDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoDataView.m; sourceTree = "<group>"; };
+		E18714071C5F532F00ED80F5 /* NoDataView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoDataView.xib; sourceTree = "<group>"; };
 		E187483C1C1EED730020F2FF /* BusinessScale.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BusinessScale.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E187483F1C1EED730020F2FF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E18748411C1EED730020F2FF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -2852,6 +2859,8 @@
 		E1CEEC0E1C3DF92400595EDA /* 图片 */ = {
 			isa = PBXGroup;
 			children = (
+				E1479A6E1C717835008E8F25 /* 支付宝11.png */,
+				E1479A6C1C717487008E8F25 /* weixin6.png */,
 				E1A00E221C508F1A005BA6A2 /* role_head_default.png */,
 				E1739BF51C49DA670056BFEA /* icon_left.png */,
 				E146F84A1C48D33900E14EEA /* right.png */,
@@ -4044,7 +4053,6 @@
 				E1AD16231C434FF70085FEC1 /* BEMCurve */,
 				E1CEEC371C3E02F200595EDA /* WPAttributedMarkup */,
 				E1FAEB991C2CE9AA001706CE /* MJExtension */,
-				E146F8191C44E9B200E14EEA /* Launch Screen.storyboard */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -4110,6 +4118,9 @@
 				E1FAEBB71C2CED22001706CE /* ALSelfDefineDatePickerView.m */,
 				E1A00E141C4E40AF005BA6A2 /* BaseView.h */,
 				E1A00E151C4E40AF005BA6A2 /* BaseView.m */,
+				E18714041C5F532100ED80F5 /* NoDataView.h */,
+				E18714051C5F532100ED80F5 /* NoDataView.m */,
+				E18714071C5F532F00ED80F5 /* NoDataView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4644,7 +4655,7 @@
 				ORGANIZATIONNAME = Alvin;
 				TargetAttributes = {
 					E187483B1C1EED730020F2FF = {
-						DevelopmentTeam = 5S5N686L97;
+						DevelopmentTeam = 4245569RS7;
 					};
 					E18748561C1EED730020F2FF = {
 						TestTargetID = E187483B1C1EED730020F2FF;
@@ -5190,7 +5201,6 @@
 				E1E872891C3268CF00EBA227 /* cn_img782.png in Resources */,
 				E1E871DC1C3268CF00EBA227 /* cn_img586.png in Resources */,
 				E1E873301C3268D000EBA227 /* cn_img980.png in Resources */,
-				E146F81A1C44E9B200E14EEA /* Launch Screen.storyboard in Resources */,
 				E1E86FFF1C3268CE00EBA227 /* cn_img068.png in Resources */,
 				E1E8701A1C3268CE00EBA227 /* cn_img097.png in Resources */,
 				E1E86FFE1C3268CE00EBA227 /* cn_img067.png in Resources */,
@@ -5388,6 +5398,7 @@
 				E1E86FEB1C3268CE00EBA227 /* cn_img048.png in Resources */,
 				E1E8717F1C3268CF00EBA227 /* cn_img489.png in Resources */,
 				E1E872031C3268CF00EBA227 /* cn_img634.png in Resources */,
+				E18714081C5F532F00ED80F5 /* NoDataView.xib in Resources */,
 				E1E86FDE1C3268CE00EBA227 /* cn_img034.png in Resources */,
 				E1E8730F1C3268D000EBA227 /* cn_img941.png in Resources */,
 				E1E86FD21C3268CE00EBA227 /* cn_img022.png in Resources */,
@@ -5411,6 +5422,7 @@
 				E1E871641C3268CF00EBA227 /* cn_img460.png in Resources */,
 				E1E872D61C3268CF00EBA227 /* cn_img878.png in Resources */,
 				E1E8712C1C3268CF00EBA227 /* cn_img403.png in Resources */,
+				E1479A6F1C717835008E8F25 /* 支付宝11.png in Resources */,
 				E1E8716C1C3268CF00EBA227 /* cn_img469.png in Resources */,
 				E1EEBC7A1C204D0400551A5E /* ProcessingViewController.xib in Resources */,
 				E1E870871C3268CF00EBA227 /* cn_img219.png in Resources */,
@@ -5728,6 +5740,7 @@
 				E1E8735A1C3268D000EBA227 /* en_sort028.png in Resources */,
 				E1E870671C3268CE00EBA227 /* cn_img185.png in Resources */,
 				E1E86FE11C3268CE00EBA227 /* cn_img037.png in Resources */,
+				E1479A6D1C717487008E8F25 /* weixin6.png in Resources */,
 				E1E871E61C3268CF00EBA227 /* cn_img598.png in Resources */,
 				E1E872A91C3268CF00EBA227 /* cn_img821.png in Resources */,
 				E1E8706C1C3268CF00EBA227 /* cn_img190.png in Resources */,
@@ -5951,6 +5964,7 @@
 				E14978861C5756C000AF7E94 /* QuardCodeView.m in Sources */,
 				E144E3931C22AFDF00701154 /* RecordHeader.m in Sources */,
 				E1EEBC6F1C204CFA00551A5E /* WeighingViewController.m in Sources */,
+				E18714061C5F532100ED80F5 /* NoDataView.m in Sources */,
 				E1EEBCB31C20661F00551A5E /* SWTableViewCell.m in Sources */,
 				E1AD16481C43A4830085FEC1 /* DeviceInformationController.m in Sources */,
 				E1739C231C49E26C0056BFEA /* PNPieChart.m in Sources */,
@@ -6102,15 +6116,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Yin (7Q6JR7C9N2)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Yin (7Q6JR7C9N2)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jiangyu Xu (UYJVXFA5VR)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jiangyu Xu (UYJVXFA5VR)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BusinessScale/BusinessScale-Prefix.pch";
 				INFOPLIST_FILE = "BusinessScale/BusinessScale-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cn.commercialScale.chipsea;
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercialScale.chipsea;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "552d8ad1-c3a5-484d-a120-d0c799336c1e";
+				PROVISIONING_PROFILE = "c6176d89-3673-4bd9-9dc4-e61662d460bb";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -6121,15 +6136,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: XIUYI TECHNOLOGY DEVELOPMENT CO.,LTD (4245569RS7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: XIUYI TECHNOLOGY DEVELOPMENT CO.,LTD (4245569RS7)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BusinessScale/BusinessScale-Prefix.pch";
 				INFOPLIST_FILE = "BusinessScale/BusinessScale-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cn.commercialScale.chipsea;
+				PRODUCT_BUNDLE_IDENTIFIER = com.commercialScale.chipsea;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "552d8ad1-c3a5-484d-a120-d0c799336c1e";
+				PROVISIONING_PROFILE = "c6176d89-3673-4bd9-9dc4-e61662d460bb";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
