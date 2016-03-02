@@ -65,7 +65,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Commercial-Bluetooth:
-    :commit: a6bedda48826ccfa4d918d03c8e6f7326ff858b6
+    :commit: ffd8b490ee8567e6e5372b88f869e85a3c0b1820
     :git: git@192.168.0.90:zhanglh/Commercial-Bluetooth.git
 
 SPEC CHECKSUMS:

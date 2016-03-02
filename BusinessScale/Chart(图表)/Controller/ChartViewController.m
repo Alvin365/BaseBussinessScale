@@ -29,7 +29,6 @@
 @property (nonatomic, copy) NSDate *monthBegin;
 @property (nonatomic, copy) NSDate *yearBegin;
 
-
 @end
 
 @implementation ChartViewController
@@ -153,17 +152,25 @@
     ChartBussiness *bussiness = [[ChartBussiness alloc]init];
     __weak typeof (ChartBussiness *)weakBussiness = bussiness;
     void (^block) (NSArray *) = ^(NSArray *array){
+        [self.progressHud hide:YES];
         __strong typeof (ChartBussiness *)strongBu = weakBussiness;
         CGFloat total = 0.0f;
         CGFloat aver = 0.0f;
+        NSInteger count = 0;
         for (NSNumber *num in array) {
             total += [num floatValue];
+            if ([num floatValue]>0) {
+                count++;
+            }
         }
-        aver = total/days;
+        aver = count?total/count:0;
         dispatch_async(dispatch_get_main_queue(), ^{
             _chartView.dataSource = array;
             self.totalIncomeView.priceL.text = [ALCommonTool decimalPointString:total];
             self.averageIncomeView.priceL.text = [ALCommonTool decimalPointString:aver];
+            [self.totalIncomeView setPriceShow:total!=0.0f];
+            [self.averageIncomeView setPriceShow:aver!=0];
+            
             [self topAndLowState:strongBu];
             [self.mostLevel setNeedsLayout];
             [self.leastLevel setNeedsLayout];
@@ -186,6 +193,7 @@
 #pragma mark - action
 - (void)segMentValueChanged:(UISegmentedControl *)seg
 {
+    [self.progressHud show:YES];
     _chartView.chartType = (ChartType)(seg.selectedSegmentIndex!=0);
     if (seg.selectedSegmentIndex == 0) {
         _totalIncomeView.title.text = @"本周总收入";
@@ -267,7 +275,7 @@
 - (void)dateLabelTitle
 {
     if (self.segMent.selectedSegmentIndex == 0) {
-        NSDate *weekEnd = [_weekBegin dateByAddingDays:7];
+        NSDate *weekEnd = [_weekBegin dateByAddingDays:6];
         _dateL.dateL.text = [NSString stringWithFormat:@"%@~%@",[NSString stringWithFormat:@"%i/%i/%i",(int)_weekBegin.year,(int)_weekBegin.month,(int)_weekBegin.day],[NSString stringWithFormat:@"%i/%i/%i",(int)weekEnd.year,(int)weekEnd.month,(int)weekEnd.day]];
     }else if (self.segMent.selectedSegmentIndex == 1){
         _dateL.dateL.text = [NSString stringWithFormat:@"%i年%i月",(int)_monthBegin.year,(int)_monthBegin.month];
@@ -291,11 +299,14 @@
         self.leastLevel.levelL.text = [NSString stringWithFormat:@"%i/%i",(int)bussiness.minMonth.year,(int)bussiness.minMonth.month];
         self.mostLevel.price.text = [ALCommonTool decimalPointString:bussiness.maxMonthPrice];
         self.leastLevel.price.text = [ALCommonTool decimalPointString:bussiness.minMonthPrice];
+        [self.mostLevel setPriceShow:bussiness.maxMonthPrice!=0.0f];
+        [self.leastLevel setPriceShow:bussiness.minMonthPrice!=0.0f];
         return;
     }
-    
     self.mostLevel.price.text = [ALCommonTool decimalPointString:bussiness.maxPrice];
     self.leastLevel.price.text = [ALCommonTool decimalPointString:bussiness.minPrice];
+    [self.mostLevel setPriceShow:bussiness.maxPrice!=0.0f];
+    [self.leastLevel setPriceShow:bussiness.minPrice!=0.0f];
 }
 
 @end

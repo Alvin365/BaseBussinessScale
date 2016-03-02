@@ -15,7 +15,8 @@
     if ([icon hasPrefix:@"img"]) {
         self.image = [UIImage imageFromSeverName:icon];
     }else{
-        [self sd_setImageWithURL:[NSURL URLWithString:icon] placeholderImage:[UIImage imageNamed:@"default"]];
+        NSString *iconURL = [NSString stringWithFormat:@"%@inventory/icon/%@",userServerce,icon];
+        [self sd_setImageWithURL:[NSURL URLWithString:iconURL]placeholderImage:[UIImage imageNamed:@"default"]];
     }
 }
 

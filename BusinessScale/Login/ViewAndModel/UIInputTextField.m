@@ -58,21 +58,16 @@
 //        [_textField setBackground:imageTextField];
         
         //必须要设置了Placeholder才可以通过下面的来设置某某
-        [_textField setPlaceholder:DPLocalizedString(@"input_hint", @"请输入内容")];
+        [_textField setPlaceholder:@"请输入内容"];
         [_textField setValue:[UIFont boldSystemFontOfSize:15] forKeyPath:@"_placeholderLabel.font"];
-        
         
         //对textField添加监听时间,当文字修改的时候会回调textFieldDidchange!
         [_textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    
-        
         /*
          3. 添加到当前的View中
          */
         [self addSubview:_textField];
         [self addSubview:_delView];
-
-        
     }
     return self;
 }

@@ -11,7 +11,10 @@
 #import "DeviceInformationController.h"
 #import "BoundDeviceController.h"
 #import <Commercial-Bluetooth/CsBtUtil.h>
+#import "BLEHttpTool.h"
+#import "SetPinningController.h"
 @interface MyDeviceController ()
+@property (weak, nonatomic) IBOutlet UIView *sepLine;
 
 @end
 
@@ -25,51 +28,61 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.title = DPLocalizedString(@"my_scale", @"我的设备");
+    self.title = @"我的设备";
 }
 
 #pragma mark - custom functions
 /// 初始化
 #pragma mark 初始化
 -(void) initAll {
-    ALLog(@"MyDeviceController -> initAll");
     //国际化
-    [_kUIToKnowOkOk setTitle:@"了解OKOK蓝牙秤" forState:UIControlStateNormal];
-    
-    [_kUIBoundBtn setTitle:@"绑定OKOK蓝牙秤" forState:UIControlStateNormal];
+    [_kUIToKnowOkOk setTitle:@"了解OKOK商用秤" forState:UIControlStateNormal];
+    [_kUIBoundBtn setTitle:@"绑定OKOK商用秤" forState:UIControlStateNormal];
     _kUIUnBound.text = @"解除绑定";
     _kUIDeviceInfo.text = @"设备信息";
     
     //色差
     _kUILine1.backgroundColor = separateLabelColor;
     _kUILine2.backgroundColor = separateLabelColor;
+    _sepLine.backgroundColor = separateLabelColor;
     _kUIUnBound.textColor = ALTextColor;
     _kUIDeviceInfo.textColor = ALTextColor;
-    _kUIDeviceInfoBg.backgroundColor = ALNavBarColor;
+    _kUIDeviceInfoBg.backgroundColor = [UIColor whiteColor];
     [_kUIToKnowOkOk setTitleColor:ALLightTextColor forState:UIControlStateNormal];
     [_kUIBoundBtn setTitleColor:ALNavBarColor forState:UIControlStateNormal];
     //设置分割线高度
     _kUILine1.height = ALSeparaLineHeight;
     _kUILine2.height = ALSeparaLineHeight;
+    _sepLine.height = ALSeparaLineHeight;
     _kUIBoundBtn.layer.borderWidth = 1;
     _kUIBoundBtn.layer.borderColor = ALNavBarColor.CGColor;
     _kUIBoundBtn.layer.cornerRadius = 5;
     _kUIBoundBtn.layer.masksToBounds = YES;
     
     _kUINoboundView.hidden = [ScaleTool scale].mac.length;
-    _kUIBoundView.hidden = !_kUINoboundView.hidden;
+    ALLog(@"scaleInfo = %@",[ScaleTool scale]);
+    _kUIBoundView.hidden = ![ScaleTool scale].mac.length;
 }
+
 
 #pragma mark - callback functions
 /// 解除绑定点击事件
 #pragma 解除绑定点击事件
 -(IBAction)unboundDeviceClick:(id)sender {
-    [LocalDataTool removeDocumAtPath:@"scale.data"];
-    [[CsBtUtil getInstance] disconnectWithBt];
-    [CsBtCommon clearBoundMac];
-    [[CsBtUtil getInstance]stopScanBluetoothDevice];
-    [MBProgressHUD showSuccess:@"解绑成功" compleBlock:^{
-        [self.navigationController popToRootViewControllerAnimated:YES];
+    if (![self judgeCanUpLoad]) return;
+    BLEHttpTool *req = [[BLEHttpTool alloc]initWithParam:[BLEHttpTool deleteScale]];
+    [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                [LocalDataTool removeDocumAtPath:@"scale.data"];
+                [[CsBtUtil getInstance] disconnectWithBt];
+                [CsBtCommon clearBoundMac];
+                [[CsBtUtil getInstance]stopScanBluetoothDevice];
+                [MBProgressHUD showSuccess:@"解绑成功" compleBlock:^{
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                }];
+            }
+        }];
     }];
 }
 
@@ -88,11 +101,26 @@
 //    [self.navigationController setNavigationBarHidden:YES];
     UIViewController *controller;
     if ([CsBtUtil getInstance].state != CsScaleStateClosed) {
-        controller = [[BoundDeviceController alloc] init];
+        if([CsBtCommon getPin].length){
+            controller = [[BoundDeviceController alloc]init];
+        }else{
+            controller = [[SetPinningController alloc]init];
+            ((SetPinningController *)controller).isPush = YES;
+        }
     } else {
         controller = [[OpenBleController alloc] init];
     }
     [self.navigationController pushViewController:controller animated:YES];
+}
+
+- (BOOL)judgeCanUpLoad
+{
+    BOOL b = YES;
+    if ([Reachability shareReachAbilty].currentReachabilityStatus == NotReachable) {
+        [MBProgressHUD showError:@"当前网络不好，请重选网络再试"];
+        b = NO;
+    }
+    return b;
 }
 
 @end

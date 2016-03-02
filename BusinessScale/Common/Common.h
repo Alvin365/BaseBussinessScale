@@ -49,7 +49,7 @@
  */
 #define unitGlobal @"unitGlobal"
 #define loginPassWord @"loginPassWord"
-
+#define loginAccount @"loginAccount"
 /**
  * NSNotificationCenter
  */

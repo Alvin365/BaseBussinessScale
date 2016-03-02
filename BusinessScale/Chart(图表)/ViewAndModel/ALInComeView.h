@@ -11,6 +11,7 @@
 @interface ALInComeView : UIView
 
 + (instancetype)loadXibIncomeView;
+- (void)setPriceShow:(BOOL)show;
 
 @property (weak, nonatomic) IBOutlet UILabel *title;
 @property (weak, nonatomic) IBOutlet UILabel *priceFlag;

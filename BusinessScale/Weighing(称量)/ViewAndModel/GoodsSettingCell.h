@@ -10,6 +10,6 @@
 
 @interface GoodsSettingCell : UITableViewCell
 
-@property (nonatomic, strong) GoodsInfoModel *model;
+@property (nonatomic, strong) GoodsTempList *model;
 
 @end

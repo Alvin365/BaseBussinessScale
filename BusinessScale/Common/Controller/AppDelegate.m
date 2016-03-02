@@ -15,9 +15,12 @@
 #import "ALNavigationController.h"
 #import "OpenBleController.h"
 #import "BoundDeviceController.h"
-#import "Reachability.h"
 #import <Commercial-Bluetooth/CsBtUtil.h>
 #import "SetPinningController.h"
+#import <SDWebImage/SDWebImageDownloader.h>
+#import "GoodsListController.h"
+#import "WXApi.h"
+#import "WXApiManager.h"
 @interface AppDelegate ()
 
 @end
@@ -30,53 +33,23 @@
     self.window.backgroundColor = [UIColor whiteColor]; //背景颜色为白色
     [self.window makeKeyAndVisible];
     
-    if ([AccountTool account].token.length) {
-        RootTabViewController *ctl = [[RootTabViewController alloc]init];
+    RootTabViewController *ctl = [[RootTabViewController alloc]init];
+    self.window.rootViewController = ctl;
+    
+    if (![AccountTool account].token.length) {
+        LogonController *ctl = [[LogonController alloc]init];
         ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:ctl];
-        self.window.rootViewController = nav;
-    }else{
-        WS(weakSelf);
-        if ([ALCommonTool isFirstInstall]) {
-            /**
-             * 第一次安装 绑定界面后到登录
-             */
-            BaseViewController *bas = nil;
-            if ([CsBtUtil getInstance].state == CsScaleStateClosed) {
-                bas = [[OpenBleController alloc]init];
-            }else{
-                if([CsBtCommon getPin].length){
-                    bas = [[BoundDeviceController alloc]init];
-                }else{
-                    bas = [[SetPinningController alloc]init];
-                    ((SetPinningController *)bas).isPush = YES;
-                }
-            }
-            
-            ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:bas];
-            self.window.rootViewController = nav;
-            nav.callBack = ^{
-                LogonController *ctl = [[LogonController alloc]init];
-                ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:ctl];
-                weakSelf.window.rootViewController = nav;
-            };
-        }else{
-            /**
-             * 未登录状态下
-             */
-            LogonController *ctl = [[LogonController alloc]init];
-            ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:ctl];
-            self.window.rootViewController = nav;
-        }
+        [self.window.rootViewController presentViewController:nav animated:NO completion:nil];
     }
-   
     /**
      * 新特性、新版本时显示引导页
      */
-    if ([ALCommonTool isNewFeature]) {
+//    if ([ALCommonTool isNewFeature]) {
         ALWellComeView *wellcom = [[ALWellComeView alloc]init];
         [wellcom show];
-        
-    }
+//    }
+    
+    [WXApi registerApp:kAppID withDescription:kAppSecret];
     ALLog(@"%@",NSHomeDirectory());
 //    [[NSObject getUsingLKDBHelper]dropAllTable];
     /**
@@ -87,6 +60,15 @@
     
     return YES;
 }
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

@@ -100,7 +100,10 @@
 @property (readonly) NSInteger weekLevel;
 
 /** 时间戳*/
-@property (nonatomic, readonly) NSTimeInterval timeStempString;
+@property (nonatomic, readonly) NSTimeInterval timeStemp;
+/** 时间戳字符串*/
+@property (nonatomic, readonly) NSString *timeStempString;
+
 /** 某一天 的00:00点*/
 @property (nonatomic, readonly) NSDate *zeroTime;
 /** 某一天 的23:59*/

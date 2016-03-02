@@ -17,13 +17,14 @@
 #import "LoginHttpTool.h"
 #import "WeightBussiness.h"
 #import "LocalDataTool.h"
-#import "QrCodeViewController.h"
 #import <Commercial-Bluetooth/CsBtUtil.h>
 #import "OpenBleController.h"
 #import "GoodsListHttpTool.h"
 #import "BoundDeviceController.h"
 #import "QuardCodeView.h"
 #import "SettingBussiness.h"
+#import "SetPinningController.h"
+#import "BLEHttpTool.h"
 
 #define currentPalletList [NSString stringWithFormat:@"currentPalletList%@",[AccountTool account].ID]
 
@@ -32,6 +33,7 @@
     NSString *code_url;
     CsBtUtil *_btUtil;
     NSMutableDictionary *_paramsDic;
+    NSString *po_uuid;
 }
 @property (weak, nonatomic) IBOutlet UIView *SepView;
 @property (weak, nonatomic) IBOutlet UITableView *table;
@@ -95,7 +97,11 @@
     UILabel *l = [_rightBar viewWithTag:100];
     UIImageView *imageV = [_rightBar viewWithTag:1000];
     if ([CsBtUtil getInstance].state>=CsScaleStateConnected) {
-        l.text = @"蓝牙已连接";
+        if ([CsBtUtil getInstance].state!=CsScaleStateShakeHandSuccess) {
+            l.text = @"蓝牙连接中";
+        }else{
+            l.text = @"蓝牙已连接";
+        }
         imageV.image = [UIImage imageNamed:@"ble_connected.png"];
     }else{
         l.text = @"蓝牙未连接";
@@ -148,7 +154,6 @@
     if (!_noDatasView) {
         _noDatasView = [WeightNoDatasView loadXibView];
         _noDatasView.frame = self.view.bounds;
-        [self.view addSubview:_noDatasView];
     }
     return _noDatasView;
 }
@@ -156,9 +161,13 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
     self.navigationController.navigationBar.hidden = NO;
     _btUtil.delegate = self;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
+    if (_btUtil.state < CsScaleStateConnected) {
+        _btUtil.stopAdvertisementState = ![CsBtCommon getBoundMac].length;
+        [_btUtil startScanBluetoothDevice];
+    }
 }
 
 - (void)viewDidLoad {
@@ -169,7 +178,6 @@
     [self buildNavBarItems];
     [self registNotifications];
     [self datas];
-    [self.noDatasView showAnimate:YES];
 }
 
 - (void)initFromXib
@@ -231,7 +239,6 @@
 {
     WS(weakSelf);
     self.navigationItem.title = @"OKOK计量";
-    
     [self addNavLeftBarBtn:@"进入托盘" selectorBlock:^{
         PalletViewController *pctl = [[PalletViewController alloc]init];
         [weakSelf.navigationController pushViewController:pctl animated:YES];
@@ -246,8 +253,6 @@
         [weakSelf headerWithModel:weakSelf.item];
         [weakSelf.table reloadData];
     }];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(SWTableViewCellScrollNotice:) name:SWTableViewCellBeginScrollNotice object:nil];
 }
 
 #pragma mark - -actions
@@ -256,60 +261,49 @@
     if ([sender tag]) {
         [self.paySelectView showAnimate:YES];
     }else{
-        NSArray *array = [LocalDataTool loadLocalArrayFromPath:palletList];
-        NSMutableArray *muArr = [NSMutableArray array];
-        if (array.count) {
-            [muArr addObjectsFromArray:array];
-        }
-        SaleItem *item = [_dataArray lastObject];
-        [muArr addObject:[item keyValues]];
-        [LocalDataTool saveAsLocalArrayWithPath:palletList data:muArr];
-        [_dataArray removeObject:item];
-        [self saveCurrentPallet];
-        [self.table reloadData];
-        [self setHeaderDefalutData];
-        [self caculateTotal];
-        [MBProgressHUD showMessage:@"放入托盘成功"];
+        [self saveBackupPallet];
     }
 }
 
 - (void)uploadRecordsWithType:(PayWayType)type
 {
-    [self.progressHud show:YES];
     NSString *payWay = nil;
     if (type == PayWayTypeCrash) {
         payWay = @"cash";
     }else if (type == PayWayTypeWechatPay){
         payWay = @"weixin";
+        self.paySelectView.payWayImageView.image = [UIImage imageNamed:@"weixin6.png"];
     }else if(type == PayWayTypeAlipay){
         payWay = @"alipay";
+        self.paySelectView.payWayImageView.image = [UIImage imageNamed:@"支付宝11.png"];
     }else if (type == PayWayTypeOnline){
         payWay = @"online";
     }
-    NSString *price = [[self.paySelectView.priceL.text componentsSeparatedByString:@"￥"] lastObject];
-    NSMutableArray *datas = [NSMutableArray array];
-    NSMutableString *string = [NSMutableString string];
-    NSInteger i = 0;
-    for (SaleItem *item in _dataArray) {
-//        item.ts = [NSDate date].timeStempString;
-        NSDictionary *dic = [item keyValues];
-        [dic setValue:@"g" forKey:@"unit"];
-        NSNumber *number = dic[@"quantity"];
-        [dic setValue:@([number floatValue]) forKey:@"quantity"];
-        [datas addObject:dic];
-        if (i<2) {
-            [string appendString:item.title];
-            [string appendString:@" "];
-        }
-        if (i==_dataArray.count-1) {
-            [string appendString:[NSString stringWithFormat:@"等%i样",(int)(i+1)]];
-        }
-        i++;
+    
+    NSInteger paid_fee = (NSInteger)([self.paySelectView.realPriceTextField.inputField.text floatValue]*100.0f+0.5);
+    NSInteger totals_fee = (NSInteger)([[[self.paySelectView.priceL.text componentsSeparatedByString:@"￥"] lastObject] floatValue]*100.0f+0.5);
+    if (paid_fee > totals_fee) {
+        [MBProgressHUD showMessage:@"折扣价不能大于总价，请修改价格"];
+        return;
     }
-    NSDictionary *params = @{@"randid":[NSString radom11BitString],@"ts":@([NSDate date].timeStempString),@"title":string,@"total_fee":@([price floatValue]*100),@"paid_fee":@([self.paySelectView.realPriceTextField.inputField.text floatValue]*100),@"payment_type":payWay,@"items":datas};
+    [self.progressHud show:YES];
+    
+    NSDictionary *params = [WeightBussiness upLoadDatasTransfer:totals_fee payFee:paid_fee datas:_dataArray];
     [_paramsDic removeAllObjects];
     [_paramsDic addEntriesFromDictionary:params];
+    [_paramsDic setObject:payWay forKey:@"payment_type"];
+    
+    if ([Reachability shareReachAbilty].currentReachabilityStatus == NotReachable) {
+        if (type == PayWayTypeCrash) {
+            [self paySuccessEventCompletedBlock:nil];
+        }else{
+            [MBProgressHUD showError:@"当前网络不好，不能使用微信和支付宝支付"];
+        }
+        return;
+    }
+    
     [self upLoadRecordsWithParams:_paramsDic completedBlock:^(NSObject *data){
+        po_uuid = ((NSDictionary *)data)[@"po_uuid"];
         if (type!=PayWayTypeCrash) {
             NSDictionary *dic = (NSDictionary *)data;
             NSString *alipayCode = dic[@"alipay"][@"code_url"];
@@ -320,7 +314,7 @@
             }
             [self.paySelectView showSuccessQrImage:code_url];
             self.paySelectView.priceL.text = [NSString stringWithFormat:@"结算价：￥%@",self.paySelectView.realPriceTextField.inputField.text];
-            [self getPoStatusWithOrderID:((NSDictionary *)data)[@"po_uuid"]];
+            [self getPoStatusWithOrderID:po_uuid];
         }else{
             [self paySuccessEventCompletedBlock:^{
                 [LocalDataTool removeDocumAtPath:currentPalletList];
@@ -331,10 +325,17 @@
 
 - (void)connectToBLE
 {
-    if ([CsBtUtil getInstance].state>=CsScaleStateConnected) return;
+    if ([CsBtUtil getInstance].state==CsScaleStateShakeHandSuccess) return;
     if (_btUtil.state != CsScaleStateClosed) {
-        BoundDeviceController *bound = [[BoundDeviceController alloc]init];
-        [self.navigationController pushViewController:bound animated:YES];
+        if ([CsBtCommon getPin].length) {
+            UIViewController *controller = [[BoundDeviceController alloc] init];
+            [self.navigationController pushViewController:controller animated:YES];
+        }else{
+            SetPinningController *pin = [[SetPinningController alloc]init];
+            pin.title = @"PIN码设置";
+            pin.isPush = YES;
+            [self.navigationController pushViewController:pin animated:YES];
+        }
         return;
     }
     OpenBleController *open = [[OpenBleController alloc]init];
@@ -354,8 +355,9 @@
             [item setValuesForKeysWithDictionary:dic];
             [_dataArray addObject:item];
         }
-        [self.noDatasView removeFromSuperview];
         [self.table reloadData];
+    }else{
+        [self.view addSubview:self.noDatasView];
     }
     [self setHeaderDefalutData];
     [self caculateTotal];
@@ -384,9 +386,21 @@
             if (data) {
                 NSString *status = ((NSDictionary *)data)[@"payment_status"];
                 if ([status isEqualToString:@"completed"]) {
-                    [self paySuccessEventCompletedBlock:^{
-                        
-                    }];
+                    // 记录 哪种方式支付的
+                    [_paramsDic setValue:((NSDictionary *)data)[@"payment_type"] forKey:@"payment_type"];
+                    
+                    [self paySuccessEventCompletedBlock:nil];
+                }else if ([status isEqualToString:@"closed"]){
+                    if (self.paySelectView.superview){
+                        showAlert(@"支付超时，请重新扫描二维码");
+                        [self.paySelectView hide];
+                    }
+                    if (self.qrCodeView.superview){
+                        showAlert(@"支付超时，请重新扫描二维码");
+                        ReceiptsTDRespFrame *frame = [[ReceiptsTDRespFrame alloc] initWithProductId:0x0000 status:0x02];
+                        [_btUtil writeFrameToPeripheral:frame];
+                        [self.qrCodeView hide];
+                    }
                 }else if ([status isEqualToString:@"error"]){
                     if (self.paySelectView.superview){
                         showAlert(@"支付失败，用户已取消付款，请重新扫描二维码");
@@ -411,32 +425,16 @@
 /** 成功支付 完成事件*/
 - (void)paySuccessEventCompletedBlock:(void(^)())block
 {
-    [MBProgressHUD showSuccess:@"支付成功"];
-    /** 数据库插入新数据 (异步)*/
-    SaleTable *salT = [[SaleTable alloc]init];
-    [salT setValuesForKeysWithDictionary:_paramsDic];
-    NSMutableArray *arr = [NSMutableArray array];
-    NSArray *items = _paramsDic[@"items"];
-    NSInteger i = 0;
-    CGFloat paids = 0.0f;
-    for (NSDictionary *dic in items) {
-        SaleItem *item = [[SaleItem alloc]init];
-        [item setValuesForKeysWithDictionary:dic];
-        [arr addObject:item];
-        item.unit = WeightUnit_Gram;
-        item.discount = [_paramsDic[@"paid_fee"] floatValue]/[_paramsDic[@"total_fee"] floatValue];
-        item.paid_price = (item.total_price*item.discount);
-        if (!item.ts) {
-            item.ts = [NSDate date].timeStempString;
-        }
-        if (i==items.count-1) {
-            item.paid_price = (NSInteger)([_paramsDic[@"paid_fee"] floatValue] - paids);
-        }
-        paids += item.paid_price;
-        i++;
+//    [MBProgressHUD showSuccess:@"支付成功"];
+    [self.paySuccess showPrice:_paramsDic[@"paid_fee"] order:po_uuid animate:YES];
+    if (po_uuid.length) {
+        [_paramsDic setObject:po_uuid forKey:@"po_uuid"];
     }
-    salT.items = arr;
-    [[SaleTable getUsingLKDBHelper] insertToDB:salT callback:nil];
+
+    /** 数据库插入新数据 (异步)*/
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [WeightBussiness orderInsertToLocalSever:_paramsDic];
+    });
     
     if (self.paySelectView.superview){
         [self.paySelectView hide];
@@ -451,6 +449,7 @@
         [_btUtil writeFrameToPeripheral:frame];
         [self.qrCodeView hide];
     }
+    [self.view addSubview:self.noDatasView];
     if (block) {
         block();
     }
@@ -463,63 +462,56 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    WS(weakSelf);
     static NSString *cellIden = @"cell";
     GoodsSwapCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIden];
     if (!cell) {
-        NSMutableArray *rightUtilityButtons = [NSMutableArray array];
-        [rightUtilityButtons addUtilityButtonWithColor:[UIColor redColor] title:@"删除"];
-        tableView.rowHeight = 70*ALScreenScalHeight;
-        cell = [[GoodsSwapCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                    reuseIdentifier:cellIden
-                                containingTableView:tableView
-                                 leftUtilityButtons:nil
-                                rightUtilityButtons:rightUtilityButtons];
+        cell = [[GoodsSwapCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIden];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     if (indexPath.row < _dataArray.count) {
         cell.item = _dataArray[indexPath.row];
         cell.sepB.hidden = indexPath.row != _dataArray.count-1;
-        cell.rightBtnBlock = ^(NSInteger index){
-            [weakSelf deleteRowAtIndexPath:indexPath];
-        };
     }
     return cell;
 }
 
-#pragma mark - -删除
-- (void)deleteRowAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    YSAlertView *alert = [[YSAlertView alloc]initWithTitle:@"" message:@"确定删除么？" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定" click:^(NSInteger index) {
-        if (index) {
-            [_dataArray removeObjectAtIndex:indexPath.row];
-            [self saveCurrentPallet];
-            [self caculateTotal];
-//            [self.table reloadData];
-            [self.table deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        }
-    }];
-    [alert show];
+    return 70*ALScreenScalHeight;
 }
 
-- (void)SWTableViewCellScrollNotice:(NSNotification *)notice
+#pragma mark - delegate 删除
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static SWTableViewCell *formerCell = nil;
-    SWTableViewCell *currentCell = (SWTableViewCell *)notice.object;
-    if (formerCell != currentCell) {
-        [formerCell hideUtilityButtonsAnimated:YES];
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        [self.dataArray removeObjectAtIndex:indexPath.row];
+        
+        [self.table beginUpdates];
+        [self.table deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        [self.table endUpdates];
+        
+        [self saveCurrentPallet];
+        [self caculateTotal];
+        if (!self.dataArray.count) {
+            [self.view addSubview:self.noDatasView];
+        }
     }
-    formerCell = currentCell;
 }
 
 #pragma mark - 计算总价
 - (void)caculateTotal
 {
-    CGFloat total = 0.0f;
+    NSInteger total = 0;
     for (SaleItem *item in self.dataArray) {
-        total += (CGFloat)((item.total_price)/100.0f);
+        total += item.total_price;
     }
-    _totalPrice.attributedText = [ALCommonTool setAttrbute:@"总价：" andAttribute:[NSString stringWithFormat:@"%@元",[ALCommonTool decimalPointString:total]] Color1:ALTextColor Color2:ALTextColor Font1:15 Font2:22];
-    self.paySelectView.priceL.text = [NSString stringWithFormat:@"结算价：￥%@",[ALCommonTool decimalPointString:total]];
+    _totalPrice.attributedText = [ALCommonTool setAttrbute:@"总价：" andAttribute:[NSString stringWithFormat:@"%@元",[ALCommonTool decimalPointString:total/100.0f]] Color1:ALTextColor Color2:ALTextColor Font1:15 Font2:22];
+    self.paySelectView.priceL.text = [NSString stringWithFormat:@"结算价：￥%@",[ALCommonTool decimalPointString:total/100.0f]];
+    self.paySelectView.realPriceTextField.inputField.text = [ALCommonTool decimalPointString:(total/100.0f)];
 }
 
 #pragma mark - -BleDeviceDelegate
@@ -542,8 +534,8 @@
 
 - (void)didUpdateCsScaleState:(CsScaleState)state
 {
-    if (state == CsScaleStateClosed) {
-        self.navigationController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
+    if (state == CsScaleStateClosed || state == CsScaleStateConnected) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
     }else if (state == CsScaleStateOpened){
         [_btUtil startScanBluetoothDevice];
     }
@@ -551,23 +543,40 @@
 
 - (void)didHandShakeComplete:(BOOL)success
 {
-    self.navigationController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
+    [CsBtUtil getInstance].state = success?CsScaleStateShakeHandSuccess:CsScaleStateShakeHandSuccessFailure;
+    if (success) {
+        self.navigationController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
+    }else {
+        if (self.navigationController.viewControllers.count>1) {
+            [MBProgressHUD showError:@"PIN码不正确" compleBlock:^{
+                SetPinningController *pin = [[SetPinningController alloc]init];
+                [self.navigationController pushViewController:pin animated:YES];
+            }];
+        }
+    }
 }
 #pragma mark - CSBtUtilDelegate 被动收款
 /**
- *  发现交易记录数据
- *  用于被动收款的场景、即秤端算好价格App来付款
- *  @param data 交易记录数据
+ * 被动收款
  */
-- (void)discoverTransactionDatas:(NSMutableArray *)datas {
-    
+- (void)discoverTransactionDatas:(NSMutableArray *)datas
+{
+    if (self.qrCodeView.superview) {
+        [MBProgressHUD showError:@"请先完成支付"];
+        return;
+    }
     [WeightBussiness dealPassivityWithArray:datas CompletedBlock:^(NSDictionary *params, CGFloat payfee) {
+        if (payfee < 0) {
+            [MBProgressHUD showError:@"无效金额，请重新输入"];
+            return ;
+        }
         [_paramsDic removeAllObjects];
         [_paramsDic addEntriesFromDictionary:params];
         [self.progressHud show:YES];
         self.progressHud.labelText = @"生成二维码中...";
         [self upLoadRecordsWithParams:params completedBlock:^(NSObject *data) {
             NSDictionary *dic = (NSDictionary *)data;
+            po_uuid = dic[@"po_uuid"];
             NSString *alipayCode = dic[@"alipay"][@"code_url"];
             NSString *weixinPayCode = dic[@"weixin"][@"code_url"];
             [self.qrCodeView showCodeWithCodeURLs:@[alipayCode,weixinPayCode]];
@@ -581,51 +590,48 @@
 - (void)cashPayment
 {
     [self.qrCodeView hide];
+    [_paramsDic setValue:@"cash" forKey:@"payment_type"];
     [self paySuccessEventCompletedBlock:nil];
 }
 // 取消交易
 - (void)cancelPayment
 {
     [self.qrCodeView hide];
+    [self.view addSubview:self.noDatasView];
 }
 #pragma mark - CSBtUtilDelegate 主动收款
 // 获得称重数据，并存在App的托盘上 主动收款
 - (void)finishWeighing:(TransactionData *)data
 {
     ALLog(@"%@",data);
+    if (self.paySelectView.superview) {
+        [MBProgressHUD showError:@"请先完成支付"];
+        return;
+    }
     [self.noDatasView hideAnimate:NO];
-    _weight = (data.weight)*1000.0f;
-    NSMutableDictionary *sqlDic = [NSMutableDictionary dictionary];
-    if ([AccountTool account].ID) [sqlDic setObject:[AccountTool account].ID forKey:@"uid"];
-    if ([ScaleTool scale].mac) [sqlDic setObject:[ScaleTool scale].mac forKey:@"mac"];
-    [sqlDic setObject:@(data.productId) forKey:@"number"];
     
-    NSArray *array = [[GoodsInfoModel getUsingLKDBHelper]search:[GoodsInfoModel class] where:sqlDic orderBy:nil offset:0 count:0];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (array.count) {
-            GoodsInfoModel *model = array[0];
-            NSDictionary *dic = @{@"title": model.title, @"unit_price": @((data.unitPrice/1000.0f*100.0f)), @"unit": @"g", @"quantity":@(data.weight*1000),@"icon":model.icon,@"total_price":@((NSInteger)(data.totalPrice*100.0f))};
-            // 本地都用g 保存
-            SaleItem *item = [[SaleItem alloc]init];
-            [item setValuesForKeysWithDictionary:dic];
-            item.unit = WeightUnit_Gram;
-            item.ts = data.weightDate.timeStempString;
-            _item = item;
-//            [_dataArray addObject:item];
+        _weight = (data.weight)*1000.0f;
+        NSDictionary *dic = [WeightBussiness blueToothDataTransfer:data];
+        // 本地都用g 保存
+        SaleItem *item = [[SaleItem alloc]init];
+        [item setValuesForKeysWithDictionary:dic];
+        item.unit = WeightUnit_Gram;
+        item.ts = data.weightDate.timeStemp;
+        _item = item;
+        dispatch_async(dispatch_get_main_queue(), ^{
             [_dataArray insertObject:item atIndex:0];
             [self saveCurrentPallet];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self headerWithModel:item];
-                [self caculateTotal];
-                [self.table insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-            });
-        }
+            [self headerWithModel:item];
+            [self caculateTotal];
+            [self.table insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        });
     });
 }
 
 - (void)discoverOfflineDatas:(NSMutableArray *)datas
 {
-    [SettingBussiness upLoadHistories:datas];
+    [WeightBussiness upLoadHistories:datas];
 }
 
 #pragma mark - headUIWithModel头部的UI数据模型处理
@@ -665,6 +671,34 @@
         [arr addObject:[item keyValues]];
     }
     [LocalDataTool saveAsLocalArrayWithPath:currentPalletList data:arr];
+}
+// 备份托盘
+- (void)saveBackupPallet
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSArray *array = [LocalDataTool loadLocalArrayFromPath:palletList];
+        NSMutableArray *muArr = [NSMutableArray array];
+        if (array.count) {
+            [muArr addObjectsFromArray:array];
+        }
+        SaleItem *item = [_dataArray lastObject];
+        [muArr insertObject:[item keyAndValues] atIndex:0];
+        [LocalDataTool saveAsLocalArrayWithPath:palletList data:muArr];
+        [self saveCurrentPallet];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.table beginUpdates];
+            [_dataArray removeObject:item];
+            [self.table deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            [self.table endUpdates];
+            
+            [self setHeaderDefalutData];
+            [self caculateTotal];
+            if (!_dataArray.count) {
+                [self.view addSubview:self.noDatasView];
+            }
+        });
+    });
 }
 
 - (void)dealloc

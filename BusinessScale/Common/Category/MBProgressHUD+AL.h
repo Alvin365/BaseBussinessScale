@@ -27,6 +27,8 @@
 
 // Alvin add
 + (void)showSuccess:(NSString *)success compleBlock:(MBProgressHUDCompletionBlock)back;
++ (void)showError:(NSString *)error compleBlock:(MBProgressHUDCompletionBlock)back;
+
 
 + (void)showSuccess:(NSString *)success toView:(UIView *)view compleBlock:(MBProgressHUDCompletionBlock)block;
 

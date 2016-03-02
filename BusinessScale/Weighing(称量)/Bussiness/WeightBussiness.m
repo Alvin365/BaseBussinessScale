@@ -9,42 +9,30 @@
 #import "WeightBussiness.h"
 #import "GoodsInfoModel.h"
 #import "ChineseToPinyin.h"
+#import "WeightBussiness.h"
 #import <Commercial-Bluetooth/CsBtUtil.h>
 @implementation WeightBussiness
 
 + (void)dealPassivityWithArray:(NSArray *)datas CompletedBlock:(void(^)(NSDictionary *params,CGFloat price))block
 {
-    CGFloat totalfee = 0.0f;
-    CGFloat payfee = 0.0f;
-    NSMutableString *string = [NSMutableString string];
+    NSInteger totalfee = 0;
+    NSInteger payfee = 0;
     NSMutableArray *dataArray = [NSMutableArray array];
-    NSInteger i = 0;
     for (TransactionData *data in datas) {
         if (data.productId != 0xFFFF) {
-            NSMutableDictionary *sqlDic = [NSMutableDictionary dictionary];
-            if ([AccountTool account].ID) [sqlDic setObject:[AccountTool account].ID forKey:@"uid"];
-            [sqlDic setObject:@"ewww" forKey:@"mac"];
-            if ([ScaleTool scale].mac) [sqlDic setObject:[ScaleTool scale].mac forKey:@"mac"];
-            [sqlDic setObject:@(data.productId) forKey:@"number"];
-            NSArray *array = [[GoodsInfoModel getUsingLKDBHelper]search:[GoodsInfoModel class] where:sqlDic orderBy:nil offset:0 count:0];
-            if (array.count) {
-                totalfee += data.totalPrice*100;
-                GoodsInfoModel *model = array[0];
-                NSDictionary *dic = @{@"title": model.title, @"unit_price": @((data.unitPrice/1000.0f*100.0f)), @"unit": @"g", @"quantity":@(data.weight*1000),@"icon":model.icon,@"total_price":@((NSInteger)(data.totalPrice*100.0f)),@"icon":model.icon};
-                
-                [dataArray addObject:dic];
-                if (i<2) {
-                    [string appendString:model.title];
-                    [string appendString:@" "];
-                }
-                if (i==datas.count-2) {
-                    [string appendString:[NSString stringWithFormat:@"等%i样",(int)(i+1)]];
-                }
-                i++;
-            }
+            totalfee += (NSInteger)(data.totalPrice*100.0f+0.5);
+            NSDictionary *dic = [WeightBussiness blueToothDataTransfer:data];
+            SaleItem *item = [[SaleItem alloc]init];
+            [item setValuesForKeysWithDictionary:dic];
+            [dataArray addObject:item];
         }else{
-            payfee = totalfee-data.totalPrice*100;
-            NSDictionary *params = @{@"randid":[NSString radom11BitString],@"ts":@([NSDate date].timeStempString),@"title":string,@"total_fee":@(totalfee),@"paid_fee":@(payfee),@"payment_type":@"online",@"items": dataArray};
+            payfee = totalfee-(NSInteger)(data.totalPrice*100.0f+0.5);
+            if (payfee > totalfee) {
+                [MBProgressHUD showMessage:@"折扣价不能大于总价，请修改价格"];
+                return;
+            }
+            NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[WeightBussiness upLoadDatasTransfer:totalfee payFee:payfee datas:dataArray]];
+            [params setObject:@"online" forKey:@"payment_type"];
             if(block){
                 block(params, payfee);
             }
@@ -52,26 +40,156 @@
     }
 }
 
++ (void)upLoadHistories:(NSArray *)datas
+{
+    NSInteger totalfee = 0;
+    NSInteger payfee = 0;
+    NSMutableArray *dataArray = [NSMutableArray array];
+    for (TransactionData *data in datas) {
+        if (data.productId != 0xFFFF) {
+            totalfee += (NSInteger)(data.totalPrice*100.0f+0.5);
+            NSDictionary *dic = [WeightBussiness blueToothDataTransfer:data];
+            SaleItem *item = [[SaleItem alloc]init];
+            [item setValuesForKeysWithDictionary:dic];
+            [dataArray addObject:item];
+        }else{
+            payfee = totalfee-(NSInteger)(data.totalPrice*100.0f+0.5);
+            if (payfee > totalfee) {
+                [MBProgressHUD showMessage:@"折扣价不能大于总价，请修改价格"];
+                return;
+            }
+            
+            NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[WeightBussiness upLoadDatasTransfer:totalfee payFee:payfee datas:dataArray]];
+            [params setObject:@"online" forKey:@"payment_type"];
+            
+            SaleTable *salT = [[SaleTable alloc]init];
+            [salT setValuesForKeysWithDictionary:params];
+            NSMutableArray *arr = [NSMutableArray array];
+            NSArray *items = params[@"items"];
+            for (NSDictionary *dic in items) {
+                SaleItem *item = [[SaleItem alloc]init];
+                [item setValuesForKeysWithDictionary:dic];
+                [arr addObject:item];
+                item.unit = WeightUnit_Gram;
+            }
+            salT.items = arr;
+            [[SaleTable getUsingLKDBHelper] insertWhenNotExists:salT callback:nil];
+        }
+    }
+}
++ (NSDictionary *)upLoadDatasTransfer:(NSInteger)totals_fee payFee:(NSInteger)paid_fee datas:(NSArray *)dataArray
+{
+    if (!dataArray.count) {
+        return nil;
+    }
+    
+    NSMutableArray *datas = [NSMutableArray array];
+    NSMutableString *string = [NSMutableString string];
+    NSInteger i = 0;
+    NSInteger paids = 0;
+    NSInteger time = 10;
+    
+    for (SaleItem *item in dataArray) {
+        item.unit = WeightUnit_Gram;
+        item.discount = paid_fee/(totals_fee*1.0f);
+        item.paid_price = (item.total_price*item.discount);
+//        if (!item.ts) {
+        item.ts = [NSDate date].timeStemp + time;
+//        }
+        if (i==dataArray.count-1) {
+            item.paid_price = (NSInteger)(paid_fee - paids);
+        }
+        paids += item.paid_price;
+        NSDictionary *dic = [item keyValues];
+        [dic setValue:@"g" forKey:@"unit"];
+        NSNumber *number = dic[@"quantity"];
+        [dic setValue:@([number floatValue]) forKey:@"quantity"];
+        NSMutableDictionary *muDic = [[NSMutableDictionary alloc]init];
+        [muDic addEntriesFromDictionary:dic];
+        [muDic removeObjectForKey:@"isSelected"];
+        [datas addObject:muDic];
+        if (i<2) {
+            [string appendString:item.title];
+            [string appendString:@" "];
+        }
+        if (i==dataArray.count-1) {
+            [string appendString:[NSString stringWithFormat:@"等%i样",(int)(i+1)]];
+        }
+        i++;
+        time += 10;
+    }
+    
+    NSDictionary *params = @{@"randid":[NSString radom11BitString],@"ts":@([NSDate date].timeStemp),@"title":string,@"total_fee":@(totals_fee),@"paid_fee":@(paid_fee),@"items":datas};
+    return params;
+}
+
++ (void)orderInsertToLocalSever:(NSDictionary *)orderDic
+{
+    SaleTable *salT = [[SaleTable alloc]init];
+    [salT setValuesForKeysWithDictionary:orderDic];
+    NSMutableArray *arr = [NSMutableArray array];
+    NSArray *items = orderDic[@"items"];
+    NSInteger i = 10;
+    for (NSDictionary *dic in items) {
+        SaleItem *item = [[SaleItem alloc]init];
+        [item setValuesForKeysWithDictionary:dic];
+        [arr addObject:item];
+        item.unit = WeightUnit_Gram;
+        item.ts = salT.ts+i;
+        i += 10;
+    }
+    salT.items = arr;
+    [[SaleTable getUsingLKDBHelper] insertWhenNotExists:salT];
+}
+
++ (NSDictionary *)blueToothDataTransfer:(TransactionData *)data
+{
+    NSMutableDictionary *sqlDic = [NSMutableDictionary dictionary];
+    if ([AccountTool account].ID) [sqlDic setObject:[AccountTool account].ID forKey:@"uid"];
+    [sqlDic setObject:@(data.productId) forKey:@"number"];
+    
+    NSArray *array = [[GoodsInfoModel getUsingLKDBHelper]search:[GoodsInfoModel class] where:sqlDic orderBy:nil offset:0 count:0];
+    GoodsInfoModel *model = nil;
+    if (array.count) {
+        model = array[0];
+    }else{
+        model = [[GoodsInfoModel alloc]init];
+        model.title = @"其他";
+        model.icon = @"fdsafas";
+    }
+    NSDictionary *dic = @{@"title": model.title, @"unit_price": @((NSInteger)(data.unitPrice*100.0f)), @"unit": @"g", @"quantity":@(data.weight*1000),@"icon":model.icon,@"total_price":@((NSInteger)((data.totalPrice+0.005)*100.0f))};
+    return dic;
+}
+
 @end
 
 @implementation WeightBussiness(GoodsList)
 
-- (void)getGoodsListCompletedBlock:(void (^)(NSArray *))block
+- (void)getGoodsListCompletedBlock:(void (^)(NSArray *))block category:(BOOL)isCategory
 {
-    NSDictionary *localDic = [LocalDataTool getGoodsList];
-    NSMutableArray *array = [NSMutableArray array];
-    [localDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        GoodsTempList *model = [[GoodsTempList alloc]init];
-        [model setValuesForKeysWithDictionary:@{@"title":key,@"icon":obj}];
-        [array addObject:model];
-    }];
-    NSArray *arr = [self sortDataArray:array];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (block) {
-            block(arr);
-        }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *localDic = [LocalDataTool getGoodsList];
+        NSMutableArray *array = [NSMutableArray array];
+        [localDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            GoodsTempList *model = [[GoodsTempList alloc]init];
+            [model setValuesForKeysWithDictionary:@{@"title":key,@"icon":obj}];
+            [array addObject:model];
+        }];
+        NSArray *arr = [self sortDataArray:array];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (isCategory) {
+                if (block) {
+                    block(arr);
+                }
+            }else{
+                if (block) {
+                    block(array);
+                }
+            }
+        });
     });
 }
+
 #pragma mark -privateMethod
 - (NSMutableArray *)sortDataArray:(NSArray *)dataArray
 {

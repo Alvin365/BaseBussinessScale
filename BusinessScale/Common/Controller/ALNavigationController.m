@@ -8,7 +8,7 @@
 
 #import "ALNavigationController.h"
 #import "Common.h"
-@interface ALNavigationController ()<UIGestureRecognizerDelegate>
+@interface ALNavigationController ()<UIGestureRecognizerDelegate,UINavigationControllerDelegate>
 
 @end
 
@@ -19,6 +19,7 @@
     __weak typeof (self) weakSelf = self;
     if ([self respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.interactivePopGestureRecognizer.delegate = weakSelf;
+        self.delegate = weakSelf;
     }
     self.navigationBar.translucent = NO;
     self.canHiddenWhenPush = YES;
@@ -108,10 +109,26 @@
 #pragma mark - pushAndPop
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
+    if ([self respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.interactivePopGestureRecognizer.enabled = NO;
+    }
+    
     if (self.viewControllers.count >= 1 && self.canHiddenWhenPush) {
         viewController.hidesBottomBarWhenPushed = YES;
     }
     [super pushViewController:viewController animated:animated];
+}
+
+- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    if ([navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        navigationController.interactivePopGestureRecognizer.enabled = YES;
+    }
+    
+    if (navigationController.viewControllers.count == 1) {
+        navigationController.interactivePopGestureRecognizer.enabled = NO;
+        navigationController.interactivePopGestureRecognizer.delegate = nil;
+    }
 }
 
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated

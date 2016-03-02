@@ -87,15 +87,17 @@
     ALLog(@"%@",NSHomeDirectory());
 }
 
-+ (long long) fileSizeAtPath:(NSString*) filePath{
++ (long long)fileSizeAtPath:(NSString*)filePath
+{
+    NSString *path1 = [ALDocuMentPath stringByAppendingPathComponent:filePath];
     NSFileManager* manager = [NSFileManager defaultManager];
-    if ([manager fileExistsAtPath:filePath]){
-        return [[manager attributesOfItemAtPath:filePath error:nil] fileSize];
+    if ([manager fileExistsAtPath:path1]){
+        return [[manager attributesOfItemAtPath:path1 error:nil] fileSize];
     }
     return 0;
 }
 // 遍历文件夹获得文件夹大小，返回多少M
-+ (float ) folderSizeAtPath:(NSString*) folderPath{
++ (float )folderSizeAtPath:(NSString*) folderPath{
     NSFileManager* manager = [NSFileManager defaultManager];
     if (![manager fileExistsAtPath:folderPath]) return 0;
     NSEnumerator *childFilesEnumerator = [[manager subpathsAtPath:folderPath] objectEnumerator];

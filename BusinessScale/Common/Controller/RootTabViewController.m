@@ -13,8 +13,12 @@
 #import "SettingViewController.h"
 #import "ALNavigationController.h"
 #import "Common.h"
+#import "GlobalBussiness.h"
 @interface RootTabViewController ()<UITabBarControllerDelegate>
-
+{
+    NSTimer *_timer;
+    NSInteger _seconds;
+}
 @property (nonatomic, strong) WeighingViewController *weighing;
 @property (nonatomic, strong) ProcessingViewController *process;
 @property (nonatomic, strong) ChartViewController *chart;
@@ -41,6 +45,15 @@
      */
     self.tabBar.barTintColor = [UIColor colorWithHexString:@"4b494f"];
     self.tabBar.selectionIndicatorImage = [UIImage imageWithColor:[UIColor colorWithHexString:@"34323a"] andSize:CGSizeMake(screenWidth/4.0, 49)];
+    
+    // 网络监测
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name: kReachabilityChangedNotification object: nil];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(sychroWithCloud) userInfo:nil repeats:YES];
+    _seconds = 0;
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter  defaultCenter]addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
 }
 
 - (void)addAllChildVcs
@@ -86,6 +99,7 @@
     childVc.tabBarItem.selectedImage = selectedImage;
     // 添加为tabbar控制器的子控制器
     ALNavigationController *nav = [[ALNavigationController alloc] initWithRootViewController:childVc];
+    [nav.tabBarItem setTitlePositionAdjustment:UIOffsetMake(0, -4)];
 
     [self addChildViewController:nav];
 }
@@ -102,4 +116,46 @@
     }
 }
 
+// 同步云端数据
+- (void)sychroWithCloud
+{
+    if (_seconds == 0) {
+        [self syChor];
+        _seconds = 3600;
+    }
+    _seconds --;
+//    ALLog(@"sychorTime:%i",(int)_seconds);
+}
+// netObserver
+- (void)reachabilityChanged: (NSNotification* )note
+{
+    [self syChor];
+}
+
+- (void)syChor
+{
+    NetworkStatus status = [[Reachability shareReachAbilty] currentReachabilityStatus];
+    if (status != NotReachable) {
+        [[GlobalBussiness shareBussiness]batchUpLoadLocalSaleRecordsCompletedBlock:^{
+            [[GlobalBussiness shareBussiness]downLoadSaleRecords];
+        }];
+    }
+}
+
+- (void)applicationDidBecomeActive:(NSNotificationCenter *)notice
+{
+    [_timer setFireDate:[NSDate date]];
+}
+
+-(void)applicationDidEnterBackground:(NSNotificationCenter *)notication
+{
+    [_timer setFireDate:[NSDate distantFuture]];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+    [_timer invalidate];
+    _timer = nil;
+}
 @end

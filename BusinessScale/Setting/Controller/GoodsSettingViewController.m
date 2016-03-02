@@ -14,7 +14,6 @@
 #import <Commercial-Bluetooth/CsBtUtil.h>
 #import "GoodsListHttpTool.h"
 #import "GoodsListController.h"
-#import "Reachability.h"
 #import "SettingBussiness.h"
 @interface GoodsSettingViewController ()<UITableViewDataSource,UITableViewDelegate>
 
@@ -28,9 +27,7 @@
 @property (nonatomic, strong) GoodsAddView *updateGoodsView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
-@property (nonatomic, strong) NSMutableArray *sychroArray; // 需要同步的列表
 @property (nonatomic, strong) NSMutableArray *currentArray; // 正在上传的物品列表
-
 @end
 
 @implementation GoodsSettingViewController
@@ -42,20 +39,6 @@
         _noDataView.frame = CGRectMake(0, 130, screenWidth, screenHeight-130-64);
     }
     return _noDataView;
-}
-
-- (NSMutableArray *)sychroArray
-{
-    if (!_sychroArray) {
-        _sychroArray = [NSMutableArray array];
-    }
-    [_sychroArray removeAllObjects];
-    for (GoodsTempList *model in self.dataArray) {
-        if (!model.isSychro) {
-            [_sychroArray addObject:model];
-        }
-    }
-    return _sychroArray;
 }
 
 - (NSMutableArray *)dataArray
@@ -72,10 +55,14 @@
         WS(weakSelf);
         _updateGoodsView = [GoodsAddView loadXibView];
         _updateGoodsView.frame = [UIScreen mainScreen].bounds;
-        _updateGoodsView.callBack = ^(GoodsTempList *model){
-            if (![weakSelf judgeCanUpLoad]) {
-                return ;
+        _updateGoodsView.callBack = ^(GoodsTempList *model,BOOL cancle){
+            if (cancle) {
+                [weakSelf initDatas];
+                return;
             }
+//            if (![weakSelf judgeCanUpLoad]) {
+//                return ;
+//            }
             [weakSelf updateGoodsWithModel:model];
         };
     }
@@ -108,7 +95,7 @@
 - (void)buildNavBarItems
 {
     WS(weakSelf);
-    [self addNavRightBarBtn:@"icon_add" selectorBlock:^{
+    [self addNavRightBarBtn:@"添加" selectorBlock:^{
 //        [weakSelf.addGoodsView showAnimate:YES];
         [weakSelf navBarRightItemEvent];
     }];
@@ -125,11 +112,15 @@
 {
     NSMutableDictionary *sqlDic = [NSMutableDictionary dictionary];
     if ([AccountTool account].ID) [sqlDic setObject:[AccountTool account].ID forKey:@"uid"];
-    [sqlDic setObject:@"fdf" forKey:@"mac"];
-    if ([ScaleTool scale].mac) [sqlDic setObject:[ScaleTool scale].mac forKey:@"mac"];
+    [sqlDic setObject:@(NO) forKey:@"isDelete"];
+//    if ([ScaleTool scale].mac) [sqlDic setObject:[ScaleTool scale].mac forKey:@"mac"];
     [self.dataArray removeAllObjects];
     [[GoodsTempList getUsingLKDBHelper]search:[GoodsTempList class] where:sqlDic orderBy:@"number" offset:0 count:0 callback:^(NSMutableArray *array) {
         [self.dataArray addObjectsFromArray:array];
+        
+        [sqlDic setObject:@(YES) forKey:@"isDelete"];
+        NSArray *arr = [[GoodsTempList getUsingLKDBHelper]search:[GoodsTempList class] where:sqlDic orderBy:@"number" offset:0 count:0];
+        [self.dataArray addObjectsFromArray:arr];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!_dataArray.count) {
@@ -173,44 +164,26 @@
 }
 
 #pragma mark - netRequest
-- (void)putGoodsIntoSeverce
-{
-    NSMutableArray *dataArray = [NSMutableArray array];
-    for (GoodsTempList *model in self.dataArray) {
-        NSDictionary *dic = [model keyValues];
-        [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
-        [dataArray addObject:dic];
-        [[GoodsTempList getUsingLKDBHelper]insertToDB:model callback:nil];
-    }
-//    if ([ALCommonTool haveNewGoods:dataArray.count]) {
-        GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool coverCoodsListSeverse:dataArray]];
-        [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-                    if (data) {
-
-                    }
-                }];
-            });
-        }];
-//    }
-}
-
 - (void)postListWithDic:(NSDictionary *)uploadDic
 {
     [self.progressHud show:YES];
-    GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool postCoodsListSeverse:uploadDic]];
+    GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool coverCoodsListSeverse:uploadDic]];
     [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
                 if (data) {
-                    for (GoodsTempList *model in _currentArray) {
-                        model.isSychro = YES;
-                        [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
+                    for (GoodsTempList *model in _dataArray) {
+                        if (model.isDelete) {
+                            [[GoodsTempList getUsingLKDBHelper]deleteToDB:model];
+                        }else{
+                            [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
+                        }
+                        [LKDBHelper clearTableData:[GoodsInfoModel class]];
                         GoodsInfoModel *GoodsInfo = [[GoodsInfoModel alloc]init];
                         [GoodsInfo setValuesForKeysWithDictionary:[model keyValues]];
                         [[GoodsInfoModel getUsingLKDBHelper]insertToDB:GoodsInfo];
                     }
+                    [self initDatas];
                     [self.tableView reloadData];
                 }
             }];
@@ -230,6 +203,7 @@
     GoodsSettingCell *cell = [tableView dequeueReusableCellWithIdentifier:cellInden];
     if (!cell) {
         cell = [[GoodsSettingCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellInden];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     if (indexPath.row < self.dataArray.count) {
         cell.model = self.dataArray[indexPath.row];
@@ -244,26 +218,40 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (![self judgeCanUpLoad]) {
+    GoodsTempList *model = self.dataArray[indexPath.row];
+    if (model.isDelete) {
         return;
     }
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [self.updateGoodsView showAnimate:YES];
-    self.updateGoodsView.model = self.dataArray[indexPath.row];
+    self.updateGoodsView.model = model;
 }
 
 #pragma mark - delegate 删除
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([self.dataArray[indexPath.row] isDelete]) {
+        return NO;
+    }
     return YES;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [[GoodsTempList getUsingLKDBHelper]deleteToDB:self.dataArray[indexPath.row] callback:nil];
-        [self.dataArray removeObjectAtIndex:indexPath.row];
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        GoodsTempList *model = self.dataArray[indexPath.row];
+//        if (model.isSychro) {
+            model.isSychro = NO;
+            model.isDelete = YES;
+            [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil callback:^(BOOL result) {
+//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                [self initDatas];
+            }];
+            
+//        }else{
+//            [[GoodsTempList getUsingLKDBHelper]deleteToDB:self.dataArray[indexPath.row] callback:nil];
+//            [self.dataArray removeObjectAtIndex:indexPath.row];
+//            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+//        }
     }
 }
 
@@ -271,10 +259,13 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     WS(weakSelf);
+    __weak CsBtUtil *weakBtUtil = _btUtil;
     GoodsHeader *header = [GoodsHeader loadXibView];
     header.callBack = ^{
+        if (![self judgeCanUpLoad]) return;
         TransactionDataReqFrame *reqFrame = [[TransactionDataReqFrame alloc] init];
         [_btUtil writeFrameToPeripheral:reqFrame historyBlock:^(NSArray *histories) {
+            [weakBtUtil writeFrameToPeripheral:[[ResetDataReqFrame alloc] init]];
             // 同步单价
             [weakSelf syChrosize];
         }];
@@ -318,32 +309,19 @@
 - (void)updateGoodsWithModel:(GoodsTempList *)model
 {
     [self.dataArray removeObject:model];
-    __block BOOL isExist = NO;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        for (GoodsTempList *temp in self.dataArray) {
-            if (model.number == temp.number || [temp.title isEqualToString:model.title]) {
-                isExist = YES;
-                break;
-            }
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (isExist) {
-                [MBProgressHUD showError:@"该编号或名称已存在"];
-                [self initDatas];
-            }else{
-                [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
-                model.isSychro = NO;
-                [self initDatas];
-                [self.updateGoodsView hideAnimate:YES];
-            }
-        });
-    });
+    
+    [SettingBussiness judgeListHaveThisGoods:model list:self.dataArray completedBlock:^{
+        model.isSychro = NO;
+        [[GoodsTempList getUsingLKDBHelper]updateToDB:model where:nil];
+        [self initDatas];
+        [self.updateGoodsView hideAnimate:YES];
+    }];
 }
 
 - (BOOL)judgeCanUpLoad
 {
     BOOL b = YES;
-    if ([CsBtUtil getInstance].state < CsScaleStateConnected) {
+    if ([CsBtUtil getInstance].state != CsScaleStateShakeHandSuccess) {
         [MBProgressHUD showError:@"蓝牙未连接，请先连接设备"];
         b = NO;
     }
@@ -357,14 +335,46 @@
 #pragma mark -同步
 - (void)syChrosize
 {
-    if (![self judgeCanUpLoad]) return;
     [_currentArray removeAllObjects];
-    for (NSInteger j = _currentIndex;j<_currentIndex+3&&j<self.sychroArray.count;j++) {
-        GoodsTempList *model = self.sychroArray[j];
+    for (NSInteger j = _currentIndex;j<_currentIndex+3&&j<self.dataArray.count;j++) {
+        GoodsTempList *model = self.dataArray[j];
         [_currentArray addObject:model];
     }
     if (!_currentArray.count) {
-        [MBProgressHUD showMessage:@"全部商品已同步"];
+        // 结束同步成功事件
+        void (^endSucceessBlock)() = ^{
+            // 上传云端
+            _currentIndex = 0;
+            NSMutableDictionary *uploadDic = [NSMutableDictionary dictionary];
+//            ALLog(@"蓝牙同步单价成功");
+            for (GoodsTempList *model in self.dataArray) {
+                if (!model.isDelete) {
+                    model.isSychro = 1;
+                    NSDictionary *dic = [model keyValues];
+                    [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
+                    [uploadDic setObject:dic forKey:[NSString stringWithFormat:@"%i",(int)model.number]];
+                }
+            }
+            [self postListWithDic:uploadDic];
+        };
+        // 结束同步失败事件
+        void (^endFailureBlock)() = ^{
+            SyncUnitPriceFrame *endFrame = [SyncUnitPriceFrame endSyncFrame];
+            [_btUtil writeFrameToPeripheral:endFrame completedBlock:^(BOOL succeess, Byte xorValue,NSInteger errorCount) {
+                if (succeess) {
+                    endSucceessBlock();
+                    ALLog(@"蓝牙同步单价成功");
+                }else{
+                    if (errorCount>=5) {
+                        [MBProgressHUD showError:@"同步失败，请检查蓝牙是否连接正常，必要时可重启设备"];
+                        return;
+                    }
+                    endFailureBlock();
+                }
+            }];
+        };
+        endFailureBlock();
+        
         return;
     };
     
@@ -387,42 +397,8 @@
     void (^beginSucceessBlock) () = ^{
         // 数据同步成功事件
         void (^middleSucceessBlock)() = ^{
-            // 结束同步成功事件
-            void (^endSucceessBlock)() = ^{
-                _currentIndex += _currentArray.count;
-                // 上传云端
-                NSMutableDictionary *uploadDic = [NSMutableDictionary dictionary];
-                ALLog(@"蓝牙同步单价成功");
-                for (GoodsTempList *model in _currentArray) {
-                    NSDictionary *dic = [model keyValues];
-                    [dic setValue:[UnitTool stringFromWeightSeverce:model.unit] forKey:@"unit"];
-                    [uploadDic setObject:dic forKey:[NSString stringWithFormat:@"%i",(int)model.number]];
-                }
-                [self postListWithDic:uploadDic];
-                
-                if (_currentIndex>=self.sychroArray.count) {
-                    _currentIndex = 0;
-                    return;
-                }
-                [self syChrosize];
-            };
-            // 结束同步失败事件
-            void (^endFailureBlock)() = ^{
-                SyncUnitPriceFrame *endFrame = [SyncUnitPriceFrame endSyncFrame];
-                [_btUtil writeFrameToPeripheral:endFrame completedBlock:^(BOOL succeess, Byte xorValue,NSInteger errorCount) {
-                    if (succeess) {
-                        endSucceessBlock();
-                        ALLog(@"蓝牙同步单价成功");
-                    }else{
-                        if (errorCount>=5) {
-                            [MBProgressHUD showError:@"同步失败，请检查蓝牙是否连接正常，必要时可重启设备"];
-                            return;
-                        }
-                        endFailureBlock();
-                    }
-                }];
-            };
-            endFailureBlock();
+            _currentIndex += _currentArray.count;
+            [self syChrosize];
         };
         // 数据同步失败事件
         void (^middleFailureBlock)() = ^{

@@ -19,29 +19,28 @@ typedef NS_ENUM(NSInteger, CsScaleState) {
     CsScaleStateConnecting      = 40003,//正在连接
     CsScaleStateConnected       = 40004,// 连接上了
     CsScaleStateCalculating     = 40005, // 透传建立后,且秤上有数据
-    CsScaleStateWaitCalculat    = 40006// 透传建立后,且秤上午数据
+    CsScaleStateWaitCalculat    = 40006 ,// 透传建立后,且秤上午数据
+    CsScaleStateShakeHandSuccess       = 40007 ,// 握手成功
+    CsScaleStateShakeHandSuccessFailure       = 40008 // 握手失败
 };
 
 
 ///==========================设备代理==========================
 @protocol BleDeviceDelegate <NSObject>
 
-
+@optional
 /**
  *  发现广播数据
  *
  *  @param data 广播数据
  */
 -(void)discoverBroadcastData:(BroadcastData *)data fromPeripheral:(CBPeripheral *)peripheral;
-
 /**
  *  连接设备成功的回调
  *
  *  @param peripheral 连接成功的设备
  */
 -(void)connectedPeripheral:(CBPeripheral *)peripheral;
-
-
 /**
  *  断开设备的回调
  *
@@ -56,8 +55,6 @@ typedef NS_ENUM(NSInteger, CsScaleState) {
  *  @param success 是否握手成功
  */
 -(void)didHandShakeComplete:(BOOL) success;
-
-@optional
 
 /**
  *  蓝牙状态发生变化的回调
@@ -123,5 +120,10 @@ typedef NS_ENUM(NSInteger, CsScaleState) {
  *  @param success   是否成功,成功为YES
  */
 -(void)syncProductComplete:(Byte)xorValue success:(BOOL)success;
+
+/**
+ *  商务秤的清除数据的应答
+ */
+-(void)didResetData;
 
 @end

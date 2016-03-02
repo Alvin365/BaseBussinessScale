@@ -60,19 +60,17 @@
     return [[[NSBundle mainBundle] loadNibNamed:@"WeightNoDatasView" owner:nil options:nil] firstObject];
 }
 
-
-- (void)showAnimate:(BOOL)animate
-{
-    
-}
-
 - (void)hideAnimate:(BOOL)animate
 {
-    [UIView animateWithDuration:1.0f animations:^{
-        self.alpha = 0.0f;
-    } completion:^(BOOL finished) {
+    if (animate) {
+        [UIView animateWithDuration:1.0f animations:^{
+            self.alpha = 0.0f;
+        } completion:^(BOOL finished) {
+            [self removeFromSuperview];
+        }];
+    }else{
         [self removeFromSuperview];
-    }];
+    }
 }
 
 @end

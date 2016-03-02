@@ -23,28 +23,31 @@
                             <constraint firstAttribute="height" constant="40" id="pZx-hr-56d"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="西兰花" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CKq-M9-8sn">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="西兰花" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CKq-M9-8sn">
                         <rect key="frame" x="98" y="26" width="45" height="18"/>
                         <animations/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00011" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wSC-Jr-hVr">
-                        <rect key="frame" x="198" y="26" width="42" height="18"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1001" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wSC-Jr-hVr">
+                        <rect key="frame" x="198" y="26" width="35" height="18"/>
                         <animations/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="35" id="5AO-ry-PY0"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3.5元/斤" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZSZ-qZ-6sK">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3.5元/斤" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZSZ-qZ-6sK">
                         <rect key="frame" x="303" y="26" width="57" height="18"/>
                         <animations/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_zhang.png" translatesAutoresizingMaskIntoConstraints="NO" id="dJY-GU-DeE">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="icon_zhang.png" translatesAutoresizingMaskIntoConstraints="NO" id="dJY-GU-DeE">
                         <rect key="frame" x="230" y="18" width="40" height="33"/>
                         <animations/>
                         <constraints>
@@ -57,7 +60,7 @@
                 <constraints>
                     <constraint firstItem="wSC-Jr-hVr" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="190" id="53i-d5-0qr"/>
                     <constraint firstItem="CKq-M9-8sn" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="INu-Z0-OSf"/>
-                    <constraint firstItem="wSC-Jr-hVr" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="CKq-M9-8sn" secondAttribute="trailing" constant="5" id="TWy-ik-axp"/>
+                    <constraint firstItem="wSC-Jr-hVr" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="CKq-M9-8sn" secondAttribute="trailing" constant="10" id="TWy-ik-axp"/>
                     <constraint firstItem="wSC-Jr-hVr" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="Wpa-oh-jaW"/>
                     <constraint firstItem="CKq-M9-8sn" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="90" id="aUr-bi-FTp"/>
                     <constraint firstAttribute="trailingMargin" secondItem="ZSZ-qZ-6sK" secondAttribute="trailing" constant="7" id="eSa-3C-vrY"/>

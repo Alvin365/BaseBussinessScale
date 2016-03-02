@@ -52,7 +52,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChange:) name:@"UITextFieldTextDidChangeNotification" object:_pinText.inputField];
     self.view.backgroundColor = backGroudColor;
-    self.title = @"电话号码验证";
+    self.title = @"PIN码验证";
 }
 
 - (IBAction)btnClick:(id)sender {

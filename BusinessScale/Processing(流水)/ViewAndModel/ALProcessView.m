@@ -38,8 +38,8 @@
     CGFloat scale = 320.0f/375.0f;
     CGFloat height = scale*width;
     
-    NSArray *arr = @[@"日",@"周",@"月",@"jilu"];
-    NSArray *titleArr = @[@"日报表",@"周报表",@"月报表",@"收入记录"];
+    NSArray *arr = @[@"日",@"周",@"月",@"jizb"];
+    NSArray *titleArr = @[@"日报表",@"周报表",@"月报表",@"记账本"];
     for (int i = 0; i<4; i++) {
         if (i/2>=1) {
             y = height;

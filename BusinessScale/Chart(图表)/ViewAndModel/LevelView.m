@@ -5,8 +5,13 @@
 //  Created by Alvin on 16/1/16.
 //  Copyright © 2016年 Alvin. All rights reserved.
 //
-
 #import "LevelView.h"
+@interface LevelView()
+
+@property (nonatomic, strong) UILabel *zeroSep;
+@property (nonatomic, strong) UIView *zeroLabel;
+
+@end
 
 @implementation LevelView
 
@@ -25,6 +30,8 @@
     _levelFlag = [[UILabel alloc]init];
     _levelL = [[UILabel alloc]init];
     _priceFlag = [[UILabel alloc]init];
+    _zeroLabel = [[UIView alloc]init];
+    _zeroSep = [[UILabel alloc]init];
     
     _price.font = [UIFont systemFontOfSize:22];
     _levelL.font = [UIFont systemFontOfSize:16];
@@ -40,10 +47,17 @@
     _levelFlag.textColor = [UIColor whiteColor];
     _levelL.textColor = ALTextColor;
     
+    _zeroSep.backgroundColor = backGroudColor;
+    _zeroLabel.backgroundColor = ALNavBarColor;
+    
     [self addSubview:_priceFlag];
     [self addSubview:_price];
     [self addSubview:_levelFlag];
     [self addSubview:_levelL];
+    [self addSubview:_zeroLabel];
+    [_zeroLabel addSubview:_zeroSep];
+    _zeroLabel.hidden = YES;
+//    [self addSubview:_zeroSep];
 }
 
 - (void)layoutSubviews
@@ -61,6 +75,8 @@
     _levelL.frame = CGRectMake(_levelFlag.right+5, _levelFlag.y, levelWidth, 20);
     _priceFlag.frame = CGRectMake(priceFlagX, self.height/2.0f+5, priceflagWidth, 18);
     _price.frame = CGRectMake(_priceFlag.right+2, _priceFlag.y, priceWidth, 27);
+    _zeroLabel.frame = CGRectMake(self.width/2.0f-15, _levelFlag.y+_levelFlag.height+20, 30, 1);
+    _zeroSep.frame = CGRectMake(11, 0, 8, 1);
 }
 
 - (void)setGlobalColor:(UIColor *)globalColor
@@ -69,6 +85,13 @@
     _levelFlag.backgroundColor = _globalColor;
     _priceFlag.textColor = _globalColor;
     _price.textColor = _globalColor;
+}
+
+- (void)setPriceShow:(BOOL)show
+{
+    _priceFlag.hidden = !show;
+    _price.hidden = !show;
+    _zeroLabel.hidden = show;
 }
 
 @end

@@ -12,6 +12,9 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *dateL;
 @property (weak, nonatomic) IBOutlet UILabel *priceL;
+@property (weak, nonatomic) IBOutlet UILabel *realPrice;
+@property (weak, nonatomic) IBOutlet UILabel *cancleLine;
+
 @property (nonatomic, copy) void(^callBack)();
 
 - (void)turnIntoProcessSecctionView;

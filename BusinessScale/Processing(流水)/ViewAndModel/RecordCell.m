@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) UILabel *sepT;
 @property (nonatomic, strong) UILabel *sepB;
+@property (nonatomic, strong) UILabel *timeLabel;
 
 @property (nonatomic, strong) NSDictionary *iconKeyValues;
 
@@ -23,6 +24,17 @@
 - (NSDictionary *)iconKeyValues
 {
     return @{@"weixin":@"微信支付",@"alipay":@"支付宝",@"cash":@"RMB"};
+}
+
+- (UILabel *)timeLabel
+{
+    if (!_timeLabel) {
+        _timeLabel = [[UILabel alloc]init];
+        _timeLabel.textColor = ALLightTextColor;
+        _timeLabel.font = [UIFont systemFontOfSize:15];
+        [self addSubview:_timeLabel];
+    }
+    return _timeLabel;
 }
 
 - (UILabel *)sepT
@@ -51,7 +63,7 @@
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
+//    [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
 }
@@ -61,6 +73,8 @@
     _model = model;
     self.imageView.image = [UIImage imageNamed:self.iconKeyValues[model.payment_type]];
     self.textLabel.text = model.title;
+    NSDate *date = [NSDate dateWithTimeIntervalInMilliSecondSince1970:model.ts];
+    self.timeLabel.text = [NSString stringWithFormat:@"%02d:%02d:%02d",(int)date.hour,(int)date.minute,(int)date.seconds];
     self.detailTextLabel.text = [NSString stringWithFormat:@"%@元",[ALCommonTool decimalPointString:model.paid_fee/100.0f]];
 }
 
@@ -68,7 +82,8 @@
 {
     [super layoutSubviews];
     self.imageView.frame = CGRectMake(15, self.height/2.0f-15, 30, 30);
-    self.textLabel.frame = CGRectMake(self.imageView.right+20, self.height/2.0f-10, 200, 20);
+    self.textLabel.frame = CGRectMake(self.imageView.right+20, self.height/2.0f+2, screenWidth-140, 20);
+    self.timeLabel.frame = CGRectMake(self.imageView.right+20, self.height/2.0f-18, screenWidth-140, 20);
     self.detailTextLabel.frame = CGRectMake(self.width-200, self.height/2.0f-10, 180, 20);
     
     self.textLabel.textColor = ALLightTextColor;

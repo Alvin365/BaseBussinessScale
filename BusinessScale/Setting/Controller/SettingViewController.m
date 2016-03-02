@@ -11,6 +11,7 @@
 #import "ALLogonViewController.h"
 #import "ALNavigationController.h"
 #import "LogonController.h"
+#import <Commercial-Bluetooth/CsBtUtil.h>
 @implementation SettingViewControllerModel
 
 - (instancetype)initWithLabel:(NSString *)label className:(NSString *)className
@@ -73,7 +74,7 @@
         _dataArray = [NSMutableArray array];
     }
     [_dataArray removeAllObjects];
-    [_dataArray addObject:@[[[SettingViewControllerModel alloc]initWithLabel:@"我的账号" className:@"MyAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"我的设备" className:@"MyDeviceController"],[[SettingViewControllerModel alloc]initWithLabel:@"单位设置" className:@"cannotFindxxx"],[[SettingViewControllerModel alloc]initWithLabel:@"商品设定" className:@"GoodsSettingViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"支付账号设定" className:@"PayAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"PIN码设定" className:@"SetPinningController"]]];
+    [_dataArray addObject:@[[[SettingViewControllerModel alloc]initWithLabel:@"我的账号" className:@"MyAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"我的设备" className:@"MyDeviceController"],[[SettingViewControllerModel alloc]initWithLabel:@"商品设定" className:@"GoodsSettingViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"支付账号设定" className:@"PayAccountViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"PIN码设定" className:@"SetPinningController"]]];
     [_dataArray addObject:@[[[SettingViewControllerModel alloc]initWithLabel:@"意见反馈" className:@"SuggesstViewController"],[[SettingViewControllerModel alloc]initWithLabel:@"隐私和协议" className:@"LienceController"]]];
 }
 
@@ -85,7 +86,9 @@
         [self.progressHud hide:YES];
         LogonController *ctl = [[LogonController alloc]init];
         ALNavigationController *nav = [[ALNavigationController alloc]initWithRootViewController:ctl];
-        [UIApplication sharedApplication].delegate.window.rootViewController = nav;
+        [self presentViewController:nav animated:YES completion:nil];
+        [CsBtUtil getInstance].delegate = nil;
+        [[CsBtUtil getInstance]disconnectWithBt];
     });
 }
 
@@ -113,17 +116,6 @@
     if (indexPath.row < arr.count) {
         cell.textLabel.text = [arr[indexPath.row] label];
         cell.sepT.hidden = indexPath.row;
-        cell.segMent.hidden = indexPath.row!=2;
-        if (indexPath.row==2) {
-            [cell.rightArrow removeFromSuperview];
-        }else{
-            [cell addSubview:cell.rightArrow];
-        }
-        if (!cell.segMent.hidden) {
-            cell.segItemChanged = ^(NSInteger index){
-                
-            };
-        }
     }
     return cell;
 }
@@ -137,19 +129,12 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *arr = self.dataArray[indexPath.section];
-        if (!indexPath.section && indexPath.row==2) return;
+        NSArray *arr = _dataArray[indexPath.section];
         SettingViewControllerModel *model = arr[indexPath.row];
         Class ctlClass = NSClassFromString(model.className);
         BaseViewController *ctl = [[ctlClass alloc]init];
         ctl.title = model.label;
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (!indexPath.section && indexPath.row == 3) {
-                if (![ScaleTool scale].mac.length) {
-                    [MBProgressHUD showMessage:@"请先绑定蓝牙秤"];
-                    return;
-                }
-            }
             [self.navigationController pushViewController:ctl animated:YES];
         });
     });

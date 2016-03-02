@@ -9,11 +9,17 @@
 #import "ChartBussiness.h"
 
 @interface ChartBussiness()
+
+/**
+ * Log
+ */
+@property (nonatomic, strong) NSMutableDictionary *logDic;
+
 /**
  * 周、月 数据
  */
 @property (nonatomic, strong) NSMutableArray *array;
-@property (nonatomic, assign) NSInteger i;
+@property (nonatomic, assign) int i;
 @property (nonatomic, copy) void(^returnBlock)(NSArray *array);
 
 /**
@@ -33,25 +39,33 @@
         _minPrice = 0.0f;
         _maxPrice = 0.0f;
         _minDate = [[NSDate date] copy];
+        _minMonth = [[NSDate date] copy];
+        _maxMonth = [[NSDate date] copy];
+        _minMonthPrice = 0.0f;
+        _maxMonthPrice = 0.0f;
+        
         _maxDate = [[NSDate date] copy];
         _month = 1;
         _yearDatas = [NSMutableArray array];
         _i = 0;
         _array = [NSMutableArray array];
         _returnBlock = nil;
+        _returnMonthBlock = nil;
+        
+        _logDic = [NSMutableDictionary dictionary];
     }
     return self;
 }
 
 - (void)setDayDataReturnBlock:(void (^)(NSArray *))block
 {
-    _returnBlock = nil;
+//    _returnBlock = nil;
     _returnBlock = [block copy];
 }
 
 - (void)setMonthDataReturnBlock:(void (^)(NSArray *))block
 {
-    _returnMonthBlock = nil;
+//    _returnMonthBlock = nil;
     _returnMonthBlock = [block copy];
 }
 
@@ -60,18 +74,23 @@
  */
 - (void)chartDatasBeginDate:(NSDate *)beginDate endDate:(NSDate *)endDate completedBlock:(void (^)(CGFloat payPrice))block
 {
-    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>'%.f' and ts<'%.f' and mac='%@' and uid='%@'",beginDate.zeroTime.timeStempString,endDate.dayEndTime.timeStempString,[ScaleTool scale].mac?[ScaleTool scale].mac:@"fsd",[AccountTool account].ID] orderBy:nil offset:0 count:0 callback:^(NSMutableArray *array) {
+    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>'%.f' and ts<'%.f' and uid='%@'",beginDate.zeroTime.timeStemp,endDate.dayEndTime.timeStemp,[AccountTool account].ID] orderBy:nil offset:0 count:0 callback:^(NSMutableArray *array) {
         CGFloat payPrice = 0.0f;
         for (SaleTable *salT in array) {
             payPrice += salT.paid_fee/100.0f;
         }
-        if (_minPrice-payPrice>=0.0f) {
-            _minPrice = payPrice;
-            _minDate = [beginDate copy];
-        }
-        if (payPrice-_maxPrice >=0.0f ) {
-            _maxPrice = payPrice;
-            _maxDate = [beginDate copy];
+        if (payPrice>0.0f) {
+            if (!_minPrice) {
+                _minPrice = payPrice;
+            }
+            if (_minPrice-payPrice>=0.0f) {
+                _minPrice = payPrice;
+                _minDate = [beginDate copy];
+            }
+            if (payPrice-_maxPrice >=0.0f ) {
+                _maxPrice = payPrice;
+                _maxDate = [beginDate copy];
+            }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (block) {
@@ -86,17 +105,20 @@
  */
 - (void)chartDatasBeginDate:(NSDate *)beginDate dayCount:(NSInteger )days
 {
-    if (_i == days-1) {
-        ALLog(@"%@",[self.array copy]);
+    WS(weakSelf);
+    if (_i == days) {
+        ALLog(@"%@",_logDic);
         _returnBlock([self.array copy]);
-        _i=0;
+        _i = 0;
         [self.array removeAllObjects];
+        [_logDic removeAllObjects];
         return;
     }
     [self chartDatasBeginDate:beginDate endDate:beginDate completedBlock:^(CGFloat payPrice) {
-        [self.array addObject:@(payPrice)];
-        [self chartDatasBeginDate:[beginDate dateByAddingDays:1] dayCount:days];
         _i++;
+        [weakSelf.array addObject:@(payPrice)];
+        [weakSelf.logDic setObject:@(payPrice) forKey:[NSString stringFromDate:beginDate]];
+        [weakSelf chartDatasBeginDate:[beginDate dateByAddingDays:1] dayCount:days];
     }];
 }
 
@@ -110,14 +132,20 @@
         for (NSNumber *num in array) {
             total += [num floatValue];
         }
-        if (weakSelf.minMonthPrice-total>=0.0f) {
-            weakSelf.minMonthPrice = total;
-            weakSelf.minMonth = beginDate;
+        if (total > 0.0f) {
+            if (!weakSelf.minMonthPrice) {
+                weakSelf.minMonthPrice = total;
+            }
+            if (weakSelf.minMonthPrice-total>=0.0f) {
+                weakSelf.minMonthPrice = total;
+                weakSelf.minMonth = beginDate;
+            }
+            if (weakSelf.maxMonthPrice-total<=0.0f) {
+                weakSelf.maxMonthPrice = total;
+                weakSelf.maxMonth = beginDate;
+            }
         }
-        if (weakSelf.maxMonthPrice-total<=0.0f) {
-            weakSelf.maxMonthPrice = total;
-            weakSelf.maxMonth = beginDate;
-        }
+        
         [weakSelf.yearDatas addObject:@(total)];
         weakSelf.month ++;
         if (weakSelf.month>12) {

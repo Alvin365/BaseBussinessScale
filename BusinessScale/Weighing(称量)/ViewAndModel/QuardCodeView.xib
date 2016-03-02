@@ -55,11 +55,11 @@
                     </constraints>
                 </imageView>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="weixin6.png" translatesAutoresizingMaskIntoConstraints="NO" id="MCr-hX-9s6">
-                    <rect key="frame" x="128" y="418" width="120" height="120"/>
+                    <rect key="frame" x="168" y="458" width="40" height="40"/>
                     <animations/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="120" id="Ob2-H9-DE7"/>
-                        <constraint firstAttribute="height" constant="120" id="iD8-bM-p3c"/>
+                        <constraint firstAttribute="width" constant="40" id="Ob2-H9-DE7"/>
+                        <constraint firstAttribute="height" constant="40" id="iD8-bM-p3c"/>
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="微信支付丨请扫描二维码支付" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kIa-lw-UDs">
@@ -70,11 +70,11 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="支付宝11.png" translatesAutoresizingMaskIntoConstraints="NO" id="GXB-zX-bno">
-                    <rect key="frame" x="157" y="151" width="60" height="60"/>
+                    <rect key="frame" x="167" y="161" width="40" height="40"/>
                     <animations/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="60" id="R3P-lG-Agl"/>
-                        <constraint firstAttribute="width" constant="60" id="wny-zA-hea"/>
+                        <constraint firstAttribute="height" constant="40" id="R3P-lG-Agl"/>
+                        <constraint firstAttribute="width" constant="40" id="wny-zA-hea"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">

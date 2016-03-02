@@ -48,12 +48,16 @@
 }
 #pragma mark 显示错误信息
 + (void)showError:(NSString *)error toView:(UIView *)view{
-    [self show:error icon:@"error.png" view:view];
+    [self show:error icon:nil view:view];
 }
 
 + (void)showSuccess:(NSString *)success toView:(UIView *)view
 {
     [self show:success icon:@"success.png" view:view];
+}
+
++ (void)showError:(NSString *)error toView:(UIView *)view compleBlock:(MBProgressHUDCompletionBlock)block{
+     [self show:error icon:nil view:view compleBlock:block];
 }
 
 + (void)showSuccess:(NSString *)success toView:(UIView *)view compleBlock:(MBProgressHUDCompletionBlock)block{
@@ -108,5 +112,9 @@
     [self showSuccess:success toView:nil compleBlock:back];
 }
 
++ (void)showError:(NSString *)error compleBlock:(MBProgressHUDCompletionBlock)back
+{
+    [self showError:error toView:nil compleBlock:back];
+}
 
 @end

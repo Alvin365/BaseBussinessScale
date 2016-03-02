@@ -1,0 +1,26 @@
+//
+//  GlobalBussiness.h
+//  BusinessScale
+//
+//  Created by Alvin on 16/2/17.
+//  Copyright © 2016年 Alvin. All rights reserved.
+//
+
+/**
+ * 用来处理 全局的业务逻辑
+ */
+
+#import <Foundation/Foundation.h>
+
+@interface GlobalBussiness : BaseBussiness
+/**
+ * 上传本地未上传的销售记录
+ */
++ (void)batchUpLoadLocalSaleRecordsCompletedBlock:(void(^)())block;
+
+/**
+ * 下载云端 销售记录
+ */
++ (void)downLoadSaleRecords;
+
+@end

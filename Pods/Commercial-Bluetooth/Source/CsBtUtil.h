@@ -11,10 +11,10 @@
 #import "BleDefines.h"
 #import "Frame.h"
 #import "SyncUnitPriceFrame.h"
-//#import "SyncTimeFrame.h"
 #import "TransactionDataReqFrame.h"
 #import "BleDeviceDelegate.h"
 #import "ReceiptsTDRespFrame.h"
+#import "ResetDataReqFrame.h"
 
 @interface CsBtUtil : NSObject <CBCentralManagerDelegate,CBPeripheralDelegate>{
     CBCentralManager *_manager;
@@ -31,6 +31,10 @@
 @property(assign, nonatomic) BOOL stopAdvertisementState;//停止广播标志
 @property(strong, nonatomic) CBPeripheral *activePeripheral; //当前透传连接设备
 @property(strong, nonatomic) CBCharacteristic *readCharacteristic;//当前读特
+/**
+ * 蓝牙 重连5次失败的回调
+ */
+@property (nonatomic, copy) void (^reconnectErrorBlock)();
 
 #pragma mark -自定义函数
 #pragma mark 开始查找蓝牙设备

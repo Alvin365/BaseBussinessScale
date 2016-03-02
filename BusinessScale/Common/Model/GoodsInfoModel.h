@@ -40,8 +40,9 @@
 @property (nonatomic, assign) NSInteger number;
 @property (nonatomic, assign) WeightUnit unit;
 /** 蓝牙数据是否已同步*/
-@property (nonatomic, assign) BOOL isSychro; // 是否已经和蓝牙同步
-
+@property (nonatomic, assign) NSInteger isSychro; // 是否已经和蓝牙同步
+@property (nonatomic, assign) BOOL isDelete; // 是否删除
+@property (nonatomic, assign) BOOL isSychroEdit; // 是否是已同步数据的修改
 
 @end
 

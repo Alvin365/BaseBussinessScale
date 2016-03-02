@@ -11,9 +11,6 @@
 @interface SettingBussiness : NSObject
 
 
-/**
- * 上传历史数据
- */
-+ (void)upLoadHistories:(NSArray *)datas;
++ (void)judgeListHaveThisGoods:(GoodsTempList *)model list:(NSArray *)array completedBlock:(void(^)())comletedBlock;
 
 @end

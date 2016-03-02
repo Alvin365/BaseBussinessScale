@@ -141,7 +141,6 @@
 {
     _sendCodeBtn.tag -= 1;
     [_sendCodeBtn setTitle:[NSString stringWithFormat:@"%lds后重发",(long)_sendCodeBtn.tag] forState:UIControlStateNormal];
-//    _sendCodeBtn.titleLabel.text = [NSString stringWithFormat:@"%lds后重发",(long)_sendCodeBtn.tag];
     _sendCodeBtn.backgroundColor = ALDisAbleColor;
     if (_sendCodeBtn.tag == 0) {
         _sendCodeBtn.tag = 1;

@@ -128,7 +128,7 @@
     [request setTimeoutInterval:param.timeout];
     
     if (self = [super init]) {
-        self.request = request;
+        _request = request;
         _requestParam = param;
     }
     return self;
@@ -152,7 +152,9 @@
                     block(downloadTask,response,filePath);
                 }
             }else{
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+                });
             }
             ALLog(@"File downloaded to: %@", filePath);
         }];
@@ -171,7 +173,9 @@
                               }
                               ALLog(@"URLResponse = %@\nresponseObject = %@",response,responseObject);
                           } else {
-                              [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+                              dispatch_async(dispatch_get_main_queue(), ^{
+                                  [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+                              });
                           }
                       }];
         
@@ -184,7 +188,9 @@
                     block(dataTask,response,responseObject);
                 }
             } else {
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter]postNotificationName:@"ALWorkRequestError" object:error];
+                });
             }
         }];
         [dataTask resume];

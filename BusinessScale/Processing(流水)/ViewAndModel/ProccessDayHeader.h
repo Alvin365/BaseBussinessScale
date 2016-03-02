@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *dateL;
 @property (weak, nonatomic) IBOutlet UILabel *totalPriceL;
 @property (weak, nonatomic) IBOutlet UILabel *totalFlagL;
+@property (weak, nonatomic) IBOutlet UILabel *realPriceLabel;
 
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, assign) ALProcessViewButtonTag dateTag;

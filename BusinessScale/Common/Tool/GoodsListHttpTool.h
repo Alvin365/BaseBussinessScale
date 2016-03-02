@@ -14,7 +14,7 @@
  * 覆盖服务器保存的物品表 PUT /inventory
  */
 
-+ (ALRequestParam *)coverCoodsListSeverse:(NSArray *)body;
++ (ALRequestParam *)coverCoodsListSeverse:(NSDictionary *)body;
 /**
  * 合并服务器保存的物品表 Post
  */

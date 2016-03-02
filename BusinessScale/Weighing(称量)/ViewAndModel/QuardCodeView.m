@@ -9,6 +9,8 @@
 #import "QuardCodeView.h"
 #import <ZXMultiFormatWriter.h>
 #import <ZXImage.h>
+#import <ZXEncodeHints.h>
+#import <ZXQRCodeErrorCorrectionLevel.h>
 @interface QuardCodeView()
 {
     BOOL _animate;
@@ -103,11 +105,15 @@
 {
     NSString *codeURL = array[0];
     ZXMultiFormatWriter *writer = [[ZXMultiFormatWriter alloc] init];
+    ZXEncodeHints *hints = [ZXEncodeHints hints];
+    hints.errorCorrectionLevel = [ZXQRCodeErrorCorrectionLevel errorCorrectionLevelH];
+    
     ZXBitMatrix *result = [writer encode:codeURL
                                   format:kBarcodeFormatQRCode
                                    width:self.qrCodeImageView.frame.size.width
                                   height:self.qrCodeImageView.frame.size.height
-                                   error:nil];
+                                   hints:hints error:nil
+                                   ];
     if (result) {
         ZXImage *image = [ZXImage imageWithMatrix:result];
         self.qrCodeImageView.image = [UIImage imageWithCGImage:image.cgimage];
@@ -120,7 +126,8 @@
                                   format:kBarcodeFormatQRCode
                                    width:self.qrCodeImageView_Second.frame.size.width
                                   height:self.qrCodeImageView_Second.frame.size.height
-                                   error:nil];
+                                    hints:hints error:nil
+                                   ];
     if (result) {
         ZXImage *image = [ZXImage imageWithMatrix:result];
         self.qrCodeImageView_Second.image = [UIImage imageWithCGImage:image.cgimage];

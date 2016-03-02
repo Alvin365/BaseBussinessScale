@@ -26,6 +26,7 @@
 
 + (NSArray *)getPrimaryKeyUnionArray
 {
+    return @[@"ts"];
     return nil;
 }
 
@@ -67,8 +68,10 @@
 + (void)initialize
 {
     // remove unwant property
+    [self removePropertyWithColumnName:@"isUpLoad"];
     [self setTableColumnName:@"uid" bindingPropertyName:@"uid"];
     [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
+    [self setTableColumnName:@"po_uuid" bindingPropertyName:@"po_uuid"];
 }
 
 @end

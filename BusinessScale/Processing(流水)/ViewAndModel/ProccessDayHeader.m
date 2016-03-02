@@ -10,6 +10,7 @@
 
 @interface ProccessDayHeader()
 
+@property (weak, nonatomic) IBOutlet UILabel *cancleLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segMent;
 
 @end
@@ -42,8 +43,8 @@
     [_segMent setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateSelected];
     [_segMent setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateNormal];
     
-//    _date = [NSDate convertDateFromString:_dateL.text];
-//    ALLog(@"%@",_date);
+    _cancleLabel.backgroundColor = [UIColor whiteColor];
+    _realPriceLabel.textColor = [UIColor whiteColor];
 }
 
 - (IBAction)segMentselectedIndex:(UISegmentedControl *)sender {

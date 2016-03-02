@@ -7,49 +7,49 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="WeightNoDatasView">
-            <rect key="frame" x="0.0" y="44" width="375" height="574"/>
+        <view contentMode="scaleToFill" id="E4g-Yo-VoW" customClass="WeightNoDatasView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7YC-Cu-9XA">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CZv-D2-ybe">
                     <rect key="frame" x="42" y="312" width="120" height="55"/>
                     <animations/>
                     <color key="backgroundColor" red="1" green="0.31547068" blue="0.24645448980000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="120" id="61T-Gv-JoO"/>
-                        <constraint firstAttribute="height" constant="55" id="EbY-zT-CZP"/>
+                        <constraint firstAttribute="height" constant="55" id="gdN-YB-Vdc"/>
+                        <constraint firstAttribute="width" constant="120" id="qSS-8F-jJ8"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                     <state key="normal" title="放入托盘">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="btnClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="Uf6-u2-bQN"/>
+                        <action selector="btnClick:" destination="E4g-Yo-VoW" eventType="touchUpInside" id="raK-yq-L23"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="还没有称量数据哦~" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L2e-Cn-cis">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="还没有称量数据哦~" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0nz-fr-eWO">
                     <rect key="frame" x="119" y="100" width="138" height="20"/>
                     <animations/>
                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请将果蔬放入托盘上开始称量" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jv3-Eg-LTN">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请将果蔬放入托盘上开始称量" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K1m-ec-g43">
                     <rect key="frame" x="84" y="125" width="208" height="20"/>
                     <animations/>
                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pic" translatesAutoresizingMaskIntoConstraints="NO" id="MIf-6J-hzG">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pic" translatesAutoresizingMaskIntoConstraints="NO" id="7oz-4Z-9t7">
                     <rect key="frame" x="130" y="195" width="115" height="47"/>
                     <animations/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="47" id="MEl-vb-96i"/>
-                        <constraint firstAttribute="width" constant="115" id="MsT-jj-9zk"/>
+                        <constraint firstAttribute="width" constant="115" id="Iej-5q-A2W"/>
+                        <constraint firstAttribute="height" constant="47" id="mHS-sm-U6C"/>
                     </constraints>
                 </imageView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fal-zW-Vat">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HXc-Uh-HJj">
                     <rect key="frame" x="213" y="312" width="120" height="55"/>
                     <animations/>
                     <color key="backgroundColor" red="0.55283063970000001" green="1" blue="0.44587323150000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -58,46 +58,46 @@
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="btnClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="JzK-0n-3lZ"/>
+                        <action selector="btnClick:" destination="E4g-Yo-VoW" eventType="touchUpInside" id="92h-BC-37R"/>
                     </connections>
                 </button>
             </subviews>
             <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="Fal-zW-Vat" firstAttribute="width" secondItem="7YC-Cu-9XA" secondAttribute="width" id="AU3-3L-BPV"/>
-                <constraint firstItem="MIf-6J-hzG" firstAttribute="top" secondItem="jv3-Eg-LTN" secondAttribute="bottom" constant="50" id="Av3-Fa-4Ak"/>
-                <constraint firstItem="Fal-zW-Vat" firstAttribute="top" secondItem="7YC-Cu-9XA" secondAttribute="top" id="CZA-cl-HTf"/>
-                <constraint firstItem="MIf-6J-hzG" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Mg3-F7-hbF"/>
-                <constraint firstItem="Fal-zW-Vat" firstAttribute="height" secondItem="7YC-Cu-9XA" secondAttribute="height" id="N5P-U4-o8u"/>
-                <constraint firstAttribute="trailing" secondItem="Fal-zW-Vat" secondAttribute="trailing" constant="42" id="PGY-HU-uL3"/>
-                <constraint firstItem="jv3-Eg-LTN" firstAttribute="top" secondItem="L2e-Cn-cis" secondAttribute="bottom" constant="5" id="Qk6-0Q-kUe"/>
-                <constraint firstItem="7YC-Cu-9XA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="42" id="XgA-N0-tl8"/>
-                <constraint firstItem="L2e-Cn-cis" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="a0p-ZE-GKv"/>
-                <constraint firstItem="7YC-Cu-9XA" firstAttribute="top" secondItem="MIf-6J-hzG" secondAttribute="bottom" constant="70" id="c1D-Z1-KFv"/>
-                <constraint firstItem="jv3-Eg-LTN" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="gd8-a1-9gV"/>
-                <constraint firstItem="L2e-Cn-cis" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="100" id="p8d-Vb-Vt8"/>
+                <constraint firstItem="CZv-D2-ybe" firstAttribute="top" secondItem="7oz-4Z-9t7" secondAttribute="bottom" constant="70" id="1O5-lh-flx"/>
+                <constraint firstItem="HXc-Uh-HJj" firstAttribute="width" secondItem="CZv-D2-ybe" secondAttribute="width" id="3xI-Fy-pj8"/>
+                <constraint firstItem="K1m-ec-g43" firstAttribute="centerX" secondItem="E4g-Yo-VoW" secondAttribute="centerX" id="89u-LT-jQf"/>
+                <constraint firstItem="7oz-4Z-9t7" firstAttribute="centerX" secondItem="E4g-Yo-VoW" secondAttribute="centerX" id="AyE-Ed-UQ5"/>
+                <constraint firstItem="0nz-fr-eWO" firstAttribute="top" secondItem="E4g-Yo-VoW" secondAttribute="top" constant="100" id="Egp-PX-0U2"/>
+                <constraint firstItem="HXc-Uh-HJj" firstAttribute="top" secondItem="CZv-D2-ybe" secondAttribute="top" id="RNy-ZZ-tCx"/>
+                <constraint firstAttribute="trailing" secondItem="HXc-Uh-HJj" secondAttribute="trailing" constant="42" id="ZdX-Ma-oqN"/>
+                <constraint firstItem="CZv-D2-ybe" firstAttribute="leading" secondItem="E4g-Yo-VoW" secondAttribute="leading" constant="42" id="cyb-tx-Vsi"/>
+                <constraint firstItem="K1m-ec-g43" firstAttribute="top" secondItem="0nz-fr-eWO" secondAttribute="bottom" constant="5" id="g88-5c-pk4"/>
+                <constraint firstItem="HXc-Uh-HJj" firstAttribute="height" secondItem="CZv-D2-ybe" secondAttribute="height" id="oX6-tl-IOf"/>
+                <constraint firstItem="7oz-4Z-9t7" firstAttribute="top" secondItem="K1m-ec-g43" secondAttribute="bottom" constant="50" id="qNA-CI-8H9"/>
+                <constraint firstItem="0nz-fr-eWO" firstAttribute="centerX" secondItem="E4g-Yo-VoW" secondAttribute="centerX" id="yaa-eu-yk0"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
-            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
-            <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
-                <outlet property="btnTop" destination="c1D-Z1-KFv" id="Kac-yp-7HT"/>
-                <outlet property="flagOne" destination="L2e-Cn-cis" id="nun-Gr-YQG"/>
-                <outlet property="flagTwo" destination="jv3-Eg-LTN" id="yUQ-Ph-ZcL"/>
-                <outlet property="imageV" destination="MIf-6J-hzG" id="BcL-dz-urR"/>
-                <outlet property="imageViewTop" destination="Av3-Fa-4Ak" id="bvw-TQ-4EZ"/>
-                <outlet property="labelTop" destination="p8d-Vb-Vt8" id="VuK-KC-ryI"/>
-                <outlet property="palletBtnHeight" destination="EbY-zT-CZP" id="JcQ-aK-xqD"/>
-                <outlet property="palletBtnLeft" destination="XgA-N0-tl8" id="ckC-PC-Rjn"/>
-                <outlet property="palletBtnWidth" destination="61T-Gv-JoO" id="T4W-lM-aas"/>
-                <outlet property="payBtn" destination="Fal-zW-Vat" id="KNi-L0-AfL"/>
-                <outlet property="payBtnRight" destination="PGY-HU-uL3" id="Bfa-Ig-rGN"/>
-                <outlet property="putInPalletBtn" destination="7YC-Cu-9XA" id="smx-Tn-7TQ"/>
+                <outlet property="btnTop" destination="1O5-lh-flx" id="5e2-Bi-HsQ"/>
+                <outlet property="flagOne" destination="0nz-fr-eWO" id="2fi-kC-uBI"/>
+                <outlet property="flagTwo" destination="K1m-ec-g43" id="Jie-cb-q9V"/>
+                <outlet property="imageV" destination="7oz-4Z-9t7" id="qg1-WZ-uon"/>
+                <outlet property="imageViewTop" destination="qNA-CI-8H9" id="BxA-y9-wvE"/>
+                <outlet property="labelTop" destination="Egp-PX-0U2" id="wDf-CW-0eK"/>
+                <outlet property="palletBtnHeight" destination="gdN-YB-Vdc" id="4Ms-uO-WZU"/>
+                <outlet property="palletBtnLeft" destination="cyb-tx-Vsi" id="533-oT-JzT"/>
+                <outlet property="palletBtnWidth" destination="qSS-8F-jJ8" id="Swi-F7-KOV"/>
+                <outlet property="payBtn" destination="HXc-Uh-HJj" id="cWo-Wf-SgH"/>
+                <outlet property="payBtnRight" destination="ZdX-Ma-oqN" id="hQx-XG-FWe"/>
+                <outlet property="putInPalletBtn" destination="CZv-D2-ybe" id="Mpz-Vf-fmq"/>
             </connections>
-            <point key="canvasLocation" x="149" y="333"/>
+            <point key="canvasLocation" x="148.5" y="376.5"/>
         </view>
     </objects>
     <resources>

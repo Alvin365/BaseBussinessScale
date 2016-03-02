@@ -38,7 +38,8 @@
 {
     [self setTableColumnName:@"isSychro" bindingPropertyName:@"isSychro"];
     [self setTableColumnName:@"uid" bindingPropertyName:@"uid"];
-    [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
+//    [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
+    [self removePropertyWithColumnName:@"mac"];
 }
 
 
@@ -73,8 +74,11 @@
 + (void)initialize
 {
     [self setTableColumnName:@"isSychro" bindingPropertyName:@"isSychro"];
+    [self setTableColumnName:@"isDelete" bindingPropertyName:@"isDelete"];
     [self setTableColumnName:@"uid" bindingPropertyName:@"uid"];
-    [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
+//    [self setTableColumnName:@"mac" bindingPropertyName:@"mac"];
+    [self removePropertyWithColumnName:@"mac"];
+    [self removePropertyWithColumnName:@"isSychroEdit"];
 }
 
 @end

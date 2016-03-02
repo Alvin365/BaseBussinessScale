@@ -12,6 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *priceL; // 结算价
 @property (weak, nonatomic) IBOutlet ALTextField *realPriceTextField; // 折扣价
+@property (weak, nonatomic) IBOutlet UIImageView *payWayImageView;
 @property (nonatomic, copy) void(^callBack) (PayWayType type);
 
 + (instancetype)loadXibView;

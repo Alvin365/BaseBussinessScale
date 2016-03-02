@@ -8,13 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import "PaySuccessView.h"
 @interface BaseViewController : UIViewController
 {
     MBProgressHUD *_progressHud;
+    PaySuccessView *_paySuccess;
 }
 @property (nonatomic, strong) MBProgressHUD *progressHud;
+@property (nonatomic, strong) PaySuccessView *paySuccess;
 @property (nonatomic, copy) NSDictionary *pars;
 @property (nonatomic, strong) UIView *back;
+@property (nonatomic, assign) BOOL progressShow;
+@property (nonatomic, copy) void(^severceMsgBlock)(NSString *msg);
 
 /**
  * 去除navigationController中navgationBar中的黑线

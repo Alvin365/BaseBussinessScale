@@ -7,7 +7,10 @@
 //
 
 #import "WeightHttpTool.h"
-
+#import "zlib.h"
+#import "NSData+GZIP.h"
+#define bodyPath @"bodyPath"
+#define ZipBodyPath @"ZipBodyPath"
 @implementation WeightHttpTool
 
 + (ALRequestParam *)uploadSaleRecord:(NSDictionary *)params
@@ -34,7 +37,26 @@
     p.method = ALHttpPut;
     p.taskType = ALTaskType_UpLoad;
     [p setHttpBody:body];
+    NSData *data = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error:nil];
+    if (data.length>10000) {
+        [p setHttpBody:[data gzippedData]];
+        [p addHeader:@"gzip" forKey:@"Content-Type"];
+    }
     p.urlString = [NSString stringWithFormat:@"%@pobatch",userServerce];
+    return p;
+}
+
++ (ALRequestParam *)downLoadSaleRecordsStartTimeString:(NSTimeInterval)startTime endTimeString:(NSTimeInterval)endTime
+{
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    [p addHeader:[AccountTool account].token forKey:@"cs-token"];
+    [p addHeader:@"gzip" forKey:@"Accept-Encoding"];
+    p.method = ALHttpGet;
+    [p addParam:@(startTime) forKey:@"start"];
+    [p addParam:@(endTime) forKey:@"end"];
+    [p addParam:@"n" forKey:@"po_uuid_only"];
+//    p.taskType = ALTaskType_DownLoad;
+    p.urlString = [NSString stringWithFormat:@"%@po",userServerce];
     return p;
 }
 

@@ -23,7 +23,13 @@
 + (UIImage *)loadLocalImage;
 
 + (void)removeAllLocalDatas;
-
+/**
+ * 某文件的大小
+ */
++ (long long)fileSizeAtPath:(NSString*)filePath;
+/**
+ * 所有文件大小 
+ */
 + (float)allFolderSize;
 
 + (NSDictionary *)getGoodsList;

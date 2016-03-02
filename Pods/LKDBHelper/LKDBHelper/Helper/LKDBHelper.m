@@ -1106,6 +1106,9 @@ static BOOL LKDBLogErrorEnable = NO;
 #pragma mark - insert operation
 - (BOOL)insertToDB:(NSObject*)model
 {
+    if (![self insertBase:model]) {
+        NSLog(@"插入数据库 失败");
+    }
     return [self insertBase:model];
 }
 

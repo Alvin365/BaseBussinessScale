@@ -9,6 +9,8 @@
 #import "PayWaySelectView.h"
 #import <ZXMultiFormatWriter.h>
 #import <ZXImage.h>
+#import <ZXEncodeHints.h>
+#import <ZXQRCodeErrorCorrectionLevel.h>
 @interface PayWaySelectView()
 {
     BOOL _animate;
@@ -131,11 +133,16 @@
     }
     self.successView.hidden = NO;
     self.successView.backgroundColor = [UIColor whiteColor];
+    
+    ZXEncodeHints *hints = [ZXEncodeHints hints];
+    hints.errorCorrectionLevel = [ZXQRCodeErrorCorrectionLevel errorCorrectionLevelH];
+    
     ZXMultiFormatWriter *writer = [[ZXMultiFormatWriter alloc] init];
     ZXBitMatrix *result = [writer encode:codeURL
                                   format:kBarcodeFormatQRCode
                                    width:self.qrCodeImageView.frame.size.width
                                   height:self.qrCodeImageView.frame.size.height
+                                   hints:hints
                                    error:nil];
     if (result) {
         ZXImage *image = [ZXImage imageWithMatrix:result];

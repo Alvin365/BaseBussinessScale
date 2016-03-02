@@ -14,7 +14,7 @@
  */
 + (void)reportFormsAccordingTimeByType:(ALProcessViewButtonTag)type beginDate:(NSDate *)beginDate endDate:(NSDate *)endDate completedBlock:(void (^)(NSArray *,CGFloat,CGFloat))block
 {
-    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>'%.f' and ts<'%.f' and mac='%@' and uid='%@'",beginDate.zeroTime.timeStempString,endDate.dayEndTime.timeStempString,[ScaleTool scale].mac?[ScaleTool scale].mac:@"fsd",[AccountTool account].ID] orderBy:nil offset:0 count:0 callback:^(NSMutableArray *array) {
+    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>'%.f' and ts<'%.f' and uid=%@",beginDate.zeroTime.timeStemp,endDate.dayEndTime.timeStemp,[AccountTool account].ID] orderBy:@"ts desc" offset:0 count:0 callback:^(NSMutableArray *array) {
         ALLog(@"%@",array);
         CGFloat totalPrice = 0.0f;
         CGFloat payPrice = 0.0f;
@@ -66,7 +66,7 @@
  */
 + (void)reportFormsAccordingCategoryByType:(ALProcessViewButtonTag)type beginDate:(NSDate *)beginDate endDate:(NSDate *)endDate completedBlock:(void (^)(NSArray *, CGFloat, CGFloat))block
 {
-    [[SaleItem getUsingLKDBHelper]search:[SaleItem class] where:[NSString stringWithFormat:@"ts>='%.f' and ts<='%.f' and mac='%@' and uid='%@'",beginDate.zeroTime.timeStempString,endDate.dayEndTime.timeStempString,[ScaleTool scale].mac?[ScaleTool scale].mac:@"fsd",[AccountTool account].ID] orderBy:@"title" offset:0 count:0 callback:^(NSMutableArray *array) {
+    [[SaleItem getUsingLKDBHelper]search:[SaleItem class] where:[NSString stringWithFormat:@"ts>='%.f' and ts<='%.f' and uid=%@",beginDate.zeroTime.timeStemp,endDate.dayEndTime.timeStemp,[AccountTool account].ID] orderBy:@"title,ts desc" offset:0 count:0 callback:^(NSMutableArray *array) {
         ALLog(@"%@",array);
         NSMutableArray *dataArray = [NSMutableArray array];
         CGFloat totalPrice = 0.0f;
@@ -104,8 +104,8 @@
     NSDate *beginDate = date.firstDayOfCurrentMonth;
     NSDate *endDate = [date lastDayOfCurrentMonth];
 
-    ALLog(@"%g",beginDate.zeroTime.timeStempString);
-    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>'%.f' and ts<'%.f' and mac='%@' and uid='%@'",beginDate.zeroTime.timeStempString,endDate.dayEndTime.timeStempString,[ScaleTool scale].mac?[ScaleTool scale].mac:@"fsd",[AccountTool account].ID] orderBy:nil offset:0 count:0 callback:^(NSMutableArray *array) {
+    ALLog(@"%g",beginDate.zeroTime.timeStemp);
+    [[SaleTable getUsingLKDBHelper]search:[SaleTable class] where:[NSString stringWithFormat:@"ts>'%.f' and ts<'%.f' and uid=%@",beginDate.zeroTime.timeStemp,endDate.dayEndTime.timeStemp,[AccountTool account].ID] orderBy:@"ts desc" offset:0 count:0 callback:^(NSMutableArray *array) {
         ALLog(@"%@",array);
         CGFloat totalPrice = 0.0f;
         CGFloat payPrice = 0.0f;

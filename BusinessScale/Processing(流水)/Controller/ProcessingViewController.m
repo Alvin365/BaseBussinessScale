@@ -13,9 +13,7 @@
 #import "RecordViewController.h"
 
 @interface ProcessingViewController ()
-
 @property (nonatomic, strong) ALProcessView *process;
-
 @end
 
 @implementation ProcessingViewController
@@ -49,7 +47,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end

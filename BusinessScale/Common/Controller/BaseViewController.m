@@ -9,6 +9,7 @@
 #import "BaseViewController.h"
 #import "ALLogonViewController.h"
 #import "ALNavigationController.h"
+
 @interface BaseViewController ()
 
 @property (nonatomic, copy) void(^leftBarBtnBlock)();
@@ -19,6 +20,11 @@
 
 @implementation BaseViewController
 
+- (void)setSeverceMsgBlock:(void (^)(NSString *))severceMsgBlock
+{
+    _severceMsgBlock = [severceMsgBlock copy];
+}
+
 - (MBProgressHUD *)progressHud
 {
     if (!_progressHud) {
@@ -26,6 +32,15 @@
         [self.view addSubview:_progressHud];
     }
     return _progressHud;
+}
+
+- (PaySuccessView *)paySuccess
+{
+    if (!_paySuccess) {
+        _paySuccess = [PaySuccessView loadXibView];
+        _paySuccess.frame = [UIScreen mainScreen].bounds;
+    }
+    return _paySuccess;
 }
 
 - (UIView *)back
@@ -53,6 +68,7 @@
     if (self.navigationController.viewControllers.count > 1) {
         [self buildBack];
     }
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(progressHide:) name:@"progressHide" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(requestFail:) name:@"ALWorkRequestError" object:nil];
 }
 
@@ -104,15 +120,15 @@
 
 - (void)doDatasFromNet:(NSObject *)resuilt useFulData:(void (^)(NSObject *))data
 {
-    [self.progressHud hide:YES];
-    self.progressHud.labelText = nil;
+    if (!self.progressShow) {
+        [self.progressHud hide:YES];
+        self.progressHud.labelText = nil;
+    }
     if ([resuilt isKindOfClass:[NSDictionary class]]) {
         NSDictionary *dic = (NSDictionary *)resuilt;
         if (![dic[@"code"] integerValue]) {
             if (data) {
-                if ([dic[@"data"] isKindOfClass:[NSNull class]]) {
-                    data(@"");
-                }else if (dic.count==1){
+                if (dic.count==1){
                     data(resuilt);
                 }else{
                     data(dic[@"data"]);
@@ -127,6 +143,9 @@
             [alert show];
         }else{
             [MBProgressHUD showError:dic[@"msg"]];
+            if (self.severceMsgBlock) {
+                self.severceMsgBlock(dic[@"msg"]);
+            }
         }
     }else if ([resuilt isKindOfClass:[NSError class]]){
         NSError *error = (NSError *)resuilt;
@@ -146,6 +165,7 @@
 {
     [self.progressHud hide:YES];
     NSString *error = [notice.object localizedDescription];
+    ALLog(@"request error:%@",notice);
     [MBProgressHUD showMessage:error];
 }
 
@@ -181,6 +201,11 @@
 - (void)noticeGlobalChanged:(NSNotification *)notice
 {
     _noticeGlobalBlock();
+}
+
+- (void)progressHide:(NSNotification *)notice
+{
+    [self.progressHud hide:YES];
 }
 
 - (void)dealloc

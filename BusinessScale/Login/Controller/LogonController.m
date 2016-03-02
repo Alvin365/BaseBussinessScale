@@ -42,7 +42,7 @@
 #pragma mark 初始化
 -(void)initAll {
     
-    _kUILogonTip.text = @"登录则表示您同意遵守OKOK蓝牙秤的";
+    _kUILogonTip.text = @"登录则表示您同意遵守OKOK商用秤的";
     // 由于xib有色差，所以通过代码设置颜色
     self.view.backgroundColor = ALNavBarColor;
     [_kUIRegister setTitleColor:ALNavBarColor forState:UIControlStateNormal];

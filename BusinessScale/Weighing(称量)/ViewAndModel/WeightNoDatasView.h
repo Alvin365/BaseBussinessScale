@@ -12,7 +12,6 @@
 
 + (instancetype)loadXibView;
 
-- (void)showAnimate:(BOOL)animate;
 - (void)hideAnimate:(BOOL)animate;
 
 @end

@@ -24,7 +24,7 @@
 
 
 @property (nonatomic, strong) GoodsTempList *model;
-@property (nonatomic, copy) void(^callBack)(GoodsTempList  *model);
+@property (nonatomic, copy) void(^callBack)(GoodsTempList  *model,BOOL cancle);
 
 + (instancetype)loadXibView;
 

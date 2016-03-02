@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NoDataView *noDataView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
+@property (nonatomic, strong) NSMutableDictionary *isOpens;
 @property (nonatomic, copy) NSDate *beginDate;
 @property (nonatomic, copy) NSDate *endDate;
 
@@ -72,6 +73,8 @@
 {
     _dataArray = [NSMutableArray array];
     NSDate *date = [NSDate date];
+    _isOpens = [NSMutableDictionary dictionary];
+    [_isOpens setValue:@(YES) forKey:@"0"];
     
     self.header.dateL.text = [NSString stringWithFormat:@"%i年%i月",(int)date.year,(int)date.month];
     [self selectDate:date];
@@ -102,6 +105,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (![[_isOpens valueForKey:[NSString stringWithFormat:@"%i",(int)section]] boolValue]) {
+        return 0;
+    }
     NSArray *arr = _dataArray[section];
     return arr.count;
 }
@@ -114,28 +120,35 @@
 #pragma mark -section
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    WS(weakSelf);
     @autoreleasepool {
         RecordSectionView *view = [RecordSectionView loadXibView];
-        view.frame = CGRectMake(0, 0, screenWidth, 50);
+        view.frame = CGRectMake(0, 0, screenWidth, 55);
         NSArray *arr = _dataArray[section];
         SaleTable *salT = nil;
         if (arr) {
             salT = arr[0];
         }
+        view.callBack = ^{
+            [weakSelf sectionEvent:section];
+        };
         NSDate *date = [NSDate dateWithTimeIntervalInMilliSecondSince1970:salT.ts];
-        view.dateL.text = [NSString stringWithFormat:@"%i/%i",(int)date.year,(int)date.month];
+        view.dateL.text = [NSString stringWithFormat:@"%i/%i/%i",(int)date.year,(int)date.month,(int)date.day];
         CGFloat totalP = 0.0f;
-        for (SaleTable *sal in arr) {
-            totalP += sal.paid_fee/100.0f;
+        CGFloat totals = 0.0f;
+        for (SaleTable *s in arr) {
+            totalP += s.paid_fee/100.0f;
+            totals += s.total_fee/100.0f;
         }
         view.priceL.text = [NSString stringWithFormat:@"%@元",[ALCommonTool decimalPointString:totalP]];
+        view.realPrice.text = [NSString stringWithFormat:@"%@元",[ALCommonTool decimalPointString:totals]];
         return view;
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 50.0f;
+    return 55.0f;
 }
 
 - (void)selectDate:(NSDate *)date
@@ -154,6 +167,17 @@
         
         [self.tableView reloadData];
     }];
+}
+
+#pragma mark - sectionHideOrShow 某区域是打开还是收藏
+- (void)sectionEvent:(NSInteger)section
+{
+    BOOL isOpen = [[self.isOpens valueForKey:[NSString stringWithFormat:@"%i",(int)section]] boolValue];
+    [self.isOpens setValue:@(!isOpen) forKey:[NSString stringWithFormat:@"%i",(int)section]];
+    [self.tableView reloadData];
+    if (!isOpen) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:section] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 @end

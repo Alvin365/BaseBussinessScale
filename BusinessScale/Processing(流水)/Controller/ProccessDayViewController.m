@@ -91,10 +91,14 @@
     if (!_header) {
         WS(weakSelf);
         _header = [ProccessDayHeader loadXibView];
-        _header.frame = CGRectMake(0, 0, screenWidth, 214);
+        _header.frame = CGRectMake(0, 0, screenWidth, 220);
         _header.dateTag = _tag;
         _header.callBack = ^(NSInteger index){
             weakSelf.currentIndex = index;
+            if (weakSelf.tag == ALProcessViewButtonTagMonth) {
+                [weakSelf selectDate:weakSelf.beginDate endDate:weakSelf.beginDate];
+                return ;
+            }
             [weakSelf selectDate:weakSelf.beginDate endDate:weakSelf.endDate];
         };
     }
@@ -104,6 +108,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.navigationController.navigationBar.translucent = YES;
     UIColor *navigationBarColor = ALNavBarColor;
     Class className = NSClassFromString(@"_UINavigationBarBackground");
     for (UIView *view in self.navigationController.navigationBar.subviews) {
@@ -130,7 +135,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationController.navigationBar.translucent = YES;
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.backgroundColor = backGroudColor;
     self.navigationItem.titleView = self.titleGestureView;
@@ -304,9 +308,7 @@
 #pragma mark -ALSelfDefineDatePickerViewDelegate
 - (void)monthPickCallBackDate:(NSDate *)date
 {
-    NSInteger days = [date numberOfDaysInCurrentMonth];
-    NSDate *endDate = [date dateByAddingDays:days];
-    [self selectDate:date endDate:endDate];
+    [self selectDate:date endDate:date];
 }
 
 - (void)weekPickCallBackBeginDate:(NSDate *)beginDate endDate:(NSDate *)endDate
@@ -348,8 +350,8 @@
         }
         [self.progressHud hide:YES];
         [self showHeaderDate];
-        self.header.totalPriceL.attributedText = [ALCommonTool setAttrbute:[ALCommonTool decimalPointString:paiPrice] andAttribute:[NSString stringWithFormat:@"(%@)",[ALCommonTool decimalPointString:totalPrice]] Color1:[UIColor whiteColor] Color2:[UIColor whiteColor] Font1:25 Font2:15];
-//        self.header.totalPriceL.text = [ALCommonTool decimalPointString:paiPrice];
+        self.header.totalPriceL.text = [ALCommonTool decimalPointString:paiPrice];
+        self.header.realPriceLabel.attributedText = [ALCommonTool setAttrbute:@"￥" andAttribute:[ALCommonTool decimalPointString:totalPrice] Color1:[UIColor whiteColor] Color2:[UIColor whiteColor] Font1:13 Font2:15];
         
         [self.tableView reloadData];
     }];
@@ -369,8 +371,8 @@
             [self.noDataView removeFromSuperview];
         }
         [self showHeaderDate];
-        self.header.totalPriceL.attributedText = [ALCommonTool setAttrbute:[ALCommonTool decimalPointString:paiPrice] andAttribute:[NSString stringWithFormat:@"(%@)",[ALCommonTool decimalPointString:totalPrice]] Color1:[UIColor whiteColor] Color2:[UIColor whiteColor] Font1:25 Font2:15];
-//        self.header.totalPriceL.text = [ALCommonTool decimalPointString:paiPrice];
+        self.header.totalPriceL.text = [ALCommonTool decimalPointString:paiPrice];
+        self.header.realPriceLabel.attributedText = [ALCommonTool setAttrbute:@"￥" andAttribute:[ALCommonTool decimalPointString:totalPrice] Color1:[UIColor whiteColor] Color2:[UIColor whiteColor] Font1:13 Font2:15];
         [self.tableView reloadData];
     }];
 }

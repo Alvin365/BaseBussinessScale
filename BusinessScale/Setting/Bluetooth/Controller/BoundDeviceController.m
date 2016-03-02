@@ -12,12 +12,16 @@
 #import <Commercial-Bluetooth/CsBtUtil.h>
 #import "ScaleTool.h"
 #import "ALNavigationController.h"
+#import "BLEHttpTool.h"
+#import "SetPinningController.h"
 @interface BoundDeviceController ()<BleDeviceDelegate> {
     BOOL needStopScan;
     CsBtUtil *_btUtil;
     ScaleModel *_model;
     BOOL _isSure;
     BroadcastData *broadcastData;
+    NSMutableSet *_broadsSet;
+    NSInteger _scanCount;
     
     __weak IBOutlet NSLayoutConstraint *KUISearViewHeight;
     
@@ -45,22 +49,16 @@
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
     _btUtil.stopAdvertisementState = NO;
+    [self researchClick:nil];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self removeLineOfNavigationBar];
+    [self datas];
     [self initAll];
     [self initConstraints];
-    _model = [[ScaleModel alloc]init];
-    _btUtil = [CsBtUtil getInstance];
-    _btUtil.delegate = self;
-//    [self.progressHud show:YES];
-//    self.progressHud.labelText = @"搜索中...";
-    [[CsBtUtil getInstance] disconnectWithBt];
-    [CsBtCommon clearBoundMac];
-    
-    [_btUtil startScanBluetoothDevice];
+    self.progressShow = YES;
 }
 
 #pragma mark - custom functions
@@ -73,9 +71,9 @@
     _kUINoBound.layer.borderColor = ALLightTextColor.CGColor;
     _kUINoBound.layer.borderWidth = 0.7;
     [_kUINoBound setTitleColor:ALLightTextColor forState:UIControlStateNormal];
-    [_kUINoBound setTitle:DPLocalizedString(@"not_bind_now", @"先不绑定了") forState:UIControlStateNormal];
+    [_kUINoBound setTitle:@"先不绑定了" forState:UIControlStateNormal];
     
-    [_kUIResearch setTitle:DPLocalizedString(@"research", @"重新搜索") forState:UIControlStateNormal];
+    [_kUIResearch setTitle:@"重新搜索" forState:UIControlStateNormal];
     _kUISearchedView.backgroundColor = ALNavBarColor;
     _kUIResearch.backgroundColor = [UIColor clearColor];
     [_kUIResearch setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -86,11 +84,10 @@
     _kUISureBound.backgroundColor = [UIColor whiteColor];
     [_kUISureBound setTitleColor:ALNavBarColor forState:UIControlStateNormal];
     
-    
     _kUISureBound.layer.cornerRadius = 20;
     _kUISureBound.layer.masksToBounds = YES;
-    [_kUISureBound setTitle:DPLocalizedString(@"sure_bind", @"确定绑定") forState:UIControlStateNormal];
-    _kUITip.text = DPLocalizedString(@"bind_tip", @"已经发现体重秤，请确认秤显示的数值和下放数值一样，即可确认绑定");
+    [_kUISureBound setTitle:@"确定绑定" forState:UIControlStateNormal];
+    _kUITip.text = @"已经发现体重秤，请确认秤显示的数值和下放数值一样，即可确认绑定";
     NSString *frmtStr = @"open_ble_2";
     if ([[ALCommonTool getPreferredLanguage] isEqualToString:@"en"]) {
         frmtStr = [frmtStr stringByAppendingString:@"_en"];
@@ -118,11 +115,23 @@
     KUINoBoundTop.constant = 40*ALScreenScalHeight;
 }
 
+- (void)datas
+{
+    _model = [[ScaleModel alloc]init];
+    _btUtil = [CsBtUtil getInstance];
+    _btUtil.delegate = self;
+    [[CsBtUtil getInstance] disconnectWithBt];
+    [CsBtCommon clearBoundMac];
+    [_btUtil startScanBluetoothDevice];
+    
+    _broadsSet = [NSMutableSet set];
+}
+
 #pragma mark 先不绑定了按钮的点击事件
 - (IBAction)noBoundClick:(id)sender
 {
     // 需要根据从哪里进来跳转到不同的页面
-    [self finishOperation];
+    [self finishOperationCompletedBlock:nil];
 }
 
 /// 重新搜索按钮的点击事件
@@ -145,41 +154,42 @@
     WS(weakSelf);
     [_btUtil stopScanBluetoothDevice];
     // 绑定时同事要保存绑定设备在广播阶段传递过来的一些配置信息
-    [CsBtCommon setBoundMac:broadcastData.mac];
-    [CsBtCommon setUnitDecimalPoint:broadcastData.uDecimalPoint];
-    [CsBtCommon setWeightDecimalPoint:broadcastData.wDecimalPoint];
-    [ScaleTool saveScale:_model];
-    
-    [_btUtil connect:_btUtil.activePeripheral timeOut:^{
+    [_btUtil setReconnectErrorBlock:^{
         [weakSelf.progressHud hide:YES];
+        [MBProgressHUD showMessage:@"连接蓝牙失败，请重启蓝牙设备"];
     }];
+    [_btUtil connect:_btUtil.activePeripheral];
     
     [self.progressHud show:YES];
     self.progressHud.labelText = @"绑定设备中...";
 }
 
-- (void)finishOperation
+- (void)finishOperationCompletedBlock:(void(^)())block
 {
-    /**
-     * 第一次启动事件
-     */
-    ALNavigationController *nav = (ALNavigationController *)self.navigationController;
-    if (nav.callBack) {
-        nav.callBack();
-        return;
-    }
-    
     /**
      * 点击确认绑定 tabbar置 称重
      */
     if (_isSure) {
         self.tabBarController.selectedIndex = 0;
     }
+    if (block) {
+        block();
+    }
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
-#pragma mark BleDeviceDelegate
+- (void)saveScaleInfo
+{
+    [_btUtil writeFrameToPeripheral:[[ResetDataReqFrame alloc] init]];
+    [CsBtCommon setBoundMac:broadcastData.mac];
+    [CsBtCommon setUnitDecimalPoint:broadcastData.uDecimalPoint];
+    [CsBtCommon setWeightDecimalPoint:broadcastData.wDecimalPoint];
+    [ScaleTool saveScale:_model];
+    [CsBtUtil getInstance].state = CsScaleStateShakeHandSuccess;
+}
 
+#pragma mark BleDeviceDelegate
 /**
  *  发现广播数据
  *
@@ -187,31 +197,80 @@
  */
 -(void)discoverBroadcastData:(BroadcastData *)data fromPeripheral:(CBPeripheral *)peripheral {
     if (_btUtil.state == CsScaleStateOpened || _btUtil.state == CsScaleStateBroadcast) {
-         broadcastData = data;
-//        [self.progressHud hide:YES];
-//        [_btUtil stopScanBluetoothDevice];
-        _kUISearchedView.hidden = NO;
-        _kUINoBound.hidden = YES;
-        _kUIWeight.hidden = _kUITip.hidden = _kUIResearch.hidden = _kUISureBound.hidden = NO;
-        _kUISearchedView.backgroundColor = ALNavBarColor;
-        _kUITip.text = DPLocalizedString(@"bind_tip", @"已经发现蓝牙秤，请确认秤显示的数值和下放数值一样，即可确认绑定");
-        _kUIWeight.text = [NSString stringWithFormat:@"%.2f",(data.weight)];
-        [_model setValuesForKeysWithDictionary:data.keyValues];
+        if (_scanCount>5) {
+            [_broadsSet removeAllObjects];
+        }
+        if (![_broadsSet containsObject:data.mac]) {
+            [_broadsSet addObject:data.mac];
+            _scanCount = 0;
+            broadcastData = data;
+            _kUISearchedView.hidden = NO;
+            _kUINoBound.hidden = YES;
+            _kUIWeight.hidden = _kUITip.hidden = _kUIResearch.hidden = _kUISureBound.hidden = NO;
+            _kUISearchedView.backgroundColor = ALNavBarColor;
+            _kUITip.text = @"已经发现蓝牙秤，请确认秤显示的数值和下放数值一样，即可确认绑定";
+            _kUIWeight.text = [NSString stringWithFormat:@"%.2f",(data.weight)];
+            [_model setValuesForKeysWithDictionary:data.keyValues];
+            [_btUtil stopScanBluetoothDevice];
+        }else{
+            _scanCount ++;
+        }
     }
-   
 }
 
-
+- (void)didUpdateCsScaleState:(CsScaleState)state
+{
+    if (state == CsScaleStateOpened){
+        _kUIWeight.hidden = _kUITip.hidden = _kUIResearch.hidden = _kUISureBound.hidden = YES;
+        _kUINoBound.hidden = NO;
+        _kUISearchedView.backgroundColor = [UIColor whiteColor];
+    }else if (state == CsScaleStateConnecting){
+        self.progressHud.labelText = @"连接设备中...";
+    }else if (state == CsScaleStateConnected){
+        self.progressHud.labelText = @"设备已连接...";
+    }
+}
 
 - (void)didHandShakeComplete:(BOOL)success
 {
-    [self.progressHud hide:YES];
+    WS(weakSelf);
     if (success) {
-        [MBProgressHUD showSuccess:@"绑定成功" compleBlock:^{
-            [self finishOperation];
+        self.progressHud.labelText = @"验证PIN码中...";
+        if ([ScaleTool scale].mac.length) {
+            if ([[ScaleTool scale].mac isEqualToString:broadcastData.mac]) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [self.progressHud hide:YES];
+                    [MBProgressHUD showSuccess:@"绑定成功" compleBlock:^{
+                        [self finishOperationCompletedBlock:^{
+                            [weakSelf saveScaleInfo];
+                        }];
+                    }];
+                });
+            }else{
+                [self.progressHud hide:YES];
+                showAlert(@"您已经绑定了一台秤，请到'设置--我的设备中'解除绑定后再试");
+            }
+            return;
+        }
+        BLEHttpTool *req = [[BLEHttpTool alloc]initWithParam:[BLEHttpTool boundScale:broadcastData]];
+        [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
+            [self.progressHud hide:YES];
+            [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+                if (data) {
+                    [MBProgressHUD showSuccess:@"绑定成功" compleBlock:^{
+                        [self finishOperationCompletedBlock:^{
+                            [weakSelf saveScaleInfo];
+                        }];
+                    }];
+                }
+            }];
         }];
     }else{
-        [MBProgressHUD showError:@"绑定失败"];
+        [self.progressHud hide:YES];
+        [MBProgressHUD showError:@"PIN码不正确" compleBlock:^{
+            SetPinningController *pin = [[SetPinningController alloc]init];
+            [self.navigationController pushViewController:pin animated:YES];
+        }];
     }
 }
 
@@ -219,6 +278,7 @@
 {
     [self.progressHud hide:YES];
     [MBProgressHUD showError:@"绑定失败"];
+    
 }
 
 @end

@@ -32,9 +32,9 @@
     [super viewDidLoad];
 //    isPushing = NO;
     //由于UISwipeGestureRecognizer被iOS7的swipe to pop截取，所以采用UIPanGestureRecognizer来替代滑动事件
-//    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(gotoNext:)];
-//    [pan setMinimumNumberOfTouches:1];
-//    [self.view addGestureRecognizer:pan];
+    UISwipeGestureRecognizer *swap = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(gotoNext:)];
+    swap.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swap];
     
     NSString *frmtStr = @"open_ble_1";
     if ([[ALCommonTool getPreferredLanguage] isEqualToString:@"en"]) {
@@ -48,18 +48,10 @@
 
 #pragma mark - callback fucntion
 #pragma mark 拖动事件的回调函数
-///// 拖动事件的回调函数
-//-(void)gotoNext:(UIPanGestureRecognizer *)panGestureReconginzer {
-//    if (panGestureReconginzer.state == UIGestureRecognizerStateChanged) {
-//        CGFloat translation = [panGestureReconginzer translationInView:self.view].x;
-//        if (translation<-25 && !isPushing) {
-//            ALLog(@"使用Pan模拟的左滑动事件的效果");
-//            isPushing = YES;
-//            UIViewController *controller = [[BoundDeviceController alloc] init];
-//            [self.navigationController pushViewController:controller animated:YES];
-//        }
-//    }
-//}
+- (void)gotoNext:(UIGestureRecognizer *)reconizer
+{
+    [self gotoNextView:nil];
+}
 
 - (IBAction)gotoNextView:(id)sender {
     if ([CsBtCommon getPin].length) {

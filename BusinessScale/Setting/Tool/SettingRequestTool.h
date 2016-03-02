@@ -20,4 +20,14 @@
  * 删除收款人账号
  */
 + (ALRequestParam *)deleteAccount:(NSString *)third_uuid;
+
+/**
+ * 绑定微信账号到公司服务器
+ */
++ (ALRequestParam *)boundWechatAccountWithParams:(NSDictionary *)params;
+
++ (ALRequestParam *)getWechatAccountInfo;
+
++ (ALRequestParam *)deleteWechatAccountInfo;
+
 @end

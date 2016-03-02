@@ -9,9 +9,11 @@
 #import "RecordSectionView.h"
 
 @interface RecordSectionView()
+
 @property (weak, nonatomic) IBOutlet UILabel *priceFlag;
 @property (weak, nonatomic) IBOutlet UIImageView *timeImageV;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *dateLeadingCons;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *priceCenterY;
 
 @property (nonatomic, strong) UILabel *sepT;
 @property (nonatomic, strong) UILabel *sepB;
@@ -56,13 +58,18 @@
     _priceFlag.layer.cornerRadius = _priceFlag.height/2.0f;
     _priceFlag.layer.masksToBounds = YES;
     
+    self.priceCenterY.constant = -3;
+    self.realPrice.textColor = ALLightTextColor;
+    self.cancleLine.backgroundColor = ALLightTextColor;
+    
     self.timeImageV.hidden = YES;
     
     self.userInteractionEnabled = YES;
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
     
     self.sepT.frame = CGRectMake(0, 0, screenWidth, 0.5);
-    self.sepB.frame = CGRectMake(0, 49.5,screenWidth, 0.5);
+    self.sepB.frame = CGRectMake(0,54.5,screenWidth, 0.5);
+//    sepBY = 54.5;
 }
 
 //- (void)layoutSubviews
@@ -75,6 +82,10 @@
 {
     self.timeImageV.hidden = NO;
     self.dateLeadingCons.constant = 50;
+    self.realPrice.hidden = YES;
+    self.cancleLine.hidden = YES;
+    self.priceCenterY.constant = 0;
+    self.sepB.frame = CGRectMake(0,50,screenWidth, 0.5);
 }
 
 - (void)tap

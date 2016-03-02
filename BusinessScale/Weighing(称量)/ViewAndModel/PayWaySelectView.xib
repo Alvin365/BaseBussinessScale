@@ -130,6 +130,20 @@
                                         <constraint firstAttribute="height" constant="260" id="oCN-KL-0FA"/>
                                     </constraints>
                                 </imageView>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="支付宝11.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZjQ-9t-2xo">
+                                    <rect key="frame" x="142" y="120" width="60" height="60"/>
+                                    <animations/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="60" id="Y1L-vj-TjX"/>
+                                        <constraint firstAttribute="width" constant="60" id="tmc-Pp-Lqx"/>
+                                    </constraints>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                            <integer key="value" value="5"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    </userDefinedRuntimeAttributes>
+                                </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="请扫描二维码" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="66r-gU-0As">
                                     <rect key="frame" x="125" y="299" width="96" height="20"/>
                                     <animations/>
@@ -142,8 +156,10 @@
                             <color key="backgroundColor" red="0.49710081719999999" green="1" blue="0.91693315730000002" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstItem="66r-gU-0As" firstAttribute="centerX" secondItem="Tcz-Az-acy" secondAttribute="centerX" id="8lo-zF-WEL"/>
+                                <constraint firstItem="ZjQ-9t-2xo" firstAttribute="centerY" secondItem="WQI-2x-LQL" secondAttribute="centerY" id="LIl-7v-Frb"/>
                                 <constraint firstItem="WQI-2x-LQL" firstAttribute="centerX" secondItem="Tcz-Az-acy" secondAttribute="centerX" id="c8d-ku-OsG"/>
                                 <constraint firstItem="WQI-2x-LQL" firstAttribute="top" secondItem="Tcz-Az-acy" secondAttribute="top" constant="20" id="fe7-kx-n87"/>
+                                <constraint firstItem="ZjQ-9t-2xo" firstAttribute="centerX" secondItem="WQI-2x-LQL" secondAttribute="centerX" id="jcw-Ff-7Ui"/>
                                 <constraint firstItem="66r-gU-0As" firstAttribute="top" secondItem="WQI-2x-LQL" secondAttribute="bottom" constant="5" id="w1S-dJ-DaB"/>
                             </constraints>
                         </view>
@@ -207,6 +223,7 @@
                 <outlet property="contentViewTop" destination="ucB-kN-UI9" id="GaZ-vw-b8H"/>
                 <outlet property="crashHeight" destination="zg2-O9-L6q" id="UBp-cV-WWK"/>
                 <outlet property="crashPay" destination="gvO-F3-zB7" id="ADJ-XM-8XU"/>
+                <outlet property="payWayImageView" destination="ZjQ-9t-2xo" id="1XA-IQ-2xW"/>
                 <outlet property="plsScanL" destination="66r-gU-0As" id="umB-dX-xzZ"/>
                 <outlet property="priceHeight" destination="Ype-bp-2bM" id="oRa-1g-16p"/>
                 <outlet property="priceL" destination="Zum-nr-4PD" id="4zB-BH-6eC"/>
@@ -226,5 +243,6 @@
     </objects>
     <resources>
         <image name="icon_cancel" width="15" height="15"/>
+        <image name="支付宝11.png" width="256" height="256"/>
     </resources>
 </document>

@@ -47,12 +47,16 @@ NSString * const ALHttpHead     = @"HEAD";
 }
 
 - (id)init {
-    if (self =[super init]) {
+    if (self = [super init]) {
         _method = ALHttpPost;
         _timeout = 60.0f;
         _requestType = ALRequestTypeOfRemote;
         _taskType = ALTaskType_DataTask;
         _httpBody = nil;
+//        [self addHeader:@"utf-8" forKey:@"character-encoding"];
+        [self addHeader:@"application/json" forKey:@"Content-Type"];
+        [self addHeader:[AccountTool account].token forKey:@"cs-token"];
+        [self addHeader:@"ebcad75de0d42a844d98a755644e30" forKey:@"cs-app-id"];
     }
     return self;
 }

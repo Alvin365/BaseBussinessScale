@@ -17,4 +17,6 @@
 
 @property (nonatomic, strong) UIColor *globalColor;
 
+- (void)setPriceShow:(BOOL)show;
+
 @end

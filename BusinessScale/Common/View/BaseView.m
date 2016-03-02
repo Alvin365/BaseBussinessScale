@@ -26,9 +26,7 @@
         NSDictionary *dic = (NSDictionary *)resuilt;
         if (![dic[@"code"] integerValue]) {
             if (data) {
-                if ([dic[@"data"] isKindOfClass:[NSNull class]]) {
-                    data(@"");
-                }else if (dic.count==1){
+                if (dic.count==1){
                     data(resuilt);
                 }else{
                     data(dic[@"data"]);

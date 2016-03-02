@@ -18,6 +18,9 @@
         self.deviceType = [decoder decodeObjectForKey:@"deviceType"];
         self.deviceProductId = [[decoder decodeObjectForKey:@"deviceProductId"] intValue];
         self.mac = [decoder decodeObjectForKey:@"mac"];
+        self.uDecimalPoint = [[decoder decodeObjectForKey:@"uDecimalPoint"] intValue];
+        self.wDecimalPoint = [[decoder decodeObjectForKey:@"wDecimalPoint"]intValue];
+        self.weight = [[decoder decodeObjectForKey:@"weight"]floatValue];
     }
     return self;
 }
@@ -31,6 +34,14 @@
     [encoder encodeObject:@(self.deviceProductId) forKey:@"deviceProductId"];
     [encoder encodeObject:self.deviceType forKey:@"deviceType"];
     [encoder encodeObject:self.mac forKey:@"mac"];
+    [encoder encodeObject:@(self.wDecimalPoint) forKey:@"wDecimalPoint"];
+    [encoder encodeObject:@(self.uDecimalPoint) forKey:@"uDecimalPoint"];
+    [encoder encodeObject:@(self.weight) forKey:@"weight"];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"mac=%@ wDecimalPoint=%i uDecimalPoint=%i",self.mac,self.wDecimalPoint,self.uDecimalPoint];
 }
 
 @end

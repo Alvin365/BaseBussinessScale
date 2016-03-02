@@ -17,5 +17,8 @@
 @property (nonatomic, copy) NSString *third_id;
 @property (nonatomic, copy) NSString *third_type;
 @property (nonatomic, copy) NSString *third_uuid;
+@property (nonatomic, copy) NSString *headimgurl;
+@property (nonatomic, copy) NSString *nickname;
+
 
 @end

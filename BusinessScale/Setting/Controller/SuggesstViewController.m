@@ -25,7 +25,7 @@
     [super viewDidLoad];
     [self buildTextView];
     self.view.backgroundColor = backGroudColor;
-    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
+//    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)]];
 }
 
 - (void)buildTextView
@@ -57,7 +57,7 @@
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = CGRectMake(textView.x, textView.y+textView.height+30, textView.width, 60);
-    btn.backgroundColor = ALDisAbleColor;
+    btn.backgroundColor = ALNavBarColor;
     btn.layer.cornerRadius = 3;
     [btn setTitle:@"发送" forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:16];
@@ -72,7 +72,7 @@
     if (canPublic) {
         [self adViceShowWithContent:self.textView.text];
     }else{
-        [MBProgressHUD showError:@"建议内容不能为空哦"];
+        [MBProgressHUD showMessage:@"建议内容不能为空哦"];
     }
 }
 
@@ -113,18 +113,18 @@
     
     canPublic = textV.text.length;
     _placeHolder.hidden = textV.text.length;
-    if (canPublic) {
-        self.btn.backgroundColor = ALNavBarColor;
-    }else{
-        self.btn.backgroundColor = ALDisAbleColor;
-    }
+//    if (canPublic) {
+//        self.btn.backgroundColor = ALNavBarColor;
+//    }else{
+//        self.btn.backgroundColor = ALDisAbleColor;
+//    }
 }
 
 - (void)textFieldChanged:(NSNotification *)notice
 {
     UITextField *textField = notice.object;
     if ([ALCommonTool hasillegalString:textField.text]) {
-        [MBProgressHUD showError:@"非法字符"];
+        [MBProgressHUD showMessage:@"非法字符"];
     }
 }
 

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9060" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Gts-ka-lql" customClass="ProcessCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="70"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Gts-ka-lql" id="aMo-hg-n32">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="69"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="西兰花" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tjn-Ft-6r8">
+                        <rect key="frame" x="83" y="25" width="48" height="20"/>
+                        <animations/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="65" id="lHL-6o-PBa"/>
+                            <constraint firstAttribute="height" constant="20" id="vxN-zk-DtP"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="vxN-zk-DtP"/>
+                            </mask>
+                        </variation>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="5.8元" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uad-9l-3xu">
+                        <rect key="frame" x="261" y="25" width="39" height="20"/>
+                        <animations/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" misplaced="YES" text="3.5斤" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p6T-Ue-UmZ">
+                        <rect key="frame" x="170" y="25" width="37" height="20"/>
+                        <animations/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="支付宝" translatesAutoresizingMaskIntoConstraints="NO" id="jqM-uv-YCX">
+                        <rect key="frame" x="28" y="12" width="45" height="45"/>
+                        <animations/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="45" id="dVh-44-9vC"/>
+                            <constraint firstAttribute="height" constant="45" id="ffi-7Q-SM2"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <animations/>
+                <constraints>
+                    <constraint firstItem="Tjn-Ft-6r8" firstAttribute="top" secondItem="aMo-hg-n32" secondAttribute="topMargin" constant="17" id="BdN-Wj-d86"/>
+                    <constraint firstItem="p6T-Ue-UmZ" firstAttribute="height" secondItem="Tjn-Ft-6r8" secondAttribute="height" id="JOi-kF-eQf"/>
+                    <constraint firstItem="p6T-Ue-UmZ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Tjn-Ft-6r8" secondAttribute="trailing" id="Md0-24-UlF"/>
+                    <constraint firstItem="uad-9l-3xu" firstAttribute="height" secondItem="p6T-Ue-UmZ" secondAttribute="height" id="NwO-py-n39"/>
+                    <constraint firstItem="p6T-Ue-UmZ" firstAttribute="centerY" secondItem="aMo-hg-n32" secondAttribute="centerY" id="RZ7-OY-cMN"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="uad-9l-3xu" secondAttribute="trailing" constant="12" id="VtR-Jh-Yqx"/>
+                    <constraint firstItem="jqM-uv-YCX" firstAttribute="leading" secondItem="aMo-hg-n32" secondAttribute="leadingMargin" constant="20" id="WKO-VU-szv"/>
+                    <constraint firstItem="Tjn-Ft-6r8" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aMo-hg-n32" secondAttribute="topMargin" constant="-8" id="Z62-wm-hXV"/>
+                    <constraint firstItem="jqM-uv-YCX" firstAttribute="centerY" secondItem="aMo-hg-n32" secondAttribute="centerY" id="bJZ-NV-yay"/>
+                    <constraint firstItem="uad-9l-3xu" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="p6T-Ue-UmZ" secondAttribute="trailing" id="ffe-rr-8fD"/>
+                    <constraint firstItem="Tjn-Ft-6r8" firstAttribute="centerY" secondItem="aMo-hg-n32" secondAttribute="centerY" id="pRK-Mf-s0D"/>
+                    <constraint firstItem="p6T-Ue-UmZ" firstAttribute="top" secondItem="Tjn-Ft-6r8" secondAttribute="top" id="q4W-Sb-Liv"/>
+                    <constraint firstItem="uad-9l-3xu" firstAttribute="centerY" secondItem="aMo-hg-n32" secondAttribute="centerY" id="r8U-ge-oBd"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="p6T-Ue-UmZ" secondAttribute="trailing" constant="105" id="wyi-tc-Qoe"/>
+                    <constraint firstItem="uad-9l-3xu" firstAttribute="top" secondItem="p6T-Ue-UmZ" secondAttribute="top" id="xqR-eK-EO2"/>
+                    <constraint firstItem="Tjn-Ft-6r8" firstAttribute="leading" secondItem="jqM-uv-YCX" secondAttribute="trailing" constant="10" id="z3S-aJ-2Tc"/>
+                </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="BdN-Wj-d86"/>
+                        <exclude reference="JOi-kF-eQf"/>
+                        <exclude reference="q4W-Sb-Liv"/>
+                        <exclude reference="xqR-eK-EO2"/>
+                    </mask>
+                </variation>
+            </tableViewCellContentView>
+            <animations/>
+            <connections>
+                <outlet property="goods" destination="Tjn-Ft-6r8" id="Yuq-b8-2Xm"/>
+                <outlet property="goodsImageV" destination="jqM-uv-YCX" id="VeZ-JB-S1N"/>
+                <outlet property="priceL" destination="uad-9l-3xu" id="qVI-Eq-YK4"/>
+                <outlet property="weight" destination="p6T-Ue-UmZ" id="I5k-P5-YFS"/>
+                <outlet property="weightRight" destination="wyi-tc-Qoe" id="noV-6Y-oxk"/>
+            </connections>
+            <point key="canvasLocation" x="305" y="281"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="支付宝" width="30" height="30"/>
+    </resources>
+</document>

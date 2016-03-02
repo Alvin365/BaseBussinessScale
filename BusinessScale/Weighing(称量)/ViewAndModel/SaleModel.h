@@ -18,9 +18,9 @@
 
 @property (nonatomic, copy) NSString *title;// 商品信息
 @property (nonatomic, copy) NSString *icon;
-@property (nonatomic, assign) CGFloat quantity; // 重量
+@property (nonatomic, assign) NSInteger quantity; // 重量
 @property (nonatomic, assign) WeightUnit unit; // 单位
-@property (nonatomic, assign) CGFloat unit_price; // 价钱
+@property (nonatomic, assign) NSInteger unit_price; // 价钱
 @property (nonatomic, assign) NSTimeInterval ts; // 交易时间
 @property (nonatomic, assign) NSInteger total_price;
 @property (nonatomic, assign) NSInteger paid_price;
@@ -42,6 +42,7 @@
 @property (nonatomic, assign) NSInteger total_fee;
 @property (nonatomic, assign) NSInteger paid_fee;
 @property (nonatomic, copy) NSString *payment_type;
-@property (nonatomic, assign) BOOL isUpLoad; // 是否已经上传
+//@property (nonatomic, assign) BOOL isUpLoad; // 是否已经上传
+@property (nonatomic, copy) NSString *po_uuid;
 
 @end

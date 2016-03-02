@@ -23,7 +23,7 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     //国际化
-    self.title = DPLocalizedString(@"scale_info", @"设备信息");
+    self.title = @"设备信息";
 }
 
 -(void)initAll {
@@ -68,9 +68,9 @@
  *  将该界面的设备信息显示成与App相关的设备信息
  */
 -(void)resetViewController {
-    _kUIFirm.text = [NSString stringWithFormat:@"  %@%@", DPLocalizedString(@"firm_info", @"   厂商："), @""];
-    _kUITel.text = [NSString stringWithFormat:@"  %@%@", DPLocalizedString(@"firm_tel", @"   电话号码："), @""];
-    _kUIAddress.text = [NSString stringWithFormat:@"  %@%@", DPLocalizedString(@"firm_address", @"   地址："), @""];
+    _kUIFirm.text = [NSString stringWithFormat:@"  %@%@",@"   厂商：", @""];
+    _kUITel.text = [NSString stringWithFormat:@"  %@%@", @"   电话号码：", @""];
+    _kUIAddress.text = [NSString stringWithFormat:@"  %@%@", @"   地址：", @""];
     _kLogo.image = [UIImage imageNamed:@"icon_device_sample"];
 }
 

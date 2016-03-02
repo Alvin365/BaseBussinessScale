@@ -30,17 +30,13 @@
 {
     ALLog(@"%@",[AccountTool account].token);
     ALRequestParam *p = [[ALRequestParam alloc]init];
-    [p addHeader:@"application/json" forKey:@"Content-Type"];
-    [p addHeader:[AccountTool account].token forKey:@"cs-token"];
-    [p addHeader:@"ebcad75de0d42a844d98a755644e30" forKey:@"cs-app-id"];
     p.method = ALHttpPost;
-    p.taskType = ALTaskType_UpLoad;
-    [p setHttpBody:content];
-    [p addParam:content forKey:@"feedback_content"];
+    [p addParam:content forKey:@"content"];
     [p addParam:@"ios" forKey:@"platform"];
     [p addParam:[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey] forKey:@"version"];
     [p addParam:[NSString stringWithFormat:@"%@", [[UIDevice currentDevice] systemVersion]] forKey:@"sdk"];
-    p.urlString = [NSString stringWithFormat:@"%@feedback",userServerce];
+    
+    p.urlString = [NSString stringWithFormat:@"%@hs/feedback",userServerce];
     return p;
 }
 
@@ -70,4 +66,30 @@
     p.urlString = [NSString stringWithFormat:@"%@thirdpay/account",userServerce];
     return p;
 }
+
++ (ALRequestParam *)boundWechatAccountWithParams:(NSDictionary *)params
+{
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    p.method = ALHttpPut;
+    [p addParams:params];
+    p.urlString = [NSString stringWithFormat:@"%@third/weixin",userServerce];
+    return p;
+}
+
++ (ALRequestParam *)getWechatAccountInfo
+{
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    p.method = ALHttpGet;
+    p.urlString = [NSString stringWithFormat:@"%@third/weixin",userServerce];
+    return p;
+}
+
++ (ALRequestParam *)deleteWechatAccountInfo
+{
+    ALRequestParam *p = [[ALRequestParam alloc]init];
+    p.method = ALHttpDelete;
+    p.urlString = [NSString stringWithFormat:@"%@third/weixin",userServerce];
+    return p;
+}
+
 @end

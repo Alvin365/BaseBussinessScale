@@ -8,7 +8,7 @@
 
 #import "SWTableViewCell.h"
 @class SaleItem;
-@interface GoodsSwapCell : SWTableViewCell
+@interface GoodsSwapCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *goodsImageView;
 @property (nonatomic, strong) UILabel *goodsL;

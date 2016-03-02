@@ -25,6 +25,7 @@ static CsBtUtil *csUtil = nil;
     NSTimer *connectMonitor;
     NSInteger writeErrorCount;
     NSInteger _timeCount;
+    NSInteger _reconnectErrorCount;
 }
 
 @property (nonatomic, copy) void(^sychroCompletedBlock)(BOOL succeess,Byte,NSInteger errorCount) ;
@@ -77,6 +78,7 @@ static CsBtUtil *csUtil = nil;
 -(void)centralManagerDidUpdateState:(CBCentralManager *)central{
     switch (central.state) {
         case CBCentralManagerStatePoweredOn:
+        {
             NSLog(@"蓝牙已经打开");
             if(self.state == CsScaleStateClosed) {
                 self.stopAdvertisementState = NO;
@@ -91,10 +93,13 @@ static CsBtUtil *csUtil = nil;
             }
             self.state = CsScaleStateOpened;
             btIsOpen = YES;
+        }
           break;
         case CBCentralManagerStatePoweredOff:
+        {
             self.stopAdvertisementState = YES;
             [self stopScanBluetoothDevice];
+            [self disconnectWithBt];
             NSLog(@"蓝牙已经关闭");
             self.state = CsScaleStateClosed;
             if (_delegate != nil) {
@@ -103,6 +108,7 @@ static CsBtUtil *csUtil = nil;
                 }
             }
             btIsOpen = NO;
+        }
             break;
         case CBCentralManagerStateResetting:
             NSLog(@"正在重置状态");
@@ -191,6 +197,14 @@ static CsBtUtil *csUtil = nil;
 //        connectMonitor = nil;
 //    }
     [connectMonitor setFireDate:[NSDate distantFuture]];
+    _reconnectErrorCount ++;
+    if (_reconnectErrorCount > 5) {
+        if (_reconnectErrorBlock) {
+            _reconnectErrorBlock();
+        }
+        return;
+    }
+    [self connect:peripheral];
 }
 
 
@@ -241,6 +255,7 @@ static CsBtUtil *csUtil = nil;
             [self.delegate connectedPeripheral:peripheral];
         }
         self.state = CsScaleStateConnected;
+        _reconnectErrorCount = 0;
         if ([_delegate respondsToSelector:@selector(didUpdateCsScaleState:)]) {
             [_delegate didUpdateCsScaleState:CsScaleStateConnected];
         }
@@ -343,6 +358,12 @@ static CsBtUtil *csUtil = nil;
                         [_delegate cancelPayment];
                     }
                 }
+                case 0x36: {
+                    if (_delegate != nil && [_delegate respondsToSelector:@selector(didResetData)]) {
+                        [_delegate didResetData];
+                    }
+                    break;
+                }
                 case 0x42:{
                     RandomNumFrame *randomFrame = [[RandomNumFrame alloc] initWithData:characteristic.value];
                     SignFrame *signFrame = [[SignFrame alloc] initWithRandomNum:randomFrame.randomNumStr pin:[CsBtCommon getPin]];
@@ -438,7 +459,9 @@ static CsBtUtil *csUtil = nil;
     if (_timeCount >= 10) {
         if (self.state == CsScaleStateConnecting) {
             self.state = CsScaleStateOpened;
-            //        [self connect:self.activePeripheral];
+            if (_timeOutBlock) {
+                _timeOutBlock();
+            }
             [_manager cancelPeripheralConnection:self.activePeripheral];
             _timeCount = 0;
             [connectMonitor setFireDate:[NSDate distantFuture]];
@@ -673,6 +696,5 @@ static CsBtUtil *csUtil = nil;
     [connectMonitor invalidate];
     connectMonitor = nil;
 }
-
 
 @end

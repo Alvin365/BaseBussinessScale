@@ -11,8 +11,11 @@
 #import "AddPayAccountController.h"
 #import "SettingRequestTool.h"
 #import "PayAccountModel.h"
-#import "Reachability.h"
-@interface PayAccountViewController ()<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate>
+#import "WXApiRequestHandler.h"
+#import "Constant.h"
+#import "WXApiManager.h"
+#import "LoginHttpTool.h"
+@interface PayAccountViewController ()<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate,WXApiManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSMutableDictionary *dataDic;
@@ -28,6 +31,7 @@
     [super viewDidLoad];
     [self initFromXib];
     [self datas];
+    [WXApiManager sharedManager].delegate = self;
 }
 
 - (void)initFromXib
@@ -43,7 +47,8 @@
 - (void)datas
 {
     _dataDic = [NSMutableDictionary dictionary];
-    [self getAccounts];
+//    [self getAccounts];
+    [self getWechatInfo];
 }
 
 #pragma mark - netRequest
@@ -99,11 +104,82 @@
     }];
 }
 
+- (void)getVeryCodeCompleteBlock:(void(^)())completeBlock
+{
+    [self.progressHud show:YES];
+    LoginHttpTool *req = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool getVeryCodeWithParams:@{@"uid":[AccountTool account].phone,@"flag":@"3"}]];
+    [req setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                [MBProgressHUD showMessage:@"验证码已成功发送到您手机"];
+                if (completeBlock) {
+                    completeBlock();
+                }
+            }
+        }];
+    }];
+
+}
+
+- (void)boundWechatAccountWithParams:(NSDictionary *)params completedBlock:(void(^)())block
+{
+    [self.progressHud show:YES];
+    SettingRequestTool *req = [[SettingRequestTool alloc]initWithParam:[SettingRequestTool boundWechatAccountWithParams:params]];
+    [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                if (block) {
+                    block();
+                }
+            }
+        }];
+    }];
+}
+
+- (void)getWechatInfo
+{
+    [self.progressHud show:YES];
+    SettingRequestTool *req = [[SettingRequestTool alloc]initWithParam:[SettingRequestTool getWechatAccountInfo]];
+    [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                NSDictionary *dic = (NSDictionary *)data;
+                if (dic[@"code"]) {
+                    return ;
+                }
+                PayAccountModel *model = [[PayAccountModel alloc]init];
+                [model setValuesForKeysWithDictionary:dic];
+                model.third_type = @"weixin";
+                [[PayAccountModel getUsingLKDBHelper]insertToDB:model];
+                [_dataDic setObject:model forKey:@"weixin"];
+                [self.tableView reloadData];
+                if (![dic[@"mplink"] boolValue]) {
+                    showAlert(@"还没关注微信号哦，赶快去微信关注'爱吃吗'公众号,才能正常收款");
+                }
+            }
+        }];
+    }];
+}
+
+- (void)deleteWechatInfo
+{
+    [self.progressHud show:YES];
+    SettingRequestTool *req = [[SettingRequestTool alloc]initWithParam:[SettingRequestTool deleteWechatAccountInfo]];
+    [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
+        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
+            if (data) {
+                [_dataDic removeObjectForKey:@"weixin"];
+                [self.tableView reloadData];
+                [MBProgressHUD showSuccess:@"删除成功"];
+            }
+        }];
+    }];
+}
 
 #pragma mark -UITableViewDataSource&&Delegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 2;
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -112,13 +188,13 @@
     static NSString *cellInden = @"cellInden";
     PayAccountCell *cell = [tableView dequeueReusableCellWithIdentifier:cellInden];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.type = !indexPath.row?PayWayTypeAlipay:PayWayTypeWechatPay;
-    if (indexPath.row == 0) {
-        cell.model = _dataDic[@"alipay"];
-    }else if (indexPath.row == 1){
+    cell.type = indexPath.row?PayWayTypeAlipay:PayWayTypeWechatPay;
+//    if (indexPath.row == 0) {
+//        cell.model = _dataDic[@"alipay"];
+//    }else if (indexPath.row == 0){
         cell.model = _dataDic[@"weixin"];
-    }
-    cell.model = indexPath.row?_dataDic[@"weixin"]:_dataDic[@"alipay"];
+//    }
+    cell.model = indexPath.row==0?_dataDic[@"weixin"]:_dataDic[@"alipay"];
     cell.callBack = ^(BOOL isManager){
         [weakSelf cellEventWithIsManager:isManager indexPath:indexPath];
     };
@@ -127,19 +203,23 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [PayAccountCell cellHeightForIsManager:indexPath.row?_dataDic[@"weixin"]:_dataDic[@"alipay"]];
+    return [PayAccountCell cellHeightForIsManager:indexPath.row==0?_dataDic[@"weixin"]:_dataDic[@"alipay"]];
 }
 #pragma mark -helpMethod
 - (void)cellEventWithIsManager:(BOOL)isManager indexPath:(NSIndexPath *)indexPath
 {
     if (isManager) {
+        if ([Reachability shareReachAbilty].currentReachabilityStatus == NotReachable) {
+            [MBProgressHUD showError:@"当前网络不好,不能解除绑定"];
+            return;
+        }
         UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"确定删除该支付账号" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [actionSheet showInView:self.view];
     }else{
-        AddPayAccountController *add = [[AddPayAccountController alloc]init];
-        add.payWayType = indexPath.row%2==0?PayWayTypeAlipay:PayWayTypeWechatPay;
-        add.payTitle = indexPath.row%2==0?@"支付宝":@"微信支付";
-        [self.navigationController pushViewController:add animated:YES];
+        [WXApiRequestHandler sendAuthRequestScope: kAuthScope
+                                            State:kAuthState
+                                           OpenID:nil
+                                 InViewController:self];
     }
     PayAccountModel *model = indexPath.row?_dataDic[@"weixin"]:_dataDic[@"alipay"];
     _third_uuid = model.third_uuid;
@@ -148,8 +228,29 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex==0) {
-        [self deleteAccount:_third_uuid];
+        [self deleteWechatInfo];
     }
+}
+
+#pragma mark - WXApiManagerDelegate
+- (void)managerDidRecvAuthResponse:(SendAuthResp *)response {
+    // 授权登录结果
+    if (response.errCode == WXErrCodeUserCancel) {
+        [MBProgressHUD showMessage:@"用户已取消微信登录"];
+        return;
+    }
+    
+    [self.progressHud show:YES];
+    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",kAppID,kAppSecret,response.code]]] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSDictionary *dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        ALLog(@"weixin respose = %@ \n dataDic = %@",response,dataDic);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self boundWechatAccountWithParams:dataDic completedBlock:^{
+                [self getWechatInfo];
+            }];
+        });
+    }];
+    [task resume];
 }
 
 @end

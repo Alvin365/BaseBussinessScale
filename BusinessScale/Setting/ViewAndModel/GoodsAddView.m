@@ -10,6 +10,7 @@
 #import "SelectImageOptionView.h"
 #import "UIViewController+Category.h"
 #import "GoodsListHttpTool.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface GoodsAddView()<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
@@ -146,10 +147,17 @@
                 [MBProgressHUD showMessage:@"请填写完整信息和菜品头像"];
                 return;
             }
+            if ([self.priceTextField.inputField.text floatValue]==0.0f) {
+                [MBProgressHUD showMessage:@"单价不能为0"];
+                return;
+            }
             if (self.callBack) {
-                self.callBack(self.model);
+                self.callBack(self.model,NO);
             }
         }else{
+            if (self.callBack) {
+                self.callBack(self.model,YES);
+            }
             [self hideAnimate:YES];
         }
     }else{
@@ -285,19 +293,42 @@
     };
     [select showFromBottom];
 }
-
+// 拍照
 - (void)camera
 {
-    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    imagePicker.delegate = self;
-    imagePicker.allowsEditing = YES;
-    imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    if (iOS8) {
-        imagePicker.modalPresentationStyle = UIModalPresentationCurrentContext;
+    void (^allowBlock)() = ^{
+        UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+        imagePicker.delegate = self;
+        imagePicker.allowsEditing = YES;
+        imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        if (iOS8) {
+            imagePicker.modalPresentationStyle = UIModalPresentationCurrentContext;
+        }
+        UIViewController *ctl = [[[UIApplication sharedApplication] windows]lastObject].rootViewController;
+        [ctl presentViewController:imagePicker animated:YES completion:nil];
+    };
+    NSString *mediaType = AVMediaTypeVideo;//读取媒体类型
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];//读取设备授权状态
+    if (authStatus == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (granted) {
+                    //第一次用户接受
+                    allowBlock();
+                }else{
+                    //用户拒绝
+                    showAlert(@"已拒绝授权，打开相机失败");
+                }
+            });
+        }];
+        return;
+    }else if(authStatus == AVAuthorizationStatusRestricted || authStatus == AVAuthorizationStatusDenied){
+        showAlert(@"相机权限受限,请在设置中启用");
+        return;
     }
-    UIViewController *ctl = [[[UIApplication sharedApplication] windows]lastObject].rootViewController;
-    [ctl presentViewController:imagePicker animated:YES completion:nil];
+    allowBlock();
 }
+// 相册
 - (void)abm
 {
     UIImagePickerControllerSourceType sourceType;
@@ -333,6 +364,7 @@
                 newHeaderImage = [info objectForKey:UIImagePickerControllerOriginalImage];
             }
             if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+                
                 UIImageWriteToSavedPhotosAlbum(newHeaderImage, nil, nil, nil);
             }
             newHeaderImage = [newHeaderImage fixOrientation];

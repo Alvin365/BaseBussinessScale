@@ -12,6 +12,19 @@
 
 @property (assign, nonatomic) NSString *deviceType;
 @property (assign, nonatomic) int deviceProductId;
+/**
+ * 重量小数点位数
+ */
+@property (assign, nonatomic) int wDecimalPoint;
+/**
+ * 单价小数点位数
+ */
+@property (assign, nonatomic) int uDecimalPoint;
+/**
+ * 是否是app收款
+ */
+@property (nonatomic, assign) BOOL appReceipt;
+@property (nonatomic, assign) float weight;
 @property (retain, nonatomic) NSString *mac;
 
 @end

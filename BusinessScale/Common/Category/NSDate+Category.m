@@ -539,10 +539,15 @@
 	return components.year;
 }
 
-- (NSTimeInterval )timeStempString
+- (NSTimeInterval )timeStemp
 {
     NSTimeInterval timeSp = [[NSString stringWithFormat:@"%lld000", (long long)[self timeIntervalSince1970]] doubleValue];
     return timeSp;
+}
+
+- (NSString *)timeStempString
+{
+    return [NSString stringWithFormat:@"%.f",self.timeStemp];
 }
 
 - (NSDate *)zeroTime
@@ -577,7 +582,7 @@
 - (NSDate *)lastDayOfCurrentMonth
 {
     NSInteger count = [self numberOfDaysInCurrentMonth];
-    return [[self firstDayOfCurrentMonth] dateByAddingDays:count];
+    return [[self firstDayOfCurrentMonth] dateByAddingDays:(count-1)];
 }
 
 - (NSUInteger)weeklyOrdinality

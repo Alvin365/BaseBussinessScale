@@ -10,7 +10,7 @@
 
 @implementation GoodsListHttpTool
 
-+ (ALRequestParam *)coverCoodsListSeverse:(NSArray *)body;
++ (ALRequestParam *)coverCoodsListSeverse:(NSDictionary *)body;
 {
     ALRequestParam *p = [[ALRequestParam alloc]init];
     [p addHeader:[AccountTool account].token forKey:@"cs-token"];

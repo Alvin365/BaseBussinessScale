@@ -11,7 +11,9 @@
 #import "LoginController.h"
 #import "ALNavigationController.h"
 @interface ResetPwdController ()
-
+{
+     NSTimer *_timer;
+}
 @end
 
 @implementation ResetPwdController
@@ -33,6 +35,9 @@
     _kUIConfirmPwd.placeholder = @"确认新密码";
     _kUIVCode.placeholder =  @"验证码";
     [_kUIGetVCode setTitle: @"获取验证码" forState:UIControlStateNormal];
+    _kUIGetVCode.layer.cornerRadius = 5;
+    _kUIGetVCode.layer.masksToBounds = YES;
+    _kUIGetVCode.backgroundColor = [UIColor whiteColor];
     [_kUIConfirm setTitle: @"提交" forState:UIControlStateNormal];
     // 色差
     [_kUIConfirm setTitleColor:ALNavBarColor forState:UIControlStateNormal];
@@ -47,6 +52,9 @@
     if (self.tele) {
         self.kUIAccount.text = self.tele;
     }
+    
+    [self addTimer];
+    [_timer setFireDate:[NSDate distantFuture]];
 }
 
 - (void)tap
@@ -54,16 +62,43 @@
     [self.view endEditing:YES];
 }
 
+- (void)addTimer
+{
+    _timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(freshTimer) userInfo:nil repeats:YES];
+}
+
+- (void)freshTimer
+{
+    _kUIGetVCode.tag -= 1;
+    [_kUIGetVCode setTitle:[NSString stringWithFormat:@"%lds后重发",(long)_kUIGetVCode.tag] forState:UIControlStateNormal];
+    [_kUIGetVCode setTitle:[NSString stringWithFormat:@"%lds后重发",(long)_kUIGetVCode.tag] forState:UIControlStateHighlighted];
+    _kUIGetVCode.titleLabel.text = [NSString stringWithFormat:@"%lds后重发",(long)_kUIGetVCode.tag];
+    if (_kUIGetVCode.tag == 0) {
+        _kUIGetVCode.tag = 1;
+        [_timer pauseTimer];
+        [_kUIGetVCode setTitle:@"获取验证码" forState:UIControlStateNormal];
+        _kUIGetVCode.titleLabel.text = @"获取验证码";
+    }
+}
+
 - (IBAction)getVeryCode:(id)sender {
-    if (!self.kUIAccount.text.length) {
-        [MBProgressHUD showMessage:@"请输入手机号码"];
+    if ([sender tag]>1) {
+        [MBProgressHUD showMessage:@"验证码已经发送，请稍后"];
         return;
     }
+    
+    if (![ALCommonTool verifyMobilePhone:self.kUIAccount.text]) {
+        [MBProgressHUD showMessage:@"手机号码不正确"];
+        return;
+    }
+    
     [self.progressHud show:YES];
     LoginHttpTool *req = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool getVeryCodeWithParams:@{@"uid":_kUIAccount.text,@"flag":@"1"}]];
     [req setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response, id responseObject) {
         [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
             if (data) {
+                _kUIGetVCode.tag = 120;
+                [_timer setFireDate:[NSDate date]];
                 [MBProgressHUD showMessage:@"验证码已成功发送到您手机"];
             }
         }];
@@ -73,8 +108,8 @@
 /// 提交点击事件
 #pragma mark 提交点事件
 -(IBAction)confirmClick:(id)sender {
-    if (!self.kUIAccount.text.length) {
-        [MBProgressHUD showMessage:@"请输入手机号码"];
+    if (![ALCommonTool verifyMobilePhone:self.kUIAccount.text]) {
+        [MBProgressHUD showMessage:@"手机号码不正确"];
         return;
     }
     if (!self.kUIPassword.text.length) {
@@ -96,11 +131,6 @@
         [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
             if (data) {
                 [MBProgressHUD showSuccess:@"重置密码成功" compleBlock:^{
-                    ALNavigationController *nav = (ALNavigationController *)self.navigationController;
-                    if (nav.callBack) {
-                        nav.callBack();
-                        return;
-                    }
                     [self.navigationController popToRootViewControllerAnimated:YES];
                 }];
             }

@@ -14,6 +14,8 @@
 #import "RootTabViewController.h"
 #import "ALNavigationController.h"
 #import "GoodsListHttpTool.h"
+#import "GlobalBussiness.h"
+#import "LoginBussiness.h"
 #define GLOBAL_THIRD_OPEN 0
 @interface LoginController ()
 
@@ -39,16 +41,16 @@
     /*
      ========= 设置账号和密码左边的icon以及左边的边距 ======
      */
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_account"]];
-    _kUIAccount.leftView = imageView;
-    _kUIAccount.leftViewMode = UITextFieldViewModeAlways;
-    [_kUIAccount setLeftPadding:30];
-    _kUIAccount.tintColor = [UIColor whiteColor];
-    imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_password"]];
-    _kUIPassword.leftView = imageView;
-    _kUIPassword.leftViewMode = UITextFieldViewModeAlways;
-    [_kUIPassword setLeftPadding:30];
-    _kUIPassword.tintColor = [UIColor whiteColor];
+//    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_account"]];
+//    _kUIAccount.leftView = imageView;
+//    _kUIAccount.leftViewMode = UITextFieldViewModeAlways;
+//    [_kUIAccount setLeftPadding:30];
+//    _kUIAccount.tintColor = [UIColor whiteColor];
+//    imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_password"]];
+//    _kUIPassword.leftView = imageView;
+//    _kUIPassword.leftViewMode = UITextFieldViewModeAlways;
+//    [_kUIPassword setLeftPadding:30];
+//    _kUIPassword.tintColor = [UIColor whiteColor];
     
     // 色差
     [_kUILogin setTitleColor:ALNavBarColor forState:UIControlStateNormal];
@@ -80,8 +82,8 @@
 /// 点击登录的回调函数
 #pragma mark  点击登录的回调函数
 - (IBAction)loginClick:(id)sender {
-    if (!_kUIAccount.text.length) {
-        [MBProgressHUD showMessage:@"请输入手机号"];
+    if (![ALCommonTool verifyMobilePhone:self.kUIAccount.text]) {
+        [MBProgressHUD showMessage:@"手机号码不正确"];
         return;
     }
     if (!_kUIPassword.text.length) {
@@ -96,62 +98,17 @@
 {
     [self.progressHud show:YES];
     self.progressHud.labelText = @"登录中...";
-    LoginHttpTool *req = [[LoginHttpTool alloc]initWithParam:[LoginHttpTool loginWithParams:params]];
-    [req setReturnBlock:^(NSURLSessionTask *task,NSURLResponse *response, id responseObject) {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-        __block  AccountModel *model = [[AccountModel alloc]init];
-        model.token = httpResponse.allHeaderFields[@"cs-token"];
-        model.expirytime = httpResponse.allHeaderFields[@"cs-token-expirytime"];
-        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-            if (data) {
-                model.ID = ((NSDictionary *)data)[@"id"];
-                model.phone = ((NSDictionary *)data)[@"phone"];
-                model.nickName = ((NSDictionary *)data)[@"nickname"];
-                [AccountTool saveAccount:model];
-                [[NSUserDefaults standardUserDefaults]setObject:_kUIPassword.text forKey:loginPassWord];
-                [[NSUserDefaults standardUserDefaults]synchronize];
-                ALNavigationController *nav = (ALNavigationController *)self.navigationController;
-                if (nav.callBack) {
-                    nav.callBack();
-                    return;
-                }
-                RootTabViewController *ctl = [[RootTabViewController alloc]init];
-                ctl.navigationController.navigationBar.hidden = YES;
-                [self.navigationController pushViewController:ctl animated:YES];
-                [self getGoodsListFromSeverce];
-            }
-        }];
-    }];
-}
-
-- (void)getGoodsListFromSeverce
-{
-    GoodsListHttpTool *req = [[GoodsListHttpTool alloc]initWithParam:[GoodsListHttpTool getGoodsListFromSeverse]];
-    [req setReturnBlock:^(NSURLSessionTask *task, NSURLResponse *response, id responseObject) {
-        [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
-            if ([data isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *dataDic = (NSDictionary *)data;
-                if (dataDic.count == 1) {
-                    return;
-                }
-                [dataDic enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, NSDictionary *obj, BOOL * _Nonnull stop) {
-                    GoodsInfoModel *model = [[GoodsInfoModel alloc]init];
-                    model.uid = [AccountTool account].ID;
-                    model.mac = [ScaleTool scale].mac;
-                    [model setValuesForKeysWithDictionary:obj];
-                    model.unit = [UnitTool unitFromStringSeverce:obj[@"unit"]];
-                    [[GoodsInfoModel getUsingLKDBHelper]insertToDB:model callback:nil];
-                    
-                    GoodsTempList *tempModel = [[GoodsTempList alloc]init];
-                    tempModel.uid = [AccountTool account].ID;
-                    tempModel.mac = [ScaleTool scale].mac;
-                    [tempModel setValuesForKeysWithDictionary:obj];
-                    tempModel.unit = [UnitTool unitFromStringSeverce:obj[@"unit"]];
-                    
-                    [[GoodsTempList getUsingLKDBHelper]insertToDB:tempModel];
-                }];
-            }
-        }];
+    [LoginBussiness loginWithParams:params completedBlock:^{
+        [[NSUserDefaults standardUserDefaults]setObject:_kUIPassword.text forKey:loginPassWord];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        if ([Reachability shareReachAbilty].currentReachabilityStatus == ReachableViaWiFi) {
+            [[GlobalBussiness shareBussiness]downLoadSaleRecords];
+        }
+        [LoginBussiness getGoodsListFromSeverce];
+        AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        RootTabViewController *root = (RootTabViewController *)delegate.window.rootViewController;
+        root.selectedIndex = 0;
+        [self dismissViewControllerAnimated:YES completion:nil];
     }];
 }
 

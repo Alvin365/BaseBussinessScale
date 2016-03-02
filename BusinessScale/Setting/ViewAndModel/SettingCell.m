@@ -34,7 +34,7 @@
     [_segMent setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateSelected];
     [_segMent setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateNormal];
     [_segMent addTarget:self action:@selector(segComponseSelected:) forControlEvents:UIControlEventValueChanged];
-    [self addSubview:_segMent];
+//    [self addSubview:_segMent];
 }
 
 - (void)segComponseSelected:(UISegmentedControl *)seg
@@ -73,7 +73,7 @@
     self.textLabel.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
     self.textLabel.frame = CGRectMake(15, self.height/2.0f-10, 200, 20);
     _rightArrow.frame = CGRectMake(screenWidth-22, self.height/2.0f-5.25, 7, 10.5);
-    _segMent.frame = CGRectMake(screenWidth-15-220*ALScreenScalWidth, self.height/2.0f-20*ALScreenScalWidth, 220*ALScreenScalWidth, 40*ALScreenScalWidth);
+//    _segMent.frame = CGRectMake(screenWidth-15-220*ALScreenScalWidth, self.height/2.0f-20*ALScreenScalWidth, 220*ALScreenScalWidth, 40*ALScreenScalWidth);
 }
 
 @end
