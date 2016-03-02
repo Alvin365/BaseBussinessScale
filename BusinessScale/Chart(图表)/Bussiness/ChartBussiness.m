@@ -59,13 +59,11 @@
 
 - (void)setDayDataReturnBlock:(void (^)(NSArray *))block
 {
-//    _returnBlock = nil;
     _returnBlock = [block copy];
 }
 
 - (void)setMonthDataReturnBlock:(void (^)(NSArray *))block
 {
-//    _returnMonthBlock = nil;
     _returnMonthBlock = [block copy];
 }
 

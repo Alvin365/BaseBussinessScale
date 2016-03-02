@@ -23,10 +23,8 @@
         model.expirytime = httpResponse.allHeaderFields[@"cs-token-expirytime"];
         [self doDatasFromNet:responseObject useFulData:^(NSObject *data) {
             if (data) {
-                NSNumber *number = ((NSDictionary *)data)[@"id"];
-                model.ID = [number stringValue];
-                model.phone = ((NSDictionary *)data)[@"phone"];
-                model.nickName = ((NSDictionary *)data)[@"nickname"];
+                [model setValuesForKeysWithDictionary:((NSDictionary *)data)];
+                model.ID = ((NSDictionary *)data)[@"a_uuid"];
                 [AccountTool saveAccount:model];
                 [self getScaleInfoCompletedBlock:^{
                     if (block) {

@@ -25,6 +25,8 @@
 /** 支付宝账号*/
 @property (nonatomic, copy) NSString *alipayNo;
 
+@property (nonatomic, assign) NSTimeInterval register_ts;
+
 @end
 
 @interface AccountTool : NSObject

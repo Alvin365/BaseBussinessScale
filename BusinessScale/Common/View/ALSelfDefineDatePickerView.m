@@ -11,9 +11,6 @@
 @interface ALSelfDefineDatePickerView()<UIPickerViewDataSource,UIPickerViewDelegate>
 {
     BOOL _animate;
-    
-    NSInteger _formerYear;
-    NSInteger _formerMonth;
     NSInteger _formerWeek;
     
     NSInteger _weeksSelectedRow;
@@ -194,8 +191,6 @@
             break;
         }
     }
-    _formerYear = _yearRow;
-    _formerMonth = _monthRow;
     [self.picker selectRow:_yearRow inComponent:0 animated:NO];
     [self.picker selectRow:_monthRow inComponent:1 animated:NO];
     if (self.type == ALProcessViewButtonTagWeek) {
@@ -249,19 +244,33 @@
         }
     };
     if (!component) {
-        _formerYear = _yearRow;
         _yearRow = row;
-        if ([self currentDateIsLaterThanNow]) {
-            [self.picker selectRow:_formerYear inComponent:0 animated:YES];
-            _yearRow = _formerYear;
+        NSInteger year = [self.years[_yearRow] integerValue];
+        NSInteger nowRow = 0;
+        for (NSInteger i = 0; i<_years.count; i++) {
+            if ([NSDate date].year == [_years[i] integerValue]) {
+                nowRow = i;
+                break;
+            }
+        }
+        if(year>=nowRow){
+            if ([self currentDateIsLaterThanNow]) {
+                _monthRow = [NSDate date].month-1;
+                _weeksSelectedRow = 0;
+                _yearRow = nowRow;
+                [self.picker selectRow:nowRow inComponent:0 animated:YES];
+                [self.picker selectRow:_monthRow inComponent:1 animated:YES];
+                [self pickerView:self.picker didSelectRow:_monthRow inComponent:1];
+            }
         }
         block();
     }else if (component == 1){
-        _formerMonth = _monthRow;
         _monthRow = row;
+        NSInteger now = [NSDate date].month;
         if ([self currentDateIsLaterThanNow]) {
-            [self.picker selectRow:_formerMonth inComponent:1 animated:YES];
-            _monthRow = _formerMonth;
+            _monthRow = now-1;
+            _weeksSelectedRow = 0;
+            [self.picker selectRow:now-1 inComponent:1 animated:YES];
         }
         block();
     }else{

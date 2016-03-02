@@ -12,7 +12,7 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _uid = [AccountTool account].ID;
+//        _uid = [AccountTool account].ID;
         _mac = [ScaleTool scale].mac;
     }
     return self;
@@ -48,7 +48,7 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _uid = [AccountTool account].ID;
+//        _uid = [AccountTool account].ID;
         _mac = [ScaleTool scale].mac;
     }
     return self;

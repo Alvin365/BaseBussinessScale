@@ -13,7 +13,7 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _uid = [AccountTool account].ID;
+//        _uid = [AccountTool account].ID;
         _mac = [ScaleTool scale].mac;
     }
     return self;
@@ -21,7 +21,7 @@
 
 + (NSString *)getTableName
 {
-    return [NSString stringWithFormat:@"GoodsList"];
+    return [NSString stringWithFormat:@"GoodsList%@",[AccountTool account].ID];
 }
 
 + (NSArray *)getPrimaryKeyUnionArray
@@ -50,7 +50,7 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _uid = [AccountTool account].ID;
+//        _uid = [AccountTool account].ID;
         _mac = [ScaleTool scale].mac;
     }
     return self;
@@ -58,7 +58,7 @@
 
 + (NSString *)getTableName
 {
-    return [NSString stringWithFormat:@"GoodsTempList"];
+    return [NSString stringWithFormat:@"GoodsTempList%@",[AccountTool account].ID];
 }
 
 + (NSArray *)getPrimaryKeyUnionArray
