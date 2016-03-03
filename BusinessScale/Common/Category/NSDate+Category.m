@@ -245,6 +245,10 @@
 {
 	NSDateComponents *components1 = [CURRENT_CALENDAR components:DATE_COMPONENTS fromDate:self];
 	NSDateComponents *components2 = [CURRENT_CALENDAR components:DATE_COMPONENTS fromDate:aDate];
+    NSDate *begin = [NSDate getWeekFirstDate:aDate];
+    NSDate *end = [NSDate getWeekLastDate:aDate];
+    
+    return [self isLaterThanDate:begin.zeroTime]&&[self isLaterThanDate:end.dayEndTime];
 	
 	// Must be same week. 12/31 and 1/1 will both be week "1" if they are in the same week
 	if (components1.week != components2.week) return NO;
@@ -565,6 +569,24 @@
 }
 
 #pragma mark -Alvin add
+
+- (NSDate *)formerMonth
+{
+    if (self.month == 1) {
+        return [NSDate dateWithYear:self.year-1 Month:12 Day:1];
+    }else{
+        return [NSDate dateWithYear:self.year Month:self.month-1 Day:1];
+    }
+}
+
+- (NSDate *)followMonth
+{
+    if (self.month == 12) {
+        return [NSDate dateWithYear:self.year+1 Month:1 Day:1];
+    }else{
+        return [NSDate dateWithYear:self.year Month:self.month+1 Day:1];
+    }
+}
 
 - (NSUInteger)numberOfDaysInCurrentMonth
 {

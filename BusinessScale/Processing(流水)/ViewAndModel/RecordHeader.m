@@ -43,11 +43,19 @@
 {
     CGPoint point = [reconizer locationInView:reconizer.view];
     RecordHeaderTag tag = point.x>=self.width/2.0f?RecordHeaderTag_Right:RecordHeaderTag_Left;
-    NSDate *date = [self caculateDate:tag];
+    NSString *dateString = [NSString stringWithFormat:@"%@15日",_dateL.text];
+    NSDate *date = [NSDate convertDateFromString:dateString];
+    date = tag==RecordHeaderTag_Left?[date formerMonth]:[date followMonth];
+    
     if ([self selectedDateIsLaterThanNow:date]) {
         [MBProgressHUD showMessage:@"没有数据"];
         return;
     }
+    if ([self selectedDateIsEarlyThanRegist:date]) {
+        [MBProgressHUD showMessage:@"已经是最早数据"];
+        return;
+    }
+    
     if (self.callBack) {
         self.callBack(date);
     }
@@ -73,5 +81,14 @@
     NSDate *now = [NSDate date];
     return date.year>now.year||(date.year==now.year&&date.month>now.month);
 }
+
+- (BOOL)selectedDateIsEarlyThanRegist:(NSDate *)date
+{
+    NSDate *registDate = [NSDate dateWithTimeIntervalInMilliSecondSince1970:[AccountTool account].register_ts];
+    BOOL isEarlyThanRegist = NO;
+    isEarlyThanRegist = [date isEarlierThanDate:registDate]&&(![date isSameMonthAsDate:registDate]);
+    return isEarlyThanRegist;
+}
+
 
 @end

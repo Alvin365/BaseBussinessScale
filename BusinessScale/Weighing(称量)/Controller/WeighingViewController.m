@@ -102,6 +102,9 @@
             l.text = @"蓝牙已连接";
         }
         imageV.image = [UIImage imageNamed:@"ble_connected.png"];
+    }else if ([CsBtUtil getInstance].state == CsScaleStateClosed){
+        l.text = @"蓝牙未打开";
+        imageV.image = [UIImage imageNamed:@"ble_noconnect.png"];
     }else{
         l.text = @"蓝牙未连接";
         imageV.image = [UIImage imageNamed:@"ble_noconnect.png"];
@@ -167,6 +170,7 @@
         _btUtil.stopAdvertisementState = ![CsBtCommon getBoundMac].length;
         [_btUtil startScanBluetoothDevice];
     }
+    [self datas];
 }
 
 - (void)viewDidLoad {
@@ -324,6 +328,14 @@
 
 - (void)connectToBLE
 {
+    if ([ScaleTool scale].mac){
+        if ([CsBtUtil getInstance].state == CsScaleStateClosed) {
+            [MBProgressHUD showError:@"蓝牙未打开，请开启手机蓝牙"];
+        }else if ([CsBtUtil getInstance].state<CsScaleStateConnected) {
+            [MBProgressHUD showError:@"请检查秤是否已经激活"];
+        }
+        return;
+    }
     if ([CsBtUtil getInstance].state==CsScaleStateShakeHandSuccess) return;
     if (_btUtil.state != CsScaleStateClosed) {
         if ([CsBtCommon getPin].length) {
@@ -344,9 +356,16 @@
 #pragma mark - -datas
 - (void)datas
 {
-    _dataArray = [NSMutableArray array];
-    _item = [[SaleItem alloc]init];
-    _paramsDic = [NSMutableDictionary dictionary];
+    if (!_dataArray) {
+        _dataArray = [NSMutableArray array];
+    }
+    if (!_item) {
+        _item = [[SaleItem alloc]init];
+    }
+    if (!_paramsDic) {
+        _paramsDic = [NSMutableDictionary dictionary];
+    }
+    [_dataArray removeAllObjects];
     NSArray *array = [LocalDataTool loadLocalArrayFromPath:currentPalletList];
     if (array.count) {
         for (NSDictionary *dic in array) {
@@ -525,6 +544,10 @@
                 [CsBtCommon setUnitDecimalPoint:data.uDecimalPoint];
                 [CsBtCommon setWeightDecimalPoint:data.wDecimalPoint];
                 
+                ScaleModel *model = [[ScaleModel alloc]init];
+                [model setValuesForKeysWithDictionary:data.keyValues];
+                [ScaleTool saveScale:model];
+                
                 [_btUtil connect:_btUtil.activePeripheral];
             }
         }
@@ -680,7 +703,7 @@
         if (array.count) {
             [muArr addObjectsFromArray:array];
         }
-        SaleItem *item = [_dataArray lastObject];
+        SaleItem *item = [_dataArray firstObject];
         [muArr insertObject:[item keyAndValues] atIndex:0];
         [LocalDataTool saveAsLocalArrayWithPath:palletList data:muArr];
         [self saveCurrentPallet];

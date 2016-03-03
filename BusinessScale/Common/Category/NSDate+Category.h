@@ -108,8 +108,10 @@
 @property (nonatomic, readonly) NSDate *zeroTime;
 /** 某一天 的23:59*/
 @property (nonatomic, readonly) NSDate *dayEndTime;
-
-
+/** 前一月 */
+@property (nonatomic, readonly) NSDate *formerMonth;
+/** 后一月*/
+@property (nonatomic, readonly) NSDate *followMonth;
 
 #pragma mark -Alvin add
 - (NSUInteger)numberOfDaysInCurrentMonth;
