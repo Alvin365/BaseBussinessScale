@@ -5,6 +5,7 @@
 //  Created by Alvin on 15/12/15.
 //  Copyright © 2015年 chipsea. All rights reserved.
 //
+
 #import "WeighingViewController.h"
 #import "GoodsSwapCell.h"
 #import "PalletViewController.h"
@@ -24,7 +25,6 @@
 #import "SettingBussiness.h"
 #import "SetPinningController.h"
 #import "BLEHttpTool.h"
-#import "BlueToothBar.h"
 
 #define currentPalletList [NSString stringWithFormat:@"currentPalletList%@",[AccountTool account].ID]
 @interface WeighingViewController ()<UITableViewDataSource,UITableViewDelegate,BleDeviceDelegate>
@@ -65,7 +65,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *payMoneyTailing;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *weightTop;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *goodImageLeading;
-@property (nonatomic, strong) BlueToothBar *rightBar;
+@property (nonatomic, strong) UIView *rightBar;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
 @property (nonatomic, assign) CGFloat weight;
@@ -77,12 +77,36 @@
 #pragma mark - -getter
 - (UIView *)rightBar
 {
-    WS(weakSelf);
     if (!_rightBar) {
-        _rightBar = [[BlueToothBar alloc]initWithFrame:CGRectMake(0, 0, 100, 40)];
-        _rightBar.callBack = ^{
-            [weakSelf connectToBLE];
-        };
+         _rightBar = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 100, 40)];
+        UILabel *l = [[UILabel alloc]initWithFrame:CGRectMake(20, 10, 70, 20)];
+        l.tag = 100;
+        l.font = [UIFont systemFontOfSize:14];
+        l.textColor = [UIColor whiteColor];
+        [_rightBar addSubview:l];
+        UIImageView *imageV = [[UIImageView alloc]initWithFrame:CGRectMake(90, 12.5, 14, 15)];
+        imageV.tag = 1000;
+        [_rightBar addSubview:imageV];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(connectToBLE)];
+        _rightBar.userInteractionEnabled = YES;
+        [_rightBar addGestureRecognizer:tap];
+    }
+    
+    UILabel *l = [_rightBar viewWithTag:100];
+    UIImageView *imageV = [_rightBar viewWithTag:1000];
+    if ([CsBtUtil getInstance].state>=CsScaleStateConnected) {
+        if ([CsBtUtil getInstance].state!=CsScaleStateShakeHandSuccess) {
+            l.text = @"蓝牙连接中";
+        }else{
+            l.text = @"蓝牙已连接";
+        }
+        imageV.image = [UIImage imageNamed:@"ble_connected.png"];
+    }else if ([CsBtUtil getInstance].state == CsScaleStateClosed){
+        l.text = @"蓝牙未打开";
+        imageV.image = [UIImage imageNamed:@"ble_noconnect.png"];
+    }else{
+        l.text = @"蓝牙未连接";
+        imageV.image = [UIImage imageNamed:@"ble_noconnect.png"];
     }
     return _rightBar;
 }
@@ -138,8 +162,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
     self.navigationController.navigationBar.hidden = NO;
-    self.rightBar.state = _btUtil.state;
     _btUtil.delegate = self;
     if (_btUtil.state < CsScaleStateConnected) {
         _btUtil.stopAdvertisementState = ![CsBtCommon getBoundMac].length;
@@ -214,13 +238,11 @@
 - (void)buildNavBarItems
 {
     WS(weakSelf);
-    self.rightBar.state = _btUtil.state;
     self.navigationItem.title = @"OKOK计量";
     [self addNavLeftBarBtn:@"进入托盘" selectorBlock:^{
         PalletViewController *pctl = [[PalletViewController alloc]init];
         [weakSelf.navigationController pushViewController:pctl animated:YES];
     }];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
 }
 
 #pragma mark - -actions
@@ -293,6 +315,15 @@
 
 - (void)connectToBLE
 {
+    if ([ScaleTool scale].mac){
+        if ([CsBtUtil getInstance].state == CsScaleStateClosed) {
+            [MBProgressHUD showError:@"蓝牙未打开，请开启手机蓝牙"];
+        }else if ([CsBtUtil getInstance].state<CsScaleStateConnected) {
+            [MBProgressHUD showError:@"请检查秤是否已经激活"];
+        }
+        return;
+    }
+    if ([CsBtUtil getInstance].state==CsScaleStateShakeHandSuccess) return;
     if (_btUtil.state != CsScaleStateClosed) {
         if ([CsBtCommon getPin].length) {
             UIViewController *controller = [[BoundDeviceController alloc] init];
@@ -514,7 +545,6 @@
     }else if (state == CsScaleStateOpened){
         [_btUtil startScanBluetoothDevice];
     }
-    _rightBar.state = state;
 }
 
 - (void)didHandShakeComplete:(BOOL)success

@@ -138,8 +138,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
     self.navigationController.navigationBar.hidden = NO;
-    self.rightBar.state = _btUtil.state;
     _btUtil.delegate = self;
     if (_btUtil.state < CsScaleStateConnected) {
         _btUtil.stopAdvertisementState = ![CsBtCommon getBoundMac].length;
@@ -214,13 +214,11 @@
 - (void)buildNavBarItems
 {
     WS(weakSelf);
-    self.rightBar.state = _btUtil.state;
     self.navigationItem.title = @"OKOK计量";
     [self addNavLeftBarBtn:@"进入托盘" selectorBlock:^{
         PalletViewController *pctl = [[PalletViewController alloc]init];
         [weakSelf.navigationController pushViewController:pctl animated:YES];
     }];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBar];
 }
 
 #pragma mark - -actions
